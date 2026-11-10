@@ -206,19 +206,24 @@ class ImagePipelineImpl @Inject constructor(
         null
     }
 
-    private fun decodeSampled(path: String, maxDimension: Int): Bitmap? = try {
-        val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
-        BitmapFactory.decodeFile(path, bounds)
-        if (bounds.outWidth <= 0 || bounds.outHeight <= 0) return null
-        val sample = ImageProcessing.calculateInSampleSize(
-            bounds.outWidth, bounds.outHeight, maxDimension
-        )
-        val opts = BitmapFactory.Options().apply { inSampleSize = sample }
-        BitmapFactory.decodeFile(path, opts)
-    } catch (e: OutOfMemoryError) {
-        null
-    } catch (e: Exception) {
-        null
+    private fun decodeSampled(path: String, maxDimension: Int): Bitmap? {
+        return try {
+            val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
+            BitmapFactory.decodeFile(path, bounds)
+            if (bounds.outWidth <= 0 || bounds.outHeight <= 0) {
+                null
+            } else {
+                val sample = ImageProcessing.calculateInSampleSize(
+                    bounds.outWidth, bounds.outHeight, maxDimension
+                )
+                val opts = BitmapFactory.Options().apply { inSampleSize = sample }
+                BitmapFactory.decodeFile(path, opts)
+            }
+        } catch (e: OutOfMemoryError) {
+            null
+        } catch (e: Exception) {
+            null
+        }
     }
 
     private fun emptyReport() = ImageQualityReport(
