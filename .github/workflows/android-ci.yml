@@ -48,13 +48,15 @@ jobs:
       - name: Report errors in job summary and annotations
         if: failure()
         run: |
-          for f in /tmp/gradle-build.log /tmp/gradle-test.log /tmp/gradle-lint.log; do
-            if [ -f "$f" ]; then
-              echo "### Errors from $f" >> "$GITHUB_STEP_SUMMARY"
-              grep -E "^e: |error:|error |FAILURE:|What went wrong|Caused by|> " "$f" | head -40 | tee -a "$GITHUB_STEP_SUMMARY" | while IFS= read -r line; do
-                echo "::error::${line}"
-              done
-            fi
+          {
+            for f in /tmp/gradle-build.log /tmp/gradle-test.log /tmp/gradle-lint.log; do
+              if [ -f "$f" ]; then
+                echo "### Errors from $f"
+                { grep -E "^e: " "$f" || true; awk '/FAILURE: Build failed|FAILURE: Build completed/{flag=1} flag' "$f" || true; } | head -60
+              fi
+            done
+          } | tee -a "$GITHUB_STEP_SUMMARY" | while IFS= read -r line; do
+            echo "::error::${line}"
           done
 
       - name: Upload APK
