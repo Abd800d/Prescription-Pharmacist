@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App -->
+    <string name="app_name">Prescription Pharmacist</string>
+    <string name="developer_credit">Developed by Dr. Abdulmajid Al-Maakthi</string>
+    <string name="app_tagline">AI-powered prescription analysis</string>
+
+    <!-- Navigation -->
+    <string name="nav_capture">Capture</string>
+    <string name="nav_history">History</string>
+    <string name="nav_settings">Settings</string>
+
+    <!-- Capture -->
+    <string name="capture_title">Capture a prescription</string>
+    <string name="capture_instruction">Take a photo of the prescription or pick it from your gallery. AI will extract the medication names.</string>
+    <string name="capture_take_photo">Take photo</string>
+    <string name="capture_pick_gallery">Pick from gallery</string>
+    <string name="capture_permission_rationale">Camera permission is required to photograph prescriptions.</string>
+    <string name="capture_permission_denied">Camera permission was denied. You can grant it from system settings or pick an image from the gallery.</string>
+    <string name="capture_camera_unavailable">Camera could not be started on this device.</string>
+    <string name="capture_open_settings">Open settings</string>
+
+    <!-- Analysis -->
+    <string name="analysis_running">Analyzing the prescription with AI…</string>
+    <string name="analysis_step_upload">Uploading image securely</string>
+    <string name="analysis_step_read">Reading handwritten text</string>
+    <string name="analysis_step_extract">Extracting medications and confidence</string>
+    <string name="analysis_title">Analysis result</string>
+
+    <!-- Review -->
+    <string name="review_title">Review and confirm</string>
+    <string name="review_subtitle">Review the extracted medications and confirm before approving. You are the final judge.</string>
+    <string name="review_confirm">Approve and save</string>
+    <string name="review_reject">Discard</string>
+    <string name="review_add_medication">Add medication</string>
+    <string name="review_edit">Edit</string>
+    <string name="review_delete">Delete</string>
+    <string name="review_empty">No medications were extracted. You can add them manually.</string>
+    <string name="review_saved">Prescription saved successfully</string>
+    <string name="review_save_draft">Save as draft</string>
+    <string name="review_notes_hint">Pharmacist notes (optional)</string>
+    <string name="review_new_extraction">Extract from image</string>
+
+    <!-- Medication -->
+    <string name="medication_name">Medication name</string>
+    <string name="medication_type_label">Name type</string>
+    <string name="medication_scientific_name">Scientific name</string>
+    <string name="medication_strength">Strength</string>
+    <string name="medication_form">Dosage form</string>
+    <string name="medication_type_brand">Brand name</string>
+    <string name="medication_type_generic">Generic name</string>
+    <string name="medication_type_unknown">Unspecified</string>
+    <string name="medication_save">Save</string>
+    <string name="medication_cancel">Cancel</string>
+
+    <!-- Confidence -->
+    <string name="confidence_label">Confidence</string>
+    <string name="confidence_high">High confidence</string>
+    <string name="confidence_medium">Medium confidence</string>
+    <string name="confidence_low">Low confidence</string>
+    <string name="confidence_percent">%1$d%%</string>
+
+    <!-- History -->
+    <string name="history_title">Prescription history</string>
+    <string name="history_empty">No saved prescriptions yet.</string>
+    <string name="history_status_pending">Pending confirmation</string>
+    <string name="history_status_confirmed">Confirmed</string>
+    <string name="history_status_rejected">Rejected</string>
+    <string name="history_delete_title">Delete prescription?</string>
+    <string name="history_delete_message">The prescription and all its medications will be permanently deleted.</string>
+    <string name="history_delete_confirm">Delete</string>
+    <string name="detail_title">Prescription details</string>
+    <string name="detail_created_at">Created: %1$s</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_appearance">Appearance</string>
+    <string name="settings_theme">Theme</string>
+    <string name="settings_theme_system">System</string>
+    <string name="settings_theme_light">Light</string>
+    <string name="settings_theme_dark">Dark</string>
+    <string name="settings_language">Language</string>
+    <string name="settings_language_system">System language</string>
+    <string name="settings_language_ar">العربية</string>
+    <string name="settings_language_en">English</string>
+    <string name="settings_analysis">Analysis service</string>
+    <string name="settings_backend_url">Secure backend URL</string>
+    <string name="settings_backend_hint">https://your-backend.example.com</string>
+    <string name="settings_backend_save">Save URL</string>
+    <string name="settings_backend_saved">URL saved</string>
+    <string name="settings_backend_invalid">Invalid URL. It must start with https://</string>
+    <string name="settings_backend_empty">No analysis backend configured yet. See the README to set up the secure server.</string>
+    <string name="settings_account">Account</string>
+    <string name="settings_sign_in_anonymous">Sign in anonymously (Firebase)</string>
+    <string name="settings_sign_out">Sign out</string>
+    <string name="settings_firebase_disabled">Firebase is not configured in this build. Add google-services.json to enable authentication and backup.</string>
+    <string name="settings_signed_in">Signed in: %1$s</string>
+    <string name="settings_about">About</string>
+    <string name="settings_version">Version %1$s</string>
+
+    <!-- Errors -->
+    <string name="error_generic">An unexpected error occurred. Please try again.</string>
+    <string name="error_network">Could not reach the server. Check your internet connection.</string>
+    <string name="error_not_configured">The analysis service is not configured. Add the secure backend URL in Settings.</string>
+    <string name="error_analysis_failed">Failed to analyze the prescription. Try a clearer photo.</string>
+    <string name="error_unauthorized">Authentication required. Please sign in from Settings.</string>
+    <string name="error_server">The server is temporarily unavailable. Please retry later.</string>
+    <string name="error_image_unreadable">The selected image could not be read.</string>
+    <string name="retry">Retry</string>
+
+    <!-- Actions -->
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="back">Back</string>
+</resources>

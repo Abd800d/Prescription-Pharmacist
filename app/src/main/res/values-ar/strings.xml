@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App -->
+    <string name="app_name">صيدلي الوصفة</string>
+    <string name="developer_credit">إعداد وتطوير د. عبدالماجد الماخذي</string>
+    <string name="app_tagline">تحليل الوصفات الطبية بالذكاء الاصطناعي</string>
+
+    <!-- Navigation -->
+    <string name="nav_capture">تصوير</string>
+    <string name="nav_history">السجل</string>
+    <string name="nav_settings">الإعدادات</string>
+
+    <!-- Capture -->
+    <string name="capture_title">تصوير وصفة طبية</string>
+    <string name="capture_instruction">صوّر الوصفة الطبية أو اخترها من معرض الهاتف، وسيقوم الذكاء الاصطناعي باستخراج أسماء الأدوية.</string>
+    <string name="capture_take_photo">التقاط صورة</string>
+    <string name="capture_pick_gallery">اختيار من المعرض</string>
+    <string name="capture_permission_rationale">نحتاج إذن الكاميرا لتصوير الوصفات الطبية.</string>
+    <string name="capture_permission_denied">تم رفض إذن الكاميرا. يمكنك منح الإذن من إعدادات النظام أو اختيار صورة من المعرض.</string>
+    <string name="capture_camera_unavailable">تعذّر تشغيل الكاميرا على هذا الجهاز.</string>
+    <string name="capture_open_settings">فتح الإعدادات</string>
+
+    <!-- Analysis -->
+    <string name="analysis_running">جارٍ تحليل الوصفة بالذكاء الاصطناعي…</string>
+    <string name="analysis_step_upload">رفع الصورة بشكل آمن</string>
+    <string name="analysis_step_read">قراءة الكتابة اليدوية</string>
+    <string name="analysis_step_extract">استخراج الأدوية ودرجات الثقة</string>
+    <string name="analysis_title">نتيجة التحليل</string>
+
+    <!-- Review -->
+    <string name="review_title">مراجعة وتأكيد النتيجة</string>
+    <string name="review_subtitle">راجع الأدوية المستخرجة وأكد النتيجة قبل اعتمادها. أنت الحكم الأخير.</string>
+    <string name="review_confirm">اعتماد وحفظ</string>
+    <string name="review_reject">إلغاء</string>
+    <string name="review_add_medication">إضافة دواء</string>
+    <string name="review_edit">تعديل</string>
+    <string name="review_delete">حذف</string>
+    <string name="review_empty">لم يتم استخراج أي أدوية. يمكنك إضافتها يدوياً.</string>
+    <string name="review_saved">تم حفظ الوصفة بنجاح</string>
+    <string name="review_save_draft">حفظ كمسودة</string>
+    <string name="review_notes_hint">ملاحظات الصيدلي (اختياري)</string>
+    <string name="review_new_extraction">استخراج من الصورة</string>
+
+    <!-- Medication -->
+    <string name="medication_name">اسم الدواء</string>
+    <string name="medication_type_label">نوع الاسم</string>
+    <string name="medication_scientific_name">الاسم العلمي</string>
+    <string name="medication_strength">التركيز</string>
+    <string name="medication_form">الشكل الصيدلاني</string>
+    <string name="medication_type_brand">اسم تجاري</string>
+    <string name="medication_type_generic">اسم علمي</string>
+    <string name="medication_type_unknown">غير محدد</string>
+    <string name="medication_save">حفظ</string>
+    <string name="medication_cancel">إلغاء</string>
+
+    <!-- Confidence -->
+    <string name="confidence_label">درجة الثقة</string>
+    <string name="confidence_high">ثقة عالية</string>
+    <string name="confidence_medium">ثقة متوسطة</string>
+    <string name="confidence_low">ثقة منخفضة</string>
+    <string name="confidence_percent">%1$d%%</string>
+
+    <!-- History -->
+    <string name="history_title">سجل الوصفات</string>
+    <string name="history_empty">لا توجد وصفات محفوظة بعد.</string>
+    <string name="history_status_pending">بانتظار التأكيد</string>
+    <string name="history_status_confirmed">معتمدة</string>
+    <string name="history_status_rejected">مرفوضة</string>
+    <string name="history_delete_title">حذف الوصفة؟</string>
+    <string name="history_delete_message">سيتم حذف الوصفة وجميع الأدوية المرتبطة بها نهائياً.</string>
+    <string name="history_delete_confirm">حذف</string>
+    <string name="detail_title">تفاصيل الوصفة</string>
+    <string name="detail_created_at">تاريخ الإنشاء: %1$s</string>
+
+    <!-- Settings -->
+    <string name="settings_title">الإعدادات</string>
+    <string name="settings_appearance">المظهر</string>
+    <string name="settings_theme">وضع العرض</string>
+    <string name="settings_theme_system">النظام</string>
+    <string name="settings_theme_light">فاتح</string>
+    <string name="settings_theme_dark">داكن</string>
+    <string name="settings_language">اللغة</string>
+    <string name="settings_language_system">لغة النظام</string>
+    <string name="settings_language_ar">العربية</string>
+    <string name="settings_language_en">English</string>
+    <string name="settings_analysis">خدمة التحليل</string>
+    <string name="settings_backend_url">رابط الخادم الآمن</string>
+    <string name="settings_backend_hint">https://your-backend.example.com</string>
+    <string name="settings_backend_save">حفظ الرابط</string>
+    <string name="settings_backend_saved">تم حفظ الرابط</string>
+    <string name="settings_backend_invalid">الرابط غير صالح. يجب أن يبدأ بـ https://</string>
+    <string name="settings_backend_empty">لم يتم إعداد خادم التحليل بعد. راجع ملف README لإعداد الخادم الآمن.</string>
+    <string name="settings_account">الحساب</string>
+    <string name="settings_sign_in_anonymous">تسجيل دخول مجهول (Firebase)</string>
+    <string name="settings_sign_out">تسجيل الخروج</string>
+    <string name="settings_firebase_disabled">Firebase غير مُعدّ على هذا البناء. أضف google-services.json لتفعيل المصادقة والنسخ الاحتياطي.</string>
+    <string name="settings_signed_in">تم تسجيل الدخول: %1$s</string>
+    <string name="settings_about">حول التطبيق</string>
+    <string name="settings_version">الإصدار %1$s</string>
+
+    <!-- Errors -->
+    <string name="error_generic">حدث خطأ غير متوقع. حاول مرة أخرى.</string>
+    <string name="error_network">تعذّر الاتصال بالخادم. تحقق من اتصال الإنترنت.</string>
+    <string name="error_not_configured">خدمة التحليل غير مُعدّة. أضف رابط الخادم الآمن من الإعدادات.</string>
+    <string name="error_analysis_failed">فشل تحليل الوصفة. حاول بصورة أوضح.</string>
+    <string name="error_unauthorized">المصادقة مطلوبة. سجّل الدخول من الإعدادات.</string>
+    <string name="error_server">الخادم يواجه مشكلة مؤقتة. حاول لاحقاً.</string>
+    <string name="error_image_unreadable">تعذّرت قراءة الصورة المحددة.</string>
+    <string name="retry">إعادة المحاولة</string>
+
+    <!-- Actions -->
+    <string name="ok">موافق</string>
+    <string name="cancel">إلغاء</string>
+    <string name="back">رجوع</string>
+</resources>
