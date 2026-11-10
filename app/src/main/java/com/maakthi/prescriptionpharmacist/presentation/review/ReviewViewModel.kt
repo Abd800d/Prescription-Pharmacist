@@ -7,12 +7,14 @@ import androidx.lifecycle.viewModelScope
 import com.maakthi.prescriptionpharmacist.core.util.ImageUtils
 import com.maakthi.prescriptionpharmacist.domain.model.AnalysisResult
 import com.maakthi.prescriptionpharmacist.domain.model.AppResult
+import com.maakthi.prescriptionpharmacist.domain.model.ConfidenceLevel
 import com.maakthi.prescriptionpharmacist.domain.model.ErrorCode
 import com.maakthi.prescriptionpharmacist.domain.model.Medication
 import com.maakthi.prescriptionpharmacist.domain.model.MedicationCandidate
 import com.maakthi.prescriptionpharmacist.domain.model.MedicationType
 import com.maakthi.prescriptionpharmacist.domain.model.Prescription
 import com.maakthi.prescriptionpharmacist.domain.model.PrescriptionStatus
+import com.maakthi.prescriptionpharmacist.domain.model.confidenceLevelOf
 import com.maakthi.prescriptionpharmacist.domain.usecase.AnalyzePrescriptionUseCase
 import com.maakthi.prescriptionpharmacist.domain.usecase.SavePrescriptionUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -40,7 +42,10 @@ data class EditableMedication(
     val form: String? = null,
     val confidence: Float = 1f,
     val rawText: String? = null
-)
+) {
+    val confidenceLevel: ConfidenceLevel
+        get() = confidenceLevelOf(confidence)
+}
 
 sealed interface ReviewUiState {
     data object Analyzing : ReviewUiState

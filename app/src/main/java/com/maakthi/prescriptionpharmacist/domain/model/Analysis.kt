@@ -27,11 +27,7 @@ data class MedicationCandidate(
     val rawText: String? = null
 ) {
     val confidenceLevel: ConfidenceLevel
-        get() = when {
-            confidence >= HIGH_CONFIDENCE_THRESHOLD -> ConfidenceLevel.HIGH
-            confidence >= MEDIUM_CONFIDENCE_THRESHOLD -> ConfidenceLevel.MEDIUM
-            else -> ConfidenceLevel.LOW
-        }
+        get() = confidenceLevelOf(confidence)
 
     companion object {
         const val HIGH_CONFIDENCE_THRESHOLD = 0.8f
@@ -42,6 +38,13 @@ data class MedicationCandidate(
 enum class MedicationType { BRAND, GENERIC, UNKNOWN }
 
 enum class ConfidenceLevel { HIGH, MEDIUM, LOW }
+
+/** Maps a raw 0..1 confidence to a display tier. */
+fun confidenceLevelOf(confidence: Float): ConfidenceLevel = when {
+    confidence >= MedicationCandidate.HIGH_CONFIDENCE_THRESHOLD -> ConfidenceLevel.HIGH
+    confidence >= MedicationCandidate.MEDIUM_CONFIDENCE_THRESHOLD -> ConfidenceLevel.MEDIUM
+    else -> ConfidenceLevel.LOW
+}
 
 /** Parses a type string coming from the analysis service. */
 fun medicationTypeOf(raw: String?): MedicationType = when (raw?.trim()?.uppercase()) {

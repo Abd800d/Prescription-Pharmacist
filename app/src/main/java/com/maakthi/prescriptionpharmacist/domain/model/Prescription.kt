@@ -31,8 +31,4 @@ enum class PrescriptionStatus { PENDING, CONFIRMED, REJECTED }
 
 /** Confidence tier for a saved medication, same thresholds as [MedicationCandidate]. */
 val Medication.confidenceLevel: ConfidenceLevel
-    get() = when {
-        confidence >= MedicationCandidate.HIGH_CONFIDENCE_THRESHOLD -> ConfidenceLevel.HIGH
-        confidence >= MedicationCandidate.MEDIUM_CONFIDENCE_THRESHOLD -> ConfidenceLevel.MEDIUM
-        else -> ConfidenceLevel.LOW
-    }
+    get() = confidenceLevelOf(confidence)
