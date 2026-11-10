@@ -52,7 +52,7 @@ class SavePrescriptionUseCaseTest {
     @Test
     fun `saves locally and backs up when firebase is available`() = runTest {
         val repository = FakePrescriptionRepository()
-        val backup = FakeBackupRepository(isAvailable = true)
+        val backup = FakeBackupRepository(available = true)
         val useCase = SavePrescriptionUseCase(repository, backup)
 
         useCase(prescription(), byteArrayOf(9))
@@ -65,7 +65,7 @@ class SavePrescriptionUseCaseTest {
     @Test
     fun `saves locally without backup when firebase is unavailable`() = runTest {
         val repository = FakePrescriptionRepository()
-        val backup = FakeBackupRepository(isAvailable = false)
+        val backup = FakeBackupRepository(available = false)
         val useCase = SavePrescriptionUseCase(repository, backup)
 
         useCase(prescription(), null)
