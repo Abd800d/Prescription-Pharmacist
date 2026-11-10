@@ -1,10 +1,13 @@
 package com.maakthi.prescriptionpharmacist.domain.model
 
+import kotlinx.serialization.Serializable
+
 /**
  * Result of the AI extraction for a single prescription image.
  * All fields come from the analysis service — the pharmacist confirms
  * them before anything is adopted.
  */
+@Serializable
 data class AnalysisResult(
     val medications: List<MedicationCandidate>,
     val language: String? = null,
@@ -17,6 +20,7 @@ data class AnalysisResult(
  *
  * @param confidence model confidence in the range 0f..1f.
  */
+@Serializable
 data class MedicationCandidate(
     val name: String,
     val scientificName: String? = null,
@@ -35,8 +39,10 @@ data class MedicationCandidate(
     }
 }
 
+@Serializable
 enum class MedicationType { BRAND, GENERIC, UNKNOWN }
 
+@Serializable
 enum class ConfidenceLevel { HIGH, MEDIUM, LOW }
 
 /** Maps a raw 0..1 confidence to a display tier. */

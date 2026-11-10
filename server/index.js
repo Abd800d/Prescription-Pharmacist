@@ -43,6 +43,102 @@ const GEMINI_API_KEY = defineSecret("GEMINI_API_KEY");
 const MAX_IMAGE_BYTES = 8 * 1024 * 1024;
 
 /**
+ * POST {baseUrl}/chat — AI pharmacist assistant.
+ * Body: {"messages":[{"role":"user|assistant","content":"..."}]}
+ * Resp: {"reply":"..."}
+ */
+exports.chat = onRequest(
+  {
+    region: "europe-west1",
+    cors: true,
+    secrets: [GEMINI_API_KEY],
+    memory: "256MiB",
+    timeoutSeconds: 60,
+  },
+  async (req, res) => {
+    if (req.method !== "POST") {
+      res.status(405).json({ error: { code: "method_not_allowed", message: "Use POST" } });
+      return;
+    }
+
+    const hasAuthHeader = Boolean(req.headers.authorization);
+    const uid = await verifyToken(req);
+    if (hasAuthHeader && !uid) {
+      res.status(401).json({
+        error: { code: "unauthorized", message: "Invalid or expired ID token" },
+      });
+      return;
+    }
+
+    let messages;
+    try {
+      const body = typeof req.body === "string" ? JSON.parse(req.body) : req.body;
+      messages = body?.messages;
+      if (!Array.isArray(messages) || messages.length === 0) throw new Error("messages required");
+    } catch (e) {
+      res.status(400).json({ error: { code: "bad_request", message: e.message } });
+      return;
+    }
+
+    try {
+      const endpoint =
+        "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent";
+      const payload = {
+        systemInstruction: {
+          parts: [
+            {
+              text:
+                "You are a clinical pharmacist assistant. Give concise, accurate, " +
+                "evidence-based information about medications. Always remind the user " +
+                "that a licensed pharmacist must confirm any dispensing decision. " +
+                "Answer in the language of the question (Arabic or English).",
+            },
+          ],
+        },
+        contents: messages.map((m) => ({
+          role: m.role === "assistant" ? "model" : "user",
+          parts: [{ text: String(m.content ?? "") }],
+        })),
+        generationConfig: { temperature: 0.3 },
+      };
+
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-goog-api-key": GEMINI_API_KEY.value(),
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        const detail = await response.text();
+        console.error("chat upstream error", response.status, detail);
+        res.status(502).json({
+          error: { code: "analysis_failed", message: "Upstream analysis failed" },
+        });
+        return;
+      }
+
+      const data = await response.json();
+      const reply = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+      if (!reply) {
+        res.status(502).json({
+          error: { code: "analysis_failed", message: "Empty upstream reply" },
+        });
+        return;
+      }
+      res.status(200).json({ reply });
+    } catch (e) {
+      console.error("chat failed", e);
+      res.status(502).json({
+        error: { code: "analysis_failed", message: "Upstream analysis failed" },
+      });
+    }
+  }
+);
+
+/**
  * Parses a multipart/form-data request and returns the first "image" field
  * as a Buffer. Plain Node — no Express, no temporary files.
  */

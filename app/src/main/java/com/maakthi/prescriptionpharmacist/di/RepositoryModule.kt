@@ -3,13 +3,21 @@ package com.maakthi.prescriptionpharmacist.di
 import com.maakthi.prescriptionpharmacist.data.firebase.FirebaseAuthRepository
 import com.maakthi.prescriptionpharmacist.data.firebase.FirebaseBackupRepository
 import com.maakthi.prescriptionpharmacist.data.remote.RemoteAnalysisRepository
+import com.maakthi.prescriptionpharmacist.data.repository.AssistantRepositoryImpl
+import com.maakthi.prescriptionpharmacist.data.repository.DrugRepositoryImpl
+import com.maakthi.prescriptionpharmacist.data.repository.ProductRepositoryImpl
 import com.maakthi.prescriptionpharmacist.data.repository.PrescriptionRepositoryImpl
+import com.maakthi.prescriptionpharmacist.data.repository.TransferRepositoryImpl
 import com.maakthi.prescriptionpharmacist.data.local.SettingsDataStore
 import com.maakthi.prescriptionpharmacist.domain.repository.AnalysisRepository
+import com.maakthi.prescriptionpharmacist.domain.repository.AssistantRepository
 import com.maakthi.prescriptionpharmacist.domain.repository.AuthRepository
 import com.maakthi.prescriptionpharmacist.domain.repository.BackupRepository
+import com.maakthi.prescriptionpharmacist.domain.repository.DrugRepository
 import com.maakthi.prescriptionpharmacist.domain.repository.PrescriptionRepository
+import com.maakthi.prescriptionpharmacist.domain.repository.ProductRepository
 import com.maakthi.prescriptionpharmacist.domain.repository.SettingsRepository
+import com.maakthi.prescriptionpharmacist.domain.repository.TransferRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -39,4 +47,20 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindBackupRepository(impl: FirebaseBackupRepository): BackupRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindDrugRepository(impl: DrugRepositoryImpl): DrugRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindProductRepository(impl: ProductRepositoryImpl): ProductRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindAssistantRepository(impl: AssistantRepositoryImpl): AssistantRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindTransferRepository(impl: TransferRepositoryImpl): TransferRepository
 }

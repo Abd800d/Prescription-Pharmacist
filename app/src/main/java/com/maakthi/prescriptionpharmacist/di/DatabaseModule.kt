@@ -3,7 +3,9 @@ package com.maakthi.prescriptionpharmacist.di
 import android.content.Context
 import androidx.room.Room
 import com.maakthi.prescriptionpharmacist.data.local.AppDatabase
+import com.maakthi.prescriptionpharmacist.data.local.dao.DrugDao
 import com.maakthi.prescriptionpharmacist.data.local.dao.PrescriptionDao
+import com.maakthi.prescriptionpharmacist.data.local.dao.ProductImageDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -25,4 +27,12 @@ object DatabaseModule {
     @Provides
     fun providePrescriptionDao(database: AppDatabase): PrescriptionDao =
         database.prescriptionDao()
+
+    @Provides
+    fun provideDrugDao(database: AppDatabase): DrugDao =
+        database.drugDao()
+
+    @Provides
+    fun provideProductImageDao(database: AppDatabase): ProductImageDao =
+        database.productImageDao()
 }

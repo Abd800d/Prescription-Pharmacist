@@ -1,6 +1,7 @@
 package com.maakthi.prescriptionpharmacist.data.local
 
 import android.content.Context
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
@@ -25,6 +26,7 @@ class SettingsDataStore @Inject constructor(
         val THEME_MODE = stringPreferencesKey("theme_mode")
         val LANGUAGE = stringPreferencesKey("language")
         val BACKEND_URL = stringPreferencesKey("backend_url")
+        val ONBOARDING_DONE = booleanPreferencesKey("onboarding_done")
     }
 
     override val settings: Flow<AppSettings> = context.dataStore.data.map { prefs ->
@@ -35,7 +37,8 @@ class SettingsDataStore @Inject constructor(
             language = prefs[Keys.LANGUAGE]
                 ?.let { runCatching { AppLanguage.valueOf(it) }.getOrNull() }
                 ?: AppLanguage.SYSTEM,
-            backendUrl = prefs[Keys.BACKEND_URL] ?: ""
+            backendUrl = prefs[Keys.BACKEND_URL] ?: "",
+            onboardingDone = prefs[Keys.ONBOARDING_DONE] ?: false
         )
     }
 
@@ -49,5 +52,9 @@ class SettingsDataStore @Inject constructor(
 
     override suspend fun setBackendUrl(url: String) {
         context.dataStore.edit { it[Keys.BACKEND_URL] = url.trim() }
+    }
+
+    override suspend fun setOnboardingDone(done: Boolean) {
+        context.dataStore.edit { it[Keys.ONBOARDING_DONE] = done }
     }
 }

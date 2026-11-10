@@ -1,8 +1,11 @@
 package com.maakthi.prescriptionpharmacist.domain.model
 
+import kotlinx.serialization.Serializable
+
 /**
  * A prescription saved in the local database after pharmacist review.
  */
+@Serializable
 data class Prescription(
     val id: String,
     val imagePath: String,
@@ -14,6 +17,7 @@ data class Prescription(
     val medications: List<Medication> = emptyList()
 )
 
+@Serializable
 data class Medication(
     val id: String,
     val prescriptionId: String,
@@ -27,6 +31,7 @@ data class Medication(
     val confirmedByPharmacist: Boolean = false
 )
 
+@Serializable
 enum class PrescriptionStatus { PENDING, CONFIRMED, REJECTED }
 
 /** Confidence tier for a saved medication, same thresholds as [MedicationCandidate]. */

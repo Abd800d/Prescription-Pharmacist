@@ -1,5 +1,6 @@
 package com.maakthi.prescriptionpharmacist.presentation.settings
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -8,8 +9,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
@@ -29,12 +34,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.maakthi.prescriptionpharmacist.BuildConfig
 import com.maakthi.prescriptionpharmacist.R
-import com.maakthi.prescriptionpharmacist.domain.model.AppLanguage
 import com.maakthi.prescriptionpharmacist.domain.model.ThemeMode
+import com.maakthi.prescriptionpharmacist.presentation.components.SectionHeader
+import com.maakthi.prescriptionpharmacist.presentation.navigation.Routes
 
 @Composable
 fun SettingsScreen(
-    onLanguageSelected: (AppLanguage) -> Unit,
+    onNavigate: (String) -> Unit,
     viewModel: SettingsViewModel = hiltViewModel()
 ) {
     val settings by viewModel.settings.collectAsStateWithLifecycle()
@@ -44,7 +50,6 @@ fun SettingsScreen(
     var backendError by remember { mutableStateOf(false) }
     var backendSaved by remember { mutableStateOf(false) }
 
-    // Keep the field in sync when settings change elsewhere.
     LaunchedEffect(settings.backendUrl) {
         if (!backendSaved) backendUrl = settings.backendUrl
     }
@@ -54,7 +59,7 @@ fun SettingsScreen(
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
             .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        verticalArrangement = Arrangement.spacedBy(14.dp)
     ) {
         Text(
             text = stringResource(R.string.settings_title),
@@ -80,29 +85,34 @@ fun SettingsScreen(
                     onClick = { viewModel.onThemeChanged(mode) }
                 )
             }
+        }
 
-            Text(
-                text = stringResource(R.string.settings_language),
-                style = MaterialTheme.typography.labelLarge,
-                modifier = Modifier.padding(top = 8.dp)
+        // ---- App screens ----
+        SettingsSection(title = stringResource(R.string.settings_general)) {
+            SettingsLinkRow(
+                label = stringResource(R.string.language_settings_title),
+                onClick = { onNavigate(Routes.LANGUAGE_SETTINGS) }
             )
-            AppLanguage.entries.forEach { language ->
-                RadioRow(
-                    label = stringResource(
-                        when (language) {
-                            AppLanguage.SYSTEM -> R.string.settings_language_system
-                            AppLanguage.ARABIC -> R.string.settings_language_ar
-                            AppLanguage.ENGLISH -> R.string.settings_language_en
-                        }
-                    ),
-                    selected = settings.language == language,
-                    onClick = {
-                        if (settings.language != language) {
-                            onLanguageSelected(language)
-                        }
-                    }
-                )
-            }
+            HorizontalDivider()
+            SettingsLinkRow(
+                label = stringResource(R.string.backup_title),
+                onClick = { onNavigate(Routes.BACKUP) }
+            )
+            HorizontalDivider()
+            SettingsLinkRow(
+                label = stringResource(R.string.support_title),
+                onClick = { onNavigate(Routes.SUPPORT) }
+            )
+            HorizontalDivider()
+            SettingsLinkRow(
+                label = stringResource(R.string.privacy_title),
+                onClick = { onNavigate(Routes.PRIVACY) }
+            )
+            HorizontalDivider()
+            SettingsLinkRow(
+                label = stringResource(R.string.terms_title),
+                onClick = { onNavigate(Routes.TERMS) }
+            )
         }
 
         // ---- Analysis service ----
@@ -173,6 +183,10 @@ fun SettingsScreen(
                     }
                 }
             }
+            SettingsLinkRow(
+                label = stringResource(R.string.login_title),
+                onClick = { onNavigate(Routes.LOGIN) }
+            )
         }
 
         // ---- About ----
@@ -230,6 +244,31 @@ private fun RadioRow(
             text = label,
             style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier.padding(start = 4.dp)
+        )
+    }
+}
+
+@Composable
+private fun SettingsLinkRow(
+    label: String,
+    onClick: () -> Unit
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick)
+            .padding(vertical = 8.dp)
+    ) {
+        Text(
+            text = label,
+            style = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier.weight(1f)
+        )
+        Icon(
+            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.onSurfaceVariant
         )
     }
 }

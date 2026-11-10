@@ -2,6 +2,8 @@ package com.maakthi.prescriptionpharmacist.di
 
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import com.maakthi.prescriptionpharmacist.data.remote.AnalysisApi
+import com.maakthi.prescriptionpharmacist.data.remote.AssistantApi
+import com.maakthi.prescriptionpharmacist.data.remote.OpenFdaApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -57,4 +59,20 @@ object NetworkModule {
     @Singleton
     fun provideAnalysisApi(retrofit: Retrofit): AnalysisApi =
         retrofit.create(AnalysisApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideAssistantApi(retrofit: Retrofit): AssistantApi =
+        retrofit.create(AssistantApi::class.java)
+
+    /** Public openFDA drug label API (no API key). */
+    @Provides
+    @Singleton
+    fun provideOpenFdaApi(client: OkHttpClient, json: Json): OpenFdaApi =
+        Retrofit.Builder()
+            .baseUrl("https://api.fda.gov/")
+            .client(client)
+            .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
+            .build()
+            .create(OpenFdaApi::class.java)
 }

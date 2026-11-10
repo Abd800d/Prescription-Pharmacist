@@ -13,4 +13,5 @@ interface SettingsRepository {
     suspend fun setThemeMode(themeMode: ThemeMode)
     suspend fun setLanguage(language: AppLanguage)
     suspend fun setBackendUrl(url: String)
+    suspend fun setOnboardingDone(done: Boolean)
 }

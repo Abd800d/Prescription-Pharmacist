@@ -4,7 +4,8 @@ package com.maakthi.prescriptionpharmacist.domain.model
 data class AppSettings(
     val themeMode: ThemeMode = ThemeMode.SYSTEM,
     val language: AppLanguage = AppLanguage.SYSTEM,
-    val backendUrl: String = ""
+    val backendUrl: String = "",
+    val onboardingDone: Boolean = false
 )
 
 enum class ThemeMode { SYSTEM, LIGHT, DARK }

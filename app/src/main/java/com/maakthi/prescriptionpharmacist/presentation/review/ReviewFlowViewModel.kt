@@ -58,7 +58,7 @@ sealed interface ReviewEvent {
 }
 
 @HiltViewModel
-class ReviewViewModel @Inject constructor(
+class ReviewFlowViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val analyzePrescription: AnalyzePrescriptionUseCase,
     private val savePrescription: SavePrescriptionUseCase,

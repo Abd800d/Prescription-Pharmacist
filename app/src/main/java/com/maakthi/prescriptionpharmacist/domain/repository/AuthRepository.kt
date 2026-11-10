@@ -12,6 +12,9 @@ interface AuthRepository {
     fun isAvailable(): Boolean
     val currentUser: Flow<AppUser?>
     suspend fun signInAnonymously(): AppResult<AppUser>
+    suspend fun signInWithEmail(email: String, password: String): AppResult<AppUser>
+    suspend fun registerWithEmail(email: String, password: String): AppResult<AppUser>
+    suspend fun signInWithGoogleIdToken(idToken: String): AppResult<AppUser>
     suspend fun signOut()
     /** Current Firebase ID token (JWT) used to call the secure backend. */
     suspend fun getIdToken(): String?

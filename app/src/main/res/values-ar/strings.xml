@@ -6,9 +6,68 @@
     <string name="app_tagline">تحليل الوصفات الطبية بالذكاء الاصطناعي</string>
 
     <!-- Navigation -->
+    <string name="nav_home">الرئيسية</string>
+    <string name="nav_drug_search">الأدوية</string>
+    <string name="nav_saved">المحفوظة</string>
+    <string name="nav_products">المنتجات</string>
     <string name="nav_capture">تصوير</string>
     <string name="nav_history">السجل</string>
     <string name="nav_settings">الإعدادات</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_page1_title">صوّر الوصفات فوراً</string>
+    <string name="onboarding_page1_body">استخدم الكاميرا أو المعرض لإضافة أي وصفة طبية خلال ثوانٍ.</string>
+    <string name="onboarding_page2_title">ذكاء اصطناعي يقرأ اليد</string>
+    <string name="onboarding_page2_body">يستخرج الذكاء الاصطناعي أسماء الأدوية — التجارية والعلمية — مع درجات الثقة.</string>
+    <string name="onboarding_page3_title">القرار لك</string>
+    <string name="onboarding_page3_body">كل نتيجة تحتاج تأكيدك كصيدلي قبل حفظها واعتمادها.</string>
+    <string name="onboarding_skip">تخطي</string>
+    <string name="onboarding_next">التالي</string>
+    <string name="onboarding_get_started">ابدأ الآن</string>
+
+    <!-- Auth -->
+    <string name="login_title">تسجيل الدخول</string>
+    <string name="login_subtitle">سجّل الدخول لمزامنة بياناتك، أو تابع بدون حساب.</string>
+    <string name="login_button">دخول</string>
+    <string name="login_failed">فشل تسجيل الدخول. حاول مرة أخرى.</string>
+    <string name="register_title">إنشاء حساب</string>
+    <string name="register_subtitle">أنشئ حساباً ببريدك الإلكتروني وكلمة المرور.</string>
+    <string name="register_button">إنشاء الحساب</string>
+    <string name="register_link">ليس لديك حساب؟ سجّل الآن</string>
+    <string name="have_account_link">لديك حساب بالفعل؟ سجّل الدخول</string>
+    <string name="email_hint">البريد الإلكتروني</string>
+    <string name="password_hint">كلمة المرور</string>
+    <string name="confirm_password_hint">تأكيد كلمة المرور</string>
+    <string name="weak_password">كلمة المرور يجب ألا تقل عن 6 أحرف.</string>
+    <string name="passwords_dont_match">كلمتا المرور غير متطابقتين.</string>
+    <string name="wrong_credentials">البريد الإلكتروني أو كلمة المرور غير صحيحة.</string>
+    <string name="continue_guest">المتابعة بدون حساب</string>
+    <string name="auth_not_ready">Firebase غير مُعدّ في هذا البناء. أضف app/google-services.json لتفعيل المصادقة.</string>
+    <string name="google_signin_title">الدخول بحساب Google</string>
+    <string name="google_signin_subtitle">سجّل الدخول بسرعة وأمان عبر حسابك في Google.</string>
+    <string name="google_signin_button">الدخول بحساب Google</string>
+    <string name="google_signin_failed">فشل تسجيل الدخول بحساب Google. حاول مرة أخرى.</string>
+    <string name="google_signin_not_ready">الدخول بحساب Google يتطلب إعداد Firebase (google-services.json). راجع ملف README للخطوات.</string>
+
+    <!-- Home -->
+    <string name="home_welcome">أهلاً بك أيها الصيدلي</string>
+    <string name="home_quick_actions">إجراءات سريعة</string>
+    <string name="home_recent">أحدث الوصفات</string>
+    <string name="home_view_all">عرض الكل</string>
+    <string name="account_guest">وضع محلي — بدون حساب</string>
+    <string name="account_signed_in">تم تسجيل الدخول: %1$s</string>
+    <string name="action_capture">تصوير وصفة</string>
+    <string name="action_gallery">من المعرض</string>
+    <string name="action_drug_search">بحث الأدوية</string>
+    <string name="action_add_drug">إضافة دواء</string>
+    <string name="action_saved">المحفوظة</string>
+    <string name="action_products">صور المنتجات</string>
+    <string name="action_transfer">استيراد/تصدير</string>
+    <string name="action_assistant">المساعد الذكي</string>
+    <string name="action_backup">النسخ الاحتياطي</string>
+    <string name="action_support">الدعم الفني</string>
+    <string name="action_settings">الإعدادات</string>
+    <string name="action_language">اللغة</string>
 
     <!-- Capture -->
     <string name="capture_title">تصوير وصفة طبية</string>
@@ -18,7 +77,26 @@
     <string name="capture_permission_rationale">نحتاج إذن الكاميرا لتصوير الوصفات الطبية.</string>
     <string name="capture_permission_denied">تم رفض إذن الكاميرا. يمكنك منح الإذن من إعدادات النظام أو اختيار صورة من المعرض.</string>
     <string name="capture_camera_unavailable">تعذّر تشغيل الكاميرا على هذا الجهاز.</string>
-    <string name="capture_open_settings">فتح الإعدادات</string>
+    <string name="capture_open_settings">منح الإذن</string>
+
+    <!-- Gallery -->
+    <string name="gallery_title">اختيار صورة من المعرض</string>
+    <string name="gallery_instruction">اختر صورة واضحة للوصفة، ثم تابع للقص والتحرير.</string>
+    <string name="gallery_pick_button">اختيار صورة</string>
+    <string name="gallery_no_image">لم يتم اختيار صورة بعد</string>
+    <string name="next_edit">المتابعة للقص والتحرير</string>
+
+    <!-- Crop & Edit -->
+    <string name="crop_title">قص وتحرير الصورة</string>
+    <string name="crop_rotate_left">تدوير يسار</string>
+    <string name="crop_rotate_right">تدوير يمين</string>
+    <string name="crop_flip">قلب أفقي</string>
+    <string name="crop_reset">إعادة ضبط</string>
+    <string name="crop_apply">تطبيق وتحليل</string>
+    <string name="crop_aspect_free">حر</string>
+    <string name="crop_aspect_1_1">1:1</string>
+    <string name="crop_aspect_4_3">4:3</string>
+    <string name="crop_aspect_3_4">3:4</string>
 
     <!-- Analysis -->
     <string name="analysis_running">جارٍ تحليل الوصفة بالذكاء الاصطناعي…</string>
@@ -27,26 +105,32 @@
     <string name="analysis_step_extract">استخراج الأدوية ودرجات الثقة</string>
     <string name="analysis_title">نتيجة التحليل</string>
 
+    <!-- Extracted -->
+    <string name="extracted_title">الأدوية المستخرجة</string>
+    <string name="extracted_subtitle">هذه الأدوية استخرجها الذكاء الاصطناعي. راجع درجات الثقة ثم تابع للتأكيد.</string>
+    <string name="extracted_continue">المتابعة للتأكيد والتعديل</string>
+    <string name="extracted_empty">لم يتم استخراج أي أدوية من هذه الصورة.</string>
+
     <!-- Review -->
-    <string name="review_title">مراجعة وتأكيد النتيجة</string>
-    <string name="review_subtitle">راجع الأدوية المستخرجة وأكد النتيجة قبل اعتمادها. أنت الحكم الأخير.</string>
+    <string name="review_title">تأكيد النتائج وتعديلها</string>
+    <string name="review_subtitle">عدّل أو أضف أو احذف الأدوية، ثم أكّد قبل الحفظ. أنت الحكم الأخير.</string>
     <string name="review_confirm">اعتماد وحفظ</string>
     <string name="review_reject">إلغاء</string>
     <string name="review_add_medication">إضافة دواء</string>
     <string name="review_edit">تعديل</string>
     <string name="review_delete">حذف</string>
-    <string name="review_empty">لم يتم استخراج أي أدوية. يمكنك إضافتها يدوياً.</string>
+    <string name="review_empty">لا توجد أدوية مدرجة. يمكنك إضافتها يدوياً.</string>
     <string name="review_saved">تم حفظ الوصفة بنجاح</string>
     <string name="review_save_draft">حفظ كمسودة</string>
     <string name="review_notes_hint">ملاحظات الصيدلي (اختياري)</string>
-    <string name="review_new_extraction">استخراج من الصورة</string>
+    <string name="review_new_extraction">إعادة تحليل الصورة</string>
 
     <!-- Medication -->
     <string name="medication_name">اسم الدواء</string>
-    <string name="medication_type_label">نوع الاسم</string>
     <string name="medication_scientific_name">الاسم العلمي</string>
     <string name="medication_strength">التركيز</string>
     <string name="medication_form">الشكل الصيدلاني</string>
+    <string name="medication_type_label">نوع الاسم</string>
     <string name="medication_type_brand">اسم تجاري</string>
     <string name="medication_type_generic">اسم علمي</string>
     <string name="medication_type_unknown">غير محدد</string>
@@ -61,7 +145,7 @@
     <string name="confidence_percent">%1$d%%</string>
 
     <!-- History -->
-    <string name="history_title">سجل الوصفات</string>
+    <string name="history_title">الوصفات المحفوظة</string>
     <string name="history_empty">لا توجد وصفات محفوظة بعد.</string>
     <string name="history_status_pending">بانتظار التأكيد</string>
     <string name="history_status_confirmed">معتمدة</string>
@@ -72,9 +156,65 @@
     <string name="detail_title">تفاصيل الوصفة</string>
     <string name="detail_created_at">تاريخ الإنشاء: %1$s</string>
 
+    <!-- Drug search -->
+    <string name="drug_search_title">بحث الأدوية</string>
+    <string name="drug_search_hint">ابحث بالاسم التجاري أو العلمي…</string>
+    <string name="drug_search_action">بحث</string>
+    <string name="drug_search_local">الكتالوج المحلي</string>
+    <string name="drug_search_remote">قاعدة بيانات openFDA</string>
+    <string name="drug_search_empty">ابحث في كتالوجك المحلي وفي قاعدة بيانات openFDA للأدوية.</string>
+    <string name="drug_search_no_results">لا توجد نتائج. جرّب اسماً مختلفاً.</string>
+    <string name="drug_search_error">فشل البحث. تحقق من اتصالك وحاول مجدداً.</string>
+
+    <!-- Drug details / forms -->
+    <string name="drug_add_title">إضافة دواء</string>
+    <string name="drug_edit_title">تعديل الدواء</string>
+    <string name="drug_details_title">تفاصيل الدواء</string>
+    <string name="drug_source_local">محلي</string>
+    <string name="drug_source_remote">openFDA</string>
+    <string name="drug_manufacturer_hint">الشركة المصنعة</string>
+    <string name="drug_indications_hint">المؤشرات العلاجية</string>
+    <string name="drug_dosage_hint">الجرعة</string>
+    <string name="drug_warnings_hint">التحذيرات</string>
+    <string name="drug_notes_hint">ملاحظات</string>
+    <string name="drug_delete_title">حذف الدواء؟</string>
+    <string name="drug_delete_message">سيتم إزالة هذا الدواء من كتالوجك المحلي.</string>
+
+    <!-- Products -->
+    <string name="products_title">صور المنتجات</string>
+    <string name="products_empty">لا توجد صور منتجات بعد. أضف صوراً لعلب الأدوية أو الرفوف.</string>
+    <string name="products_add_camera">الكاميرا</string>
+    <string name="products_add_gallery">المعرض</string>
+    <string name="product_title_hint">عنوان المنتج</string>
+    <string name="product_delete_title">حذف الصورة؟</string>
+    <string name="product_delete_message">سيتم حذف صورة المنتج نهائياً.</string>
+
+    <!-- Import / Export -->
+    <string name="transfer_title">استيراد وتصدير</string>
+    <string name="transfer_export_title">تصدير البيانات</string>
+    <string name="transfer_export_desc">صدّر جميع الوصفات وكتالوج الأدوية كملف JSON يمكنك حفظه بأمان أو نقله إلى جهاز آخر.</string>
+    <string name="transfer_export_button">تصدير ملف JSON</string>
+    <string name="transfer_import_title">استيراد البيانات</string>
+    <string name="transfer_import_desc">استيراد ملف JSON تم تصديره سابقاً. السجلات الموجودة بالمعرّف نفسه سيتم تحديثها.</string>
+    <string name="transfer_import_button">استيراد ملف JSON</string>
+    <string name="transfer_export_success">تم تصدير الملف بنجاح</string>
+    <string name="transfer_import_success">تم استيراد %1$d وصفة و%2$d دواء</string>
+    <string name="transfer_import_error">فشل الاستيراد — تنسيق الملف غير صالح.</string>
+
+    <!-- AI Assistant -->
+    <string name="assistant_title">المساعد الصيدلي الذكي</string>
+    <string name="assistant_subtitle">اسأل عن الأدوية أو التداخلات أو الجرعات. الإجابات تأتي من الخادم الآمن.</string>
+    <string name="assistant_input_hint">اكتب سؤالك…</string>
+    <string name="assistant_send">إرسال</string>
+    <string name="assistant_thinking">جارٍ التفكير…</string>
+    <string name="assistant_error">تعذّر على المساعد الإجابة. حاول مرة أخرى.</string>
+    <string name="assistant_not_configured">المساعد الذكي يتطلب الخادم الآمن. أضف رابطه من الإعدادات ← رابط الخادم الآمن.</string>
+    <string name="assistant_disclaimer">للإرشاد فقط — لا يغني أبداً عن الحكم السريري المهني.</string>
+
     <!-- Settings -->
     <string name="settings_title">الإعدادات</string>
     <string name="settings_appearance">المظهر</string>
+    <string name="settings_general">عام</string>
     <string name="settings_theme">وضع العرض</string>
     <string name="settings_theme_system">النظام</string>
     <string name="settings_theme_light">فاتح</string>
@@ -97,6 +237,41 @@
     <string name="settings_signed_in">تم تسجيل الدخول: %1$s</string>
     <string name="settings_about">حول التطبيق</string>
     <string name="settings_version">الإصدار %1$s</string>
+
+    <!-- Language settings -->
+    <string name="language_settings_title">إعدادات اللغة</string>
+    <string name="language_settings_desc">اختر لغة واجهة التطبيق. العربية تُعرض من اليمين لليسار والإنجليزية من اليسار لليمين.</string>
+
+    <!-- Backup -->
+    <string name="backup_title">النسخ الاحتياطي والمزامنة</string>
+    <string name="backup_desc">انسخ وصفاتك احتياطياً بأمان إلى Firebase Storage. يتطلب إعداد Firebase وحساباً.</string>
+    <string name="backup_now">نسخ احتياطي الآن</string>
+    <string name="backup_success">تم نسخ %1$d وصفة احتياطياً</string>
+    <string name="backup_error">فشل النسخ الاحتياطي. تحقق من اتصالك وحاول مجدداً.</string>
+    <string name="backup_not_ready">النسخ الاحتياطي يتطلب إعداد Firebase (google-services.json). راجع ملف README.</string>
+    <string name="backup_sign_in_first">الرجاء تسجيل الدخول قبل النسخ الاحتياطي.</string>
+    <string name="backup_all_data">ستتم رفع جميع الوصفات المحفوظة وصورها إلى تخزينك الخاص.</string>
+
+    <!-- Support -->
+    <string name="support_title">الدعم الفني</string>
+    <string name="support_contact">تواصل معنا</string>
+    <string name="support_email">البريد الإلكتروني</string>
+    <string name="support_phone">الهاتف</string>
+    <string name="support_report">الإبلاغ عن مشكلة</string>
+    <string name="support_report_subject">صيدلي الوصفة — بلاغ عن مشكلة</string>
+    <string name="support_faq_title">الأسئلة الشائعة</string>
+    <string name="support_faq_q1">كيف أفعّل التحليل بالذكاء الاصطناعي؟</string>
+    <string name="support_faq_a1">انشر الخادم الآمن من مجلد server/ في المستودع، ثم أضف رابطه من الإعدادات ← رابط الخادم الآمن.</string>
+    <string name="support_faq_q2">أين تُحفظ بياناتي؟</string>
+    <string name="support_faq_a2">تُحفظ جميع البيانات محلياً على جهازك. النسخ السحابي اختياري ولا يعمل إلا عند إعداد Firebase.</string>
+
+    <!-- Privacy -->
+    <string name="privacy_title">سياسة الخصوصية</string>
+    <string name="privacy_body">خصوصيتك تهمنا.\n\n• تُحفظ جميع الوصفات والصور وبيانات الأدوية محلياً على جهازك افتراضياً.\n• تُرسل الصور إلى خادم التحليل الآمن فقط عند تشغيل التحليل، وتُستخدم لإنتاج النتيجة فقط — لا تُباع ولا تُشارك مع أطراف ثالثة.\n• النسخ الاحتياطي السحابي الاختياري (Firebase) مشفر أثناء النقل ويُخزَّن في تخزينك الخاص.\n• لا يحتوي التطبيق على إعلانات أو أدوات تتبّع.\n• بيانات المصادقة (عند تفعيل Firebase) تُدار بواسطة Firebase Authentication وتخضع لسياسة خصوصية Google.\n• يمكنك حذف أي سجل في أي وقت من داخل التطبيق؛ حذف الوصفة يحذف صورتها المحلية أيضاً.\n\nللاستفسارات المتعلقة بالخصوصية، تواصل معنا عبر شاشة الدعم الفني.</string>
+
+    <!-- Terms -->
+    <string name="terms_title">الشروط وإخلاء المسؤولية الطبية</string>
+    <string name="terms_body">شروط الاستخدام وإخلاء المسؤولية الطبية\n\n• صيدلي الوصفة أداة دعم قرار للصيدليين المرخصين، ولا يغني عن الحكم السريري المهني.\n• قد تكون نتائج الاستخراج بالذكاء الاصطناعي غير كاملة أو غير دقيقة. يجب مراجعة كل نتيجة وتأكيدها من صيدلي مرخص قبل استخدامها.\n• المطور غير مسؤول عن أي أخطاء صرف ناتجة عن الاعتماد على مخرجات الذكاء الاصطناعي غير المؤكدة.\n• المساعد الذكي يقدم إجابات إرشادية فقط ولا يُعد استشارة طبية.\n• معلومات الأدوية من قاعدة بيانات openFDA مقدمة من إدارة الغذاء والدواء الأمريكية وقد لا تعكس التوفر أو الإرشادات المحلية.\n• باستخدامك هذا التطبيق فإنك توافق على أن المسؤولية النهائية عن أي قرار صرف تقع على الصيدلي المشرف.\n\nإذا كنت لا توافق على هذه الشروط، يرجى إيقاف استخدام التطبيق.</string>
 
     <!-- Errors -->
     <string name="error_generic">حدث خطأ غير متوقع. حاول مرة أخرى.</string>
