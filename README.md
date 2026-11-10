@@ -1,5 +1,7 @@
 # 🧾 صيدلي الوصفة — Prescription Pharmacist
 
+[![Android CI](https://github.com/Abd800d/Prescription-Pharmacist/actions/workflows/android-ci.yml/badge.svg)](https://github.com/Abd800d/Prescription-Pharmacist/actions/workflows/android-ci.yml)
+
 > **إعداد وتطوير د. عبدالماجد الماخذي** — *Developed by Dr. Abdulmajid Al-Maakthi*
 
 تطبيق Android إنتاجي يساعد الصيدلي على **تصوير وصفة طبية** أو تحميلها من معرض الهاتف، ثم **تحليلها بالذكاء الاصطناعي** لاستخراج أسماء الأدوية (تجارية أو علمية) المكتوبة بخط اليد، مع إظهار **درجة الثقة** لكل نتيجة وطلب **تأكيد الصيدلي** قبل اعتمادها وحفظها.
@@ -145,9 +147,10 @@ open app/build/reports/tests/testDebugUnitTest/index.html
 مستودع `.github/workflows/android-ci.yml` يبني المشروع تلقائياً عند كل دفع (push):
 
 - بناء APK التصحيح ✅
+- بناء **AAB** للإصدار النهائي (مع R8/ProGuard) ✅
 - تشغيل اختبارات الوحدات ✅
 - تشغيل Lint ✅
-- رفع APK والتقارير كـ Artifacts ✅
+- رفع APK و AAB والتقارير كـ Artifacts قابلة للتنزيل ✅
 
 ---
 
