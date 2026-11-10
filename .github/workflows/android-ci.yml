@@ -35,6 +35,11 @@ jobs:
           set -o pipefail
           ./gradlew assembleDebug --console=plain 2>&1 | tee /tmp/gradle-build.log
 
+      - name: Build release App Bundle (AAB)
+        run: |
+          set -o pipefail
+          ./gradlew bundleRelease --console=plain 2>&1 | tee /tmp/gradle-bundle.log
+
       - name: Run unit tests
         run: |
           set -o pipefail
@@ -49,7 +54,7 @@ jobs:
         if: failure()
         run: |
           {
-            for f in /tmp/gradle-build.log /tmp/gradle-test.log /tmp/gradle-lint.log; do
+            for f in /tmp/gradle-build.log /tmp/gradle-bundle.log /tmp/gradle-test.log /tmp/gradle-lint.log; do
               if [ -f "$f" ]; then
                 echo "### Errors from $f"
                 { grep -E "^e: " "$f" || true; awk '/FAILURE: Build failed|FAILURE: Build completed/{flag=1} flag' "$f" || true; } | head -60
@@ -64,6 +69,12 @@ jobs:
         with:
           name: app-debug-apk
           path: app/build/outputs/apk/debug/*.apk
+
+      - name: Upload AAB
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release-aab
+          path: app/build/outputs/bundle/release/*.aab
 
       - name: Upload reports
         if: always()
