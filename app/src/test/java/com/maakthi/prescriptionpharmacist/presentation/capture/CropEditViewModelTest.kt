@@ -56,8 +56,9 @@ class CropEditViewModelTest {
         viewModel.rotate90()
         advanceUntilIdle()
 
-        assertEquals(2, pipeline.renderCalls.size)
-        val (path, options) = pipeline.renderCalls[1]
+        // load() does not render; the rotation triggers the first render.
+        assertEquals(1, pipeline.renderCalls.size)
+        val (path, options) = pipeline.renderCalls[0]
         assertEquals("/tmp/source.jpg", path)
         assertEquals(90, options.rotationDegrees)
         assertEquals(90, viewModel.state.value.rotationDegrees)
