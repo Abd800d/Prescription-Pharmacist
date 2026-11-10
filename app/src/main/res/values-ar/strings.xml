@@ -287,4 +287,32 @@
     <string name="ok">موافق</string>
     <string name="cancel">إلغاء</string>
     <string name="back">رجوع</string>
+    <!-- Image input: capture, crop & preview consent -->
+    <string name="error">خطأ</string>
+    <string name="capture_permission_permanent">تم رفض الوصول للكاميرا نهائياً. فعّله من إعدادات التطبيق لتصوير الوصفات.</string>
+    <string name="crop_zoom">التكبير</string>
+    <string name="crop_rotate">تدوير ٩٠°</string>
+    <string name="crop_enhance">التحسينات</string>
+    <string name="crop_brightness">السطوع</string>
+    <string name="crop_contrast">التباين</string>
+    <string name="crop_sharpness">الحدة</string>
+    <string name="crop_auto_enhance">تحسين تلقائي</string>
+    <string name="crop_auto_deskew">تصحيح الميل تلقائياً</string>
+    <string name="crop_save">حفظ والمعاينة</string>
+    <string name="preview_title">المعاينة والموافقة</string>
+    <string name="preview_subtitle">راجع الصورة النهائية. لن يتم إرسالها للتحليل أبداً قبل موافقتك.</string>
+    <string name="preview_quality_title">جودة الصورة</string>
+    <string name="preview_quality_dimensions">الأبعاد</string>
+    <string name="preview_quality_size">حجم الملف</string>
+    <string name="preview_quality_blur">الوضوح</string>
+    <string name="preview_quality_light">الإضاءة</string>
+    <string name="preview_quality_skew">الميل</string>
+    <string name="preview_quality_good">جيدة</string>
+    <string name="preview_quality_bad">ضبابية</string>
+    <string name="preview_quality_dark">معتمة</string>
+    <string name="preview_quality_bright">ساطعة جداً</string>
+    <string name="preview_warning_hint">توجد مشكلات في جودة هذه الصورة. يُنصح بالعودة للتعديل للحصول على استخراج أدق.</string>
+    <string name="preview_consent">أوافق على إرسال صورة الوصفة هذه للتحليل</string>
+    <string name="preview_back_edit">العودة للتعديل</string>
+    <string name="preview_start_analysis">بدء التحليل</string>
 </resources>

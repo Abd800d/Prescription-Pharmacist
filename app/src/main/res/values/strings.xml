@@ -287,4 +287,32 @@
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
     <string name="back">Back</string>
+    <!-- Image input: capture, crop & preview consent -->
+    <string name="error">Error</string>
+    <string name="capture_permission_permanent">Camera access is permanently denied. Enable it in app settings to take prescription photos.</string>
+    <string name="crop_zoom">Zoom</string>
+    <string name="crop_rotate">Rotate 90°</string>
+    <string name="crop_enhance">Enhancements</string>
+    <string name="crop_brightness">Brightness</string>
+    <string name="crop_contrast">Contrast</string>
+    <string name="crop_sharpness">Sharpness</string>
+    <string name="crop_auto_enhance">Auto enhance</string>
+    <string name="crop_auto_deskew">Auto deskew</string>
+    <string name="crop_save">Save &amp; preview</string>
+    <string name="preview_title">Preview &amp; approval</string>
+    <string name="preview_subtitle">Review the final image. It is never sent for analysis before you approve it.</string>
+    <string name="preview_quality_title">Image quality</string>
+    <string name="preview_quality_dimensions">Size</string>
+    <string name="preview_quality_size">File</string>
+    <string name="preview_quality_blur">Clarity</string>
+    <string name="preview_quality_light">Lighting</string>
+    <string name="preview_quality_skew">Skew</string>
+    <string name="preview_quality_good">Good</string>
+    <string name="preview_quality_bad">Blurry</string>
+    <string name="preview_quality_dark">Dark</string>
+    <string name="preview_quality_bright">Too bright</string>
+    <string name="preview_warning_hint">This image has quality issues. Consider going back to edit it for more accurate extraction.</string>
+    <string name="preview_consent">I approve sending this prescription image for analysis</string>
+    <string name="preview_back_edit">Back to editing</string>
+    <string name="preview_start_analysis">Start analysis</string>
 </resources>

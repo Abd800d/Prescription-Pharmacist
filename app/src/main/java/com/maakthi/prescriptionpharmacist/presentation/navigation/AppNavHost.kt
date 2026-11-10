@@ -34,6 +34,7 @@ import com.maakthi.prescriptionpharmacist.presentation.auth.RegisterScreen
 import com.maakthi.prescriptionpharmacist.presentation.capture.CaptureScreen
 import com.maakthi.prescriptionpharmacist.presentation.capture.CropEditScreen
 import com.maakthi.prescriptionpharmacist.presentation.capture.GalleryScreen
+import com.maakthi.prescriptionpharmacist.presentation.review.PreviewConsentScreen
 import com.maakthi.prescriptionpharmacist.presentation.drugs.AddEditDrugScreen
 import com.maakthi.prescriptionpharmacist.presentation.drugs.DrugDetailsScreen
 import com.maakthi.prescriptionpharmacist.presentation.drugs.DrugSearchScreen
@@ -223,12 +224,29 @@ fun AppNavHost(
             composable(
                 route = Routes.CROP,
                 arguments = listOf(navArgument("imagePath") { type = NavType.StringType })
-            ) {
+            ) { entry ->
                 CropEditScreen(
-                    onBack = { navController.popBackStack() },
-                    onEdited = { editedPath ->
-                        navController.navigate(Routes.reviewGraph(editedPath))
-                    }
+                    imagePath = entry.arguments?.getString("imagePath").orEmpty(),
+                    onSaved = { editedPath ->
+                        navController.navigate(Routes.preview(editedPath))
+                    },
+                    onCancel = { navController.popBackStack() }
+                )
+            }
+
+            // ---------- Preview & consent (server upload gate) ----------
+            composable(
+                route = Routes.PREVIEW,
+                arguments = listOf(navArgument("imagePath") { type = NavType.StringType })
+            ) { entry ->
+                PreviewConsentScreen(
+                    imagePath = entry.arguments?.getString("imagePath").orEmpty(),
+                    onStartAnalysis = { path ->
+                        navController.navigate(Routes.reviewGraph(path)) {
+                            popUpTo(Routes.HOME)
+                        }
+                    },
+                    onBackToEdit = { navController.popBackStack() }
                 )
             }
 

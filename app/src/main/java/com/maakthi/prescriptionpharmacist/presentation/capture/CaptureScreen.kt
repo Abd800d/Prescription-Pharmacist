@@ -1,8 +1,10 @@
 package com.maakthi.prescriptionpharmacist.presentation.capture
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -46,16 +48,23 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.maakthi.prescriptionpharmacist.R
-import com.maakthi.prescriptionpharmacist.core.util.ImageUtils
 import com.maakthi.prescriptionpharmacist.domain.model.ErrorCode
 import com.maakthi.prescriptionpharmacist.presentation.components.ErrorView
+import java.io.File
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+
+private sealed interface CameraPermissionState {
+    data object Granted : CameraPermissionState
+    data object Requesting : CameraPermissionState
+    data class Denied(val permanently: Boolean) : CameraPermissionState
+}
 
 @Composable
 fun CaptureScreen(
@@ -65,19 +74,38 @@ fun CaptureScreen(
     val context = LocalContext.current
     val error by viewModel.error.collectAsStateWithLifecycle()
 
-    var hasCameraPermission by remember {
-        mutableStateOf(
-            ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) ==
+    var permissionState by remember {
+        mutableStateOf<CameraPermissionState>(
+            if (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) ==
                 PackageManager.PERMISSION_GRANTED
+            ) {
+                CameraPermissionState.Granted
+            } else {
+                CameraPermissionState.Requesting
+            }
         )
     }
+    var askedOnce by remember { mutableStateOf(false) }
+
     val permissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
-    ) { granted -> hasCameraPermission = granted }
+    ) { granted ->
+        permissionState = if (granted) {
+            CameraPermissionState.Granted
+        } else {
+            val activity = context as? android.app.Activity
+            val showRationale = activity?.let {
+                ActivityCompat.shouldShowRequestPermissionRationale(it, Manifest.permission.CAMERA)
+            } ?: true
+            // If the user was asked before and no rationale can be shown, the
+            // permission is permanently denied → route to app settings.
+            CameraPermissionState.Denied(permanently = askedOnce && !showRationale)
+        }
+    }
 
     val galleryLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.PickVisualMedia()
-    ) { uri: Uri? -> viewModel.onGalleryImagePicked(uri) }
+    ) { uri: Uri? -> viewModel.onGalleryImagePicked(uri?.toString()) }
 
     // Incremented by the shutter button; observed by the camera preview.
     var captureTick by remember { mutableIntStateOf(0) }
@@ -111,29 +139,60 @@ fun CaptureScreen(
                 .fillMaxWidth()
                 .weight(1f)
         ) {
-            if (hasCameraPermission) {
-                CameraPreview(
-                    captureTick = captureTick,
-                    onPhotoCaptured = viewModel::onPhotoCaptured,
-                    onCameraError = { viewModel.onPhotoCaptured(null) }
-                )
-            } else {
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        text = stringResource(R.string.capture_permission_denied),
-                        style = MaterialTheme.typography.bodyMedium,
-                        textAlign = TextAlign.Center,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+            when (val state = permissionState) {
+                CameraPermissionState.Granted -> {
+                    CameraPreview(
+                        captureTick = captureTick,
+                        captureFileFactory = { File(viewModel.createCaptureTarget()) },
+                        onPhotoCaptured = viewModel::onPhotoCaptured,
+                        onCameraError = { viewModel.onPhotoCaptured(null) }
                     )
-                    Spacer(Modifier.height(12.dp))
-                    OutlinedButton(
-                        onClick = { permissionLauncher.launch(Manifest.permission.CAMERA) }
+                }
+
+                CameraPermissionState.Requesting -> {
+                    LaunchedEffect(Unit) {
+                        askedOnce = true
+                        permissionLauncher.launch(Manifest.permission.CAMERA)
+                    }
+                }
+
+                is CameraPermissionState.Denied -> {
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Text(stringResource(R.string.capture_open_settings))
+                        Text(
+                            text = stringResource(
+                                if (state.permanently) R.string.capture_permission_permanent
+                                else R.string.capture_permission_denied
+                            ),
+                            style = MaterialTheme.typography.bodyMedium,
+                            textAlign = TextAlign.Center,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Spacer(Modifier.height(12.dp))
+                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            OutlinedButton(
+                                onClick = {
+                                    permissionState = CameraPermissionState.Requesting
+                                    permissionLauncher.launch(Manifest.permission.CAMERA)
+                                }
+                            ) {
+                                Text(stringResource(R.string.retry))
+                            }
+                            Button(
+                                onClick = {
+                                    val intent = Intent(
+                                        Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                                        Uri.fromParts("package", context.packageName, null)
+                                    )
+                                    runCatching { context.startActivity(intent) }
+                                }
+                            ) {
+                                Text(stringResource(R.string.capture_open_settings))
+                            }
+                        }
                     }
                 }
             }
@@ -160,7 +219,7 @@ fun CaptureScreen(
         ) {
             Button(
                 onClick = {
-                    if (hasCameraPermission) {
+                    if (permissionState is CameraPermissionState.Granted) {
                         captureTick++
                     } else {
                         permissionLauncher.launch(Manifest.permission.CAMERA)
@@ -168,8 +227,6 @@ fun CaptureScreen(
                 },
                 modifier = Modifier.weight(1f)
             ) {
-                Icon(Icons.Filled.CameraAlt, contentDescription = null)
-                Spacer(Modifier.size(8.dp))
                 Text(stringResource(R.string.capture_take_photo))
             }
             FilledTonalButton(
@@ -180,8 +237,6 @@ fun CaptureScreen(
                 },
                 modifier = Modifier.weight(1f)
             ) {
-                Icon(Icons.Filled.Image, contentDescription = null)
-                Spacer(Modifier.size(8.dp))
                 Text(stringResource(R.string.capture_pick_gallery))
             }
         }
@@ -191,6 +246,7 @@ fun CaptureScreen(
 @Composable
 private fun CameraPreview(
     captureTick: Int,
+    captureFileFactory: () -> File,
     onPhotoCaptured: (String?) -> Unit,
     onCameraError: () -> Unit
 ) {
@@ -237,7 +293,7 @@ private fun CameraPreview(
 
     LaunchedEffect(captureTick) {
         if (captureTick > 0 && cameraBound) {
-            val file = ImageUtils.createCaptureFile(context)
+            val file = captureFileFactory()
             val outputOptions = ImageCapture.OutputFileOptions.Builder(file).build()
             imageCapture.takePicture(
                 outputOptions,

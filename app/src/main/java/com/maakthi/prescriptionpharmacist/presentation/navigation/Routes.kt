@@ -24,6 +24,8 @@ object Routes {
     const val GALLERY = "gallery"
     const val CROP = "crop/{imagePath}"
     fun crop(imagePath: String) = "crop/${Uri.encode(imagePath)}"
+    const val PREVIEW = "preview/{imagePath}"
+    fun preview(imagePath: String) = "preview/${Uri.encode(imagePath)}"
 
     // Review flow (nested graph sharing one ViewModel)
     const val REVIEW_GRAPH = "review/{imagePath}"
