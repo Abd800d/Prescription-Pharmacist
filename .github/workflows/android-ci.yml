@@ -61,18 +61,7 @@ jobs:
               fi
             done
             echo "### Failing unit tests"
-            python3 - <<'PY' || true
-import glob, xml.etree.ElementTree as ET
-for f in glob.glob("app/build/test-results/testDebugUnitTest/*.xml"):
-    try:
-        root = ET.parse(f).getroot()
-    except Exception:
-        continue
-    for tc in root.iter("testcase"):
-        for fail in list(tc.iter("failure")) + list(tc.iter("error")):
-            msg = (fail.get("message") or "").splitlines()[:2]
-            print(f"FAILED {tc.get('classname')} > {tc.get('name')}: {' | '.join(msg)[:300]}")
-PY
+            python3 .github/ci_report_tests.py || true
           } | tee -a "$GITHUB_STEP_SUMMARY" | while IFS= read -r line; do
             echo "::error::${line}"
           done
