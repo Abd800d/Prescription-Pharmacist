@@ -31,13 +31,31 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build debug APK
-        run: ./gradlew assembleDebug --stacktrace
+        run: |
+          set -o pipefail
+          ./gradlew assembleDebug --console=plain 2>&1 | tee /tmp/gradle-build.log
 
       - name: Run unit tests
-        run: ./gradlew testDebugUnitTest --stacktrace
+        run: |
+          set -o pipefail
+          ./gradlew testDebugUnitTest --console=plain 2>&1 | tee /tmp/gradle-test.log
 
       - name: Run lint
-        run: ./gradlew lintDebug --stacktrace
+        run: |
+          set -o pipefail
+          ./gradlew lintDebug --console=plain 2>&1 | tee /tmp/gradle-lint.log
+
+      - name: Report errors in job summary and annotations
+        if: failure()
+        run: |
+          for f in /tmp/gradle-build.log /tmp/gradle-test.log /tmp/gradle-lint.log; do
+            if [ -f "$f" ]; then
+              echo "### Errors from $f" >> "$GITHUB_STEP_SUMMARY"
+              grep -E "^e: |error:|error |FAILURE:|What went wrong|Caused by|> " "$f" | head -40 | tee -a "$GITHUB_STEP_SUMMARY" | while IFS= read -r line; do
+                echo "::error::${line}"
+              done
+            fi
+          done
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
