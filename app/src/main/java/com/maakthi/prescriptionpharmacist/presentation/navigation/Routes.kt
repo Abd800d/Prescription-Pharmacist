@@ -36,6 +36,7 @@ object Routes {
     const val DRUG_ADD = "drug_add"
     const val DRUG_EDIT = "drug_edit/{drugId}"
     const val DRUG_DETAILS = "drug_details/{drugId}"
+    const val DRUG_KNOWLEDGE = "drug_knowledge"
     fun drugEdit(drugId: String) = "drug_edit/${Uri.encode(drugId)}"
     fun drugDetails(drugId: String): String = "drug_details/${Uri.encode(drugId)}"
 

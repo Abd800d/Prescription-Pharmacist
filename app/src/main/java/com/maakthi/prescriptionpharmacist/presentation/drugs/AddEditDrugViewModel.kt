@@ -65,7 +65,8 @@ class AddEditDrugViewModel @Inject constructor(
     private val getDrug: GetDrugUseCase,
     private val addDrug: AddDrugUseCase,
     private val updateDrug: UpdateDrugUseCase,
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
+    private val draftStore: com.maakthi.prescriptionpharmacist.presentation.knowledge.PendingDrugDraftStore
 ) : ViewModel() {
 
     private val drugId: String? = savedStateHandle.get<String>("drugId")
@@ -84,36 +85,44 @@ class AddEditDrugViewModel @Inject constructor(
             viewModelScope.launch {
                 val drug = getDrug(drugId)
                 if (drug != null) {
-                    _form.value = DrugFormState(
-                        id = drug.id,
-                        tradeNameArabic = drug.tradeNameArabic.orEmpty(),
-                        tradeNameEnglish = drug.tradeNameEnglish.orEmpty(),
-                        genericNameArabic = drug.genericNameArabic.orEmpty(),
-                        genericNameEnglish = drug.genericNameEnglish.orEmpty(),
-                        activeIngredient = drug.activeIngredient.orEmpty(),
-                        strength = drug.strength.orEmpty(),
-                        dosageForm = drug.dosageForm.orEmpty(),
-                        manufacturer = drug.manufacturer.orEmpty(),
-                        barcode = drug.barcode.orEmpty(),
-                        indications = drug.indications.orEmpty(),
-                        contraindications = drug.contraindications.orEmpty(),
-                        warnings = drug.warnings.orEmpty(),
-                        sideEffects = drug.sideEffects.orEmpty(),
-                        interactions = drug.interactions.orEmpty(),
-                        pregnancyInformation = drug.pregnancyInformation.orEmpty(),
-                        lactationInformation = drug.lactationInformation.orEmpty(),
-                        productImageUrl = drug.productImageUrl.orEmpty(),
-                        sourceName = drug.sourceName.orEmpty(),
-                        sourceUrl = drug.sourceUrl.orEmpty(),
-                        sourceDate = drug.sourceDate.orEmpty(),
-                        type = drug.type,
-                        isVerified = drug.isVerified
-                    )
+                    _form.value = drug.toFormState()
                 }
                 _loading.value = false
             }
+        } else {
+            // Knowledge draft: external information arrives ONLY as a draft —
+            // it is persisted after the pharmacist reviews it and presses save.
+            draftStore.consume()?.let { draft ->
+                _form.value = draft.toFormState().copy(id = null)
+            }
         }
     }
+
+    private fun Drug.toFormState(): DrugFormState = DrugFormState(
+        id = id,
+        tradeNameArabic = tradeNameArabic.orEmpty(),
+        tradeNameEnglish = tradeNameEnglish.orEmpty(),
+        genericNameArabic = genericNameArabic.orEmpty(),
+        genericNameEnglish = genericNameEnglish.orEmpty(),
+        activeIngredient = activeIngredient.orEmpty(),
+        strength = strength.orEmpty(),
+        dosageForm = dosageForm.orEmpty(),
+        manufacturer = manufacturer.orEmpty(),
+        barcode = barcode.orEmpty(),
+        indications = indications.orEmpty(),
+        contraindications = contraindications.orEmpty(),
+        warnings = warnings.orEmpty(),
+        sideEffects = sideEffects.orEmpty(),
+        interactions = interactions.orEmpty(),
+        pregnancyInformation = pregnancyInformation.orEmpty(),
+        lactationInformation = lactationInformation.orEmpty(),
+        productImageUrl = productImageUrl.orEmpty(),
+        sourceName = sourceName.orEmpty(),
+        sourceUrl = sourceUrl.orEmpty(),
+        sourceDate = sourceDate.orEmpty(),
+        type = type,
+        isVerified = isVerified
+    )
 
     fun update(transform: (DrugFormState) -> DrugFormState) {
         _form.value = transform(_form.value)

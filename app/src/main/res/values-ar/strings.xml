@@ -369,4 +369,18 @@
     <string name="drug_details_composition">التركيب</string>
     <string name="drug_details_usage">الاستعمال</string>
     <string name="drug_details_safety">السلامة</string>
+    <string name="knowledge_title">معلومات دوائية موثوقة</string>
+    <string name="knowledge_disclaimer">معلومات مرجعية من مصادر رسمية فقط (openFDA وواجهات هيئات الدواء) — لا تُستخدم نتائج البحث العامة كمصدر طبي. هذه المعلومات لا تغني عن التقييم المهني، ولا يُحفظ أي شيء في قاعدة بياناتك قبل مراجعتك واعتمادك.</string>
+    <string name="knowledge_search_hint">اسم الدواء (تجاري أو علمي)…</string>
+    <string name="knowledge_search_action">بحث في المصادر الرسمية</string>
+    <string name="knowledge_idle">ابحث في مصادر المعلومات الدوائية الرسمية.</string>
+    <string name="knowledge_no_results">لا توجد معلومات في المصادر الرسمية.</string>
+    <string name="knowledge_source_unavailable">مصدر(مصادر) غير متاح: %1$s — قد تكون النتائج غير مكتملة.</string>
+    <string name="knowledge_conflict_warning">تتعارض المصادر الرسمية. راجع القيم أدناه واختر يدوياً — لا يتم اختيار أي قيمة تلقائياً.</string>
+    <string name="knowledge_conflicts_section">معلومات متعارضة</string>
+    <string name="knowledge_facts_section">النتائج مع مصادرها</string>
+    <string name="knowledge_conflict_field">حقل متعارض: %1$s</string>
+    <string name="knowledge_conflict_pick">اختر القيمة التي ستُعتمد بعد المراجعة:</string>
+    <string name="knowledge_source_line">المصدر: %1$s • %2$s • %3$s</string>
+    <string name="knowledge_import">استيراد إلى نموذج المراجعة</string>
 </resources>

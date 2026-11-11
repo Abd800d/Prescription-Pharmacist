@@ -31,6 +31,31 @@ Authorization: Bearer <Firebase ID token>   (اختياري، ويُتحقّق �
 ```
 
 ```
+POST {baseUrl}/druginfo/search            (طبقة البحث الدوائي من المصادر الرسمية)
+Content-Type: application/json   Body: {"query": "Panadol"}
+Authorization: Bearer <Firebase ID token>   (اختياري)
+
+200 OK:
+{
+  "facts": [
+    {
+      "field": "warnings",
+      "value": "…",
+      "sourceName": "openFDA (US FDA)",
+      "sourceUrl": "https://open.fda.gov/apis/drug/label/",
+      "retrievedAt": 1700000000000
+    }
+  ],
+  "note": "openFDA unavailable"        (اختياري — عند تعذر مصدر)
+}
+
+• يجمّع المصادر الرسمية فقط (openFDA + واجهات وزارات الصحة/هيئات الدواء مستقبلاً).
+• مفاتيح واجهات الهيئات تُخزَّن كسرّات Firebase (AUTHORITY_API_KEY) — لا مفتاح داخل التطبيق.
+• المصادر الجديدة تُضاف داخل callAuthoritySources() في index.js.
+خطأ: 4xx/5xx مع {"error": {"code": "...", "message": "..."}}
+```
+
+```
 GET {baseUrl}/drugs?q=<query>&dosageForm=<form>&manufacturer=<name>&verified=<true|false>
 Authorization: Bearer <Firebase ID token>   (اختياري)
 
@@ -124,6 +149,7 @@ npm install
 firebase login
 firebase init functions          # اختر المشروع
 firebase functions:secrets:set GEMINI_API_KEY    # مفتاح Gemini — لا يوضع في الكود أبداً
+firebase functions:secrets:set AUTHORITY_API_KEY # مفاتيح واجهات الهيئات الرسمية — الخادم فقط
 firebase deploy --only functions
 ```
 

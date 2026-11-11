@@ -25,6 +25,7 @@ import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -57,6 +58,7 @@ import com.maakthi.prescriptionpharmacist.presentation.components.SectionHeader
 fun DrugSearchScreen(
     onOpenDrug: (String) -> Unit,
     onAddDrug: () -> Unit,
+    onKnowledge: () -> Unit,
     viewModel: DrugSearchViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -118,6 +120,12 @@ fun DrugSearchScreen(
                 icon = { Icon(Icons.Filled.Add, contentDescription = null) },
                 text = { Text(stringResource(R.string.review_add_medication)) }
             )
+        }
+        OutlinedButton(
+            onClick = onKnowledge,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(stringResource(R.string.knowledge_title))
         }
 
         when (val state = uiState) {

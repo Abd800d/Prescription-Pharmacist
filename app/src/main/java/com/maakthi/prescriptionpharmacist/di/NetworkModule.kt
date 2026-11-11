@@ -72,6 +72,12 @@ object NetworkModule {
     fun provideDrugApi(retrofit: Retrofit): DrugApi =
         retrofit.create(DrugApi::class.java)
 
+    /** Backend drug-information endpoint (official sources, keys on the server). */
+    @Provides
+    @Singleton
+    fun provideDrugKnowledgeApi(retrofit: Retrofit): com.maakthi.prescriptionpharmacist.data.remote.DrugKnowledgeApi =
+        retrofit.create(com.maakthi.prescriptionpharmacist.data.remote.DrugKnowledgeApi::class.java)
+
     /** Public openFDA drug label API (no API key). */
     @Provides
     @Singleton

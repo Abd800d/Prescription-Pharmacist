@@ -369,4 +369,18 @@
     <string name="drug_details_composition">Composition</string>
     <string name="drug_details_usage">Usage</string>
     <string name="drug_details_safety">Safety</string>
+    <string name="knowledge_title">Trusted drug information</string>
+    <string name="knowledge_disclaimer">Reference information from official sources only (openFDA, authority APIs) — general web search results are never used as a medical source. This is not a substitute for professional judgement, and nothing is saved to your drug database until you review and approve it.</string>
+    <string name="knowledge_search_hint">Drug name (trade or generic)…</string>
+    <string name="knowledge_search_action">Search official sources</string>
+    <string name="knowledge_idle">Search the official drug-information sources.</string>
+    <string name="knowledge_no_results">No information found in the official sources.</string>
+    <string name="knowledge_source_unavailable">Unavailable source(s): %1$s — results may be incomplete.</string>
+    <string name="knowledge_conflict_warning">Official sources disagree. Review the values below and choose manually — nothing is selected automatically.</string>
+    <string name="knowledge_conflicts_section">Conflicting information</string>
+    <string name="knowledge_facts_section">Results with their sources</string>
+    <string name="knowledge_conflict_field">Conflicting field: %1$s</string>
+    <string name="knowledge_conflict_pick">Choose the value to keep after review:</string>
+    <string name="knowledge_source_line">Source: %1$s • %2$s • %3$s</string>
+    <string name="knowledge_import">Import to review form</string>
 </resources>

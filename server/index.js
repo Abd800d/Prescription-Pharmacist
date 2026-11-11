@@ -514,3 +514,129 @@ exports.extract = onRequest(
     }
   }
 );
+
+/**
+ * POST {baseUrl}/druginfo/search — official drug-information sources.
+ * Body: {"query": "Panadol"}
+ * Resp: {"facts": [{"field", "value", "sourceName", "sourceUrl", "retrievedAt"}], "note"}
+ *
+ * Aggregation point for OFFICIAL sources only (never general web search):
+ *  - openFDA (keyless) is proxied server-side;
+ *  - authority APIs (ministry of health, local drug authority) are called
+ *    with their API key read from Firebase secrets — NO key ever lives in
+ *    the Android app. Add new authorities inside callAuthoritySources().
+ */
+const AUTHORITY_API_KEY = defineSecret("AUTHORITY_API_KEY");
+
+async function callOpenFdaFacts(query) {
+  const search = `(openfda.brand_name:"${query}" OR openfda.generic_name:"${query}")`;
+  const url =
+    "https://api.fda.gov/drug/label.json?limit=1&search=" + encodeURIComponent(search);
+  const resp = await fetch(url, { signal: AbortSignal.timeout(10000) });
+  if (resp.status === 404) return [];
+  if (!resp.ok) throw new Error("openFDA http " + resp.status);
+  const body = await resp.json();
+  const drug = body.results && body.results[0];
+  if (!drug) return [];
+  const now = Date.now();
+  const src = {
+    sourceName: "openFDA (US FDA)",
+    sourceUrl: "https://open.fda.gov/apis/drug/label/",
+    retrievedAt: now,
+  };
+  const facts = [];
+  const add = (field, value) => {
+    if (value && String(value).trim()) {
+      facts.push({ field, value: String(value).trim().slice(0, 900), ...src });
+    }
+  };
+  const info = drug.openfda || {};
+  add("tradeName", (info.brand_name || [])[0]);
+  add("genericName", (info.generic_name || [])[0]);
+  add("manufacturer", (info.manufacturer_name || [])[0]);
+  add("dosageForm", (info.route || [])[0]);
+  add("indications", (drug.indications_and_usage || [])[0]);
+  add("dosage", (drug.dosage_and_administration || [])[0]);
+  add("warnings", (drug.warnings || [])[0]);
+  add("description", (drug.description || [])[0]);
+  return facts;
+}
+
+/**
+ * Seam for national authority APIs (ministry of health, local drug
+ * authority). Each source returns facts already attributed to itself.
+ * The API key comes from Firebase secrets — never from the app.
+ */
+async function callAuthoritySources(query, apiKey) {
+  if (!apiKey) return [];
+  // Example (uncomment and adapt when a national API is available):
+  // const resp = await fetch("https://api.example-moh.gov.ye/drugs?q=" + encodeURIComponent(query), {
+  //   headers: { Authorization: "Bearer " + apiKey },
+  //   signal: AbortSignal.timeout(10000),
+  // });
+  // if (!resp.ok) throw new Error("authority http " + resp.status);
+  // const body = await resp.json();
+  // return (body.items || []).map((item) => ({
+  //   field: item.field,
+  //   value: item.value,
+  //   sourceName: "Ministry of Health — Drug Authority",
+  //   sourceUrl: "https://api.example-moh.gov.ye",
+  //   retrievedAt: Date.now(),
+  // }));
+  return [];
+}
+
+exports.druginfo = onRequest(
+  {
+    region: "europe-west1",
+    cors: true,
+    secrets: [AUTHORITY_API_KEY],
+    memory: "256MiB",
+    timeoutSeconds: 60,
+  },
+  async (req, res) => {
+    if (req.method !== "POST") {
+      res.status(405).json({ error: { code: "method_not_allowed", message: "Use POST" } });
+      return;
+    }
+
+    const hasAuthHeader = Boolean(req.headers.authorization);
+    const uid = await verifyToken(req);
+    if (hasAuthHeader && !uid) {
+      res.status(401).json({
+        error: { code: "unauthorized", message: "Invalid or expired ID token" },
+      });
+      return;
+    }
+
+    let query;
+    try {
+      const body = typeof req.body === "string" ? JSON.parse(req.body) : req.body;
+      query = String(body?.query ?? "").trim();
+      if (!query) throw new Error("query required");
+      if (query.length > 200) throw new Error("query too long");
+    } catch (e) {
+      res.status(400).json({ error: { code: "bad_request", message: e.message } });
+      return;
+    }
+
+    try {
+      const [openFda, authority] = await Promise.allSettled([
+        callOpenFdaFacts(query),
+        callAuthoritySources(query, AUTHORITY_API_KEY.value()),
+      ]);
+      const facts = [];
+      const notes = [];
+      if (openFda.status === "fulfilled") facts.push(...openFda.value);
+      else notes.push("openFDA unavailable");
+      if (authority.status === "fulfilled") facts.push(...authority.value);
+      else notes.push("authority source unavailable");
+      res.status(200).json({ facts, note: notes.join("; ") || undefined });
+    } catch (e) {
+      console.error("druginfo failed", e);
+      res.status(502).json({
+        error: { code: "upstream_failed", message: "Official sources are unavailable" },
+      });
+    }
+  }
+);

@@ -38,6 +38,7 @@ import com.maakthi.prescriptionpharmacist.presentation.review.PreviewConsentScre
 import com.maakthi.prescriptionpharmacist.presentation.drugs.AddEditDrugScreen
 import com.maakthi.prescriptionpharmacist.presentation.drugs.DrugDetailsScreen
 import com.maakthi.prescriptionpharmacist.presentation.drugs.DrugSearchScreen
+import com.maakthi.prescriptionpharmacist.presentation.knowledge.DrugKnowledgeScreen
 import com.maakthi.prescriptionpharmacist.presentation.history.HistoryScreen
 import com.maakthi.prescriptionpharmacist.presentation.history.PrescriptionDetailScreen
 import com.maakthi.prescriptionpharmacist.presentation.home.HomeScreen
@@ -188,7 +189,8 @@ fun AppNavHost(
             composable(Routes.DRUG_SEARCH) {
                 DrugSearchScreen(
                     onOpenDrug = { drugId -> navController.navigate(Routes.drugDetails(drugId)) },
-                    onAddDrug = { navController.navigate(Routes.DRUG_ADD) }
+                    onAddDrug = { navController.navigate(Routes.DRUG_ADD) },
+                    onKnowledge = { navController.navigate(Routes.DRUG_KNOWLEDGE) }
                 )
             }
             composable(Routes.SAVED) {
@@ -294,6 +296,11 @@ fun AppNavHost(
             }
 
             // ---------- Drugs ----------
+            composable(Routes.DRUG_KNOWLEDGE) {
+                DrugKnowledgeScreen(
+                    onImportForReview = { navController.navigate(Routes.DRUG_ADD) }
+                )
+            }
             composable(Routes.DRUG_ADD) {
                 AddEditDrugScreen(
                     onBack = { navController.popBackStack() },
