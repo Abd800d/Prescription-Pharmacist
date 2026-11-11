@@ -229,7 +229,7 @@ private fun FilterDropdown(
     var expanded by remember { mutableStateOf(false) }
     ExposedDropdownMenuBox(
         expanded = expanded,
-        onDismissRequest = { expanded = false },
+        onExpandedChange = { expanded = it },
         modifier = modifier
     ) {
         TextField(
