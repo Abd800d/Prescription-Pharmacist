@@ -52,6 +52,7 @@ fun ConfirmEditScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val notes by viewModel.notes.collectAsStateWithLifecycle()
+    val attested by viewModel.attested.collectAsStateWithLifecycle()
 
     var showEditor by remember { mutableStateOf(false) }
     var editingMedication by remember { mutableStateOf<EditableMedication?>(null) }
@@ -127,6 +128,24 @@ fun ConfirmEditScreen(
                     minLines = 2
                 )
             }
+            item {
+                // Mandatory warnings: handwriting accuracy + no auto-dispense.
+                WarningBanner(stringResource(R.string.analysis_warning_handwriting))
+                Spacer(Modifier.height(8.dp))
+                WarningBanner(stringResource(R.string.disclaimer_no_dispense))
+                Spacer(Modifier.height(8.dp))
+                // Stage 12 gate: approval is impossible without attestation.
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Checkbox(
+                        checked = attested,
+                        onCheckedChange = viewModel::setAttested
+                    )
+                    Text(
+                        text = stringResource(R.string.confirm_attest),
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+            }
         }
 
         Row(
@@ -135,6 +154,7 @@ fun ConfirmEditScreen(
         ) {
             Button(
                 onClick = { viewModel.save(PrescriptionStatus.CONFIRMED) },
+                enabled = attested,
                 modifier = Modifier.weight(1f)
             ) {
                 Text(stringResource(R.string.review_confirm))
@@ -199,6 +219,25 @@ private fun EditableMedicationCard(
                                 .joinToString(" · "),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                    val usage = listOfNotNull(
+                        medication.dose?.let { "${stringResource(R.string.label_dose)}: $it" },
+                        medication.route?.let { "${stringResource(R.string.label_route)}: $it" },
+                        medication.duration?.let { "${stringResource(R.string.label_duration)}: $it" }
+                    ).joinToString(" · ")
+                    if (usage.isNotEmpty()) {
+                        Text(
+                            text = usage,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                    if (medication.isUncertain) {
+                        Text(
+                            text = stringResource(R.string.label_uncertain),
+                            style = MaterialTheme.typography.labelMedium,
+                            color = MaterialTheme.colorScheme.error
                         )
                     }
                 }

@@ -6,10 +6,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.maakthi.prescriptionpharmacist.core.util.ImageUtils
 import com.maakthi.prescriptionpharmacist.domain.model.AnalysisResult
+import com.maakthi.prescriptionpharmacist.domain.model.AnalysisWarning
 import com.maakthi.prescriptionpharmacist.domain.model.AppResult
 import com.maakthi.prescriptionpharmacist.domain.model.ConfidenceLevel
 import com.maakthi.prescriptionpharmacist.domain.model.ErrorCode
 import com.maakthi.prescriptionpharmacist.domain.model.Medication
+import com.maakthi.prescriptionpharmacist.domain.model.MedicationAlternative
 import com.maakthi.prescriptionpharmacist.domain.model.MedicationCandidate
 import com.maakthi.prescriptionpharmacist.domain.model.MedicationType
 import com.maakthi.prescriptionpharmacist.domain.model.Prescription
@@ -40,8 +42,13 @@ data class EditableMedication(
     val type: MedicationType = MedicationType.UNKNOWN,
     val strength: String? = null,
     val form: String? = null,
+    val dose: String? = null,
+    val route: String? = null,
+    val duration: String? = null,
     val confidence: Float = 1f,
-    val rawText: String? = null
+    val rawText: String? = null,
+    val isUncertain: Boolean = false,
+    val alternatives: List<MedicationAlternative> = emptyList()
 ) {
     val confidenceLevel: ConfidenceLevel
         get() = confidenceLevelOf(confidence)
@@ -49,7 +56,10 @@ data class EditableMedication(
 
 sealed interface ReviewUiState {
     data object Analyzing : ReviewUiState
-    data class Result(val medications: List<EditableMedication>) : ReviewUiState
+    data class Result(
+        val medications: List<EditableMedication>,
+        val warnings: List<AnalysisWarning> = emptyList()
+    ) : ReviewUiState
     data class Failed(val code: ErrorCode) : ReviewUiState
 }
 
@@ -81,6 +91,10 @@ class ReviewFlowViewModel @Inject constructor(
     private val _events = Channel<ReviewEvent>(Channel.BUFFERED)
     val events = _events.receiveAsFlow()
 
+    /** Pharmacist attestation gate: CONFIRMED saves are blocked until true. */
+    private val _attested = MutableStateFlow(false)
+    val attested: StateFlow<Boolean> = _attested.asStateFlow()
+
     private var lastAnalysis: AnalysisResult? = null
     private var cachedUploadBytes: ByteArray? = null
 
@@ -102,7 +116,8 @@ class ReviewFlowViewModel @Inject constructor(
                 is AppResult.Success -> {
                     lastAnalysis = result.data
                     _uiState.value = ReviewUiState.Result(
-                        result.data.medications.map { it.toEditable() }
+                        medications = result.data.medications.map { it.toEditable() },
+                        warnings = result.data.warnings
                     )
                 }
                 is AppResult.Error -> {
@@ -114,6 +129,11 @@ class ReviewFlowViewModel @Inject constructor(
 
     fun onNotesChanged(value: String) {
         _notes.value = value
+    }
+
+    /** Records the pharmacist's explicit attestation (stage 12 gate). */
+    fun setAttested(value: Boolean) {
+        _attested.value = value
     }
 
     fun addMedication(medication: EditableMedication) {
@@ -153,6 +173,9 @@ class ReviewFlowViewModel @Inject constructor(
     /** Saves the prescription with the pharmacist decision status. */
     fun save(status: PrescriptionStatus) {
         val state = _uiState.value as? ReviewUiState.Result ?: return
+        // Stage 12: a CONFIRMED result is impossible without explicit
+        // pharmacist attestation. Drafts may be saved without it.
+        if (status == PrescriptionStatus.CONFIRMED && !_attested.value) return
         viewModelScope.launch {
             val prescriptionId = UUID.randomUUID().toString()
             val prescription = Prescription(
@@ -184,8 +207,13 @@ class ReviewFlowViewModel @Inject constructor(
         type = type,
         strength = strength,
         form = form,
+        dose = dose,
+        route = route,
+        duration = duration,
         confidence = confidence,
-        rawText = rawText
+        rawText = rawText,
+        isUncertain = isUncertain,
+        alternatives = alternatives
     )
 
     private fun EditableMedication.toDomain(prescriptionId: String) = Medication(
@@ -196,8 +224,13 @@ class ReviewFlowViewModel @Inject constructor(
         type = type,
         strength = strength,
         form = form,
+        dose = dose,
+        route = route,
+        duration = duration,
         confidence = confidence,
         rawText = rawText,
+        isUncertain = isUncertain,
+        alternatives = alternatives,
         confirmedByPharmacist = true
     )
 }

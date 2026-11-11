@@ -26,8 +26,13 @@ data class Medication(
     val type: MedicationType = MedicationType.UNKNOWN,
     val strength: String? = null,
     val form: String? = null,
+    val dose: String? = null,
+    val route: String? = null,
+    val duration: String? = null,
     val confidence: Float = 0f,
     val rawText: String? = null,
+    val isUncertain: Boolean = false,
+    val alternatives: List<MedicationAlternative> = emptyList(),
     val confirmedByPharmacist: Boolean = false
 )
 

@@ -315,4 +315,13 @@
     <string name="preview_consent">أوافق على إرسال صورة الوصفة هذه للتحليل</string>
     <string name="preview_back_edit">العودة للتعديل</string>
     <string name="preview_start_analysis">بدء التحليل</string>
+    <!-- Staged analysis pipeline -->
+    <string name="analysis_warning_handwriting">قد تكون قراءة الخط اليدوي غير دقيقة. تحقق من كل بند مقابل الوصفة الأصلية.</string>
+    <string name="disclaimer_no_dispense">لا يصرف التطبيق أي دواء تلقائياً — يجب أن يعتمد الصيدلي المرخّص كل نتيجة.</string>
+    <string name="label_uncertain">النتيجة غير مؤكدة</string>
+    <string name="label_alternatives">بدائل محتملة</string>
+    <string name="label_dose">الجرعة</string>
+    <string name="label_route">طريقة الاستخدام</string>
+    <string name="label_duration">المدة</string>
+    <string name="confirm_attest">لقد تحققت من كل نتيجة مقابل الوصفة الأصلية</string>
 </resources>

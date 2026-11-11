@@ -315,4 +315,13 @@
     <string name="preview_consent">I approve sending this prescription image for analysis</string>
     <string name="preview_back_edit">Back to editing</string>
     <string name="preview_start_analysis">Start analysis</string>
+    <!-- Staged analysis pipeline -->
+    <string name="analysis_warning_handwriting">Handwriting recognition may be inaccurate. Verify every item against the original prescription.</string>
+    <string name="disclaimer_no_dispense">This app never dispenses medication automatically — a licensed pharmacist must approve every result.</string>
+    <string name="label_uncertain">النتيجة غير مؤكدة</string>
+    <string name="label_alternatives">Possible alternatives</string>
+    <string name="label_dose">Dose</string>
+    <string name="label_route">Route</string>
+    <string name="label_duration">Duration</string>
+    <string name="confirm_attest">I have verified every result against the original prescription</string>
 </resources>

@@ -301,3 +301,216 @@ exports.analyze = onRequest(
     }
   }
 );
+
+// ---------------------------------------------------------------------------
+// Staged pipeline endpoints: /ocr (stage 3) and /extract (stages 5-8).
+// The OCR layer and the AI extraction layer are independent so the app can
+// swap providers. API keys live only in environment secrets (GEMINI_API_KEY).
+// ---------------------------------------------------------------------------
+
+/** Calls Gemini for STRICT transcription (no interpretation, no invention). */
+async function callOcrModel(imageBuffer, mimeType, apiKey) {
+  const prompt = [
+    "You are an OCR engine for medical prescriptions.",
+    "Transcribe ALL visible text in this prescription image (handwritten and/or printed, Arabic and/or English).",
+    "STRICT RULES:",
+    "- Transcribe only what is written. NEVER interpret, translate, correct or invent anything.",
+    "- Keep the original line structure.",
+    "- If a character or word is unreadable, replace ONLY that part with ? and continue.",
+    "Respond ONLY with a JSON object, no markdown, exactly this shape:",
+    '{"language":"ar|en|mixed","text":"full transcription with \\n line breaks","lines":[{"text":"one line"}]}',
+  ].join("\n");
+
+  const endpoint =
+    "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent";
+
+  const payload = {
+    contents: [
+      {
+        parts: [
+          { text: prompt },
+          { inline_data: { mime_type: mimeType, data: imageBuffer.toString("base64") } },
+        ],
+      },
+    ],
+    generationConfig: {
+      response_mime_type: "application/json",
+      temperature: 0,
+    },
+  };
+
+  const response = await fetch(endpoint, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-goog-api-key": apiKey,
+    },
+    body: JSON.stringify(payload),
+  });
+
+  if (!response.ok) {
+    const detail = await response.text();
+    throw new Error(`OCR API error ${response.status}: ${detail}`);
+  }
+
+  const data = await response.json();
+  const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+  if (!text) throw new Error("OCR API returned no content");
+  return JSON.parse(text);
+}
+
+/** Calls Gemini to structure OCR text into grounded medication hints. */
+async function callExtractModel(ocrText, apiKey) {
+  const prompt = [
+    "You are a clinical pharmacist assistant processing OCR output of a prescription.",
+    "Extract medication entries STRICTLY from the given text.",
+    "STRICT RULES:",
+    "- NEVER invent a medication name, strength, dose, route or duration that is not literally supported by the text.",
+    "- If a name is ambiguous or unclear, set unclear=true and list plausible alternatives in \"alternatives\".",
+    "- Include the source line in rawText.",
+    "Respond ONLY with a JSON object, no markdown, exactly this shape:",
+    '{"hints":[{"name":"...","scientificName":"... or null","type":"BRAND|GENERIC|UNKNOWN","strength":"... or null","form":"... or null","dose":"... or null","route":"... or null","duration":"... or null","rawText":"...","unclear":false,"alternatives":[]}]}',
+    "OCR TEXT:",
+    ocrText,
+  ].join("\n");
+
+  const endpoint =
+    "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent";
+
+  const payload = {
+    contents: [{ parts: [{ text: prompt }] }],
+    generationConfig: {
+      response_mime_type: "application/json",
+      temperature: 0,
+    },
+  };
+
+  const response = await fetch(endpoint, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-goog-api-key": apiKey,
+    },
+    body: JSON.stringify(payload),
+  });
+
+  if (!response.ok) {
+    const detail = await response.text();
+    throw new Error(`Extract API error ${response.status}: ${detail}`);
+  }
+
+  const data = await response.json();
+  const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+  if (!text) throw new Error("Extract API returned no content");
+  return JSON.parse(text);
+}
+
+/**
+ * POST {baseUrl}/ocr — stage 3: image -> raw transcription.
+ * Resp: {"requestId":"...","language":"ar|en|mixed","text":"...","lines":[{"text":"...","confidence":1.0}]}
+ */
+exports.ocr = onRequest(
+  {
+    region: "europe-west1",
+    cors: true,
+    secrets: [GEMINI_API_KEY],
+    memory: "512MiB",
+    timeoutSeconds: 120,
+  },
+  async (req, res) => {
+    if (req.method !== "POST") {
+      res.status(405).json({ error: { code: "method_not_allowed", message: "Use POST" } });
+      return;
+    }
+
+    let image;
+    try {
+      image = await readMultipartImage(req);
+    } catch (e) {
+      res.status(400).json({ error: { code: "bad_image", message: e.message } });
+      return;
+    }
+
+    const hasAuthHeader = Boolean(req.headers.authorization);
+    const uid = await verifyToken(req);
+    if (hasAuthHeader && !uid) {
+      res.status(401).json({
+        error: { code: "unauthorized", message: "Invalid or expired ID token" },
+      });
+      return;
+    }
+
+    try {
+      const result = await callOcrModel(image.buffer, image.mimeType, GEMINI_API_KEY.value());
+      const lines = Array.isArray(result.lines)
+        ? result.lines.map((l) => ({ text: String(l?.text ?? ""), confidence: 1.0 }))
+        : [];
+      res.status(200).json({
+        requestId: crypto.randomUUID(),
+        language: result.language || null,
+        text: String(result.text ?? ""),
+        lines,
+        transcribedBy: uid || "anonymous",
+      });
+    } catch (e) {
+      console.error("ocr failed", e);
+      res.status(502).json({
+        error: { code: "analysis_failed", message: "Upstream OCR failed" },
+      });
+    }
+  }
+);
+
+/**
+ * POST {baseUrl}/extract — stages 5-8: OCR text -> structured medication hints.
+ * Body: {"text":"..."}
+ * Resp: {"hints":[{name, scientificName, type, strength, form, dose, route, duration, rawText, unclear, alternatives}]}
+ */
+exports.extract = onRequest(
+  {
+    region: "europe-west1",
+    cors: true,
+    secrets: [GEMINI_API_KEY],
+    memory: "256MiB",
+    timeoutSeconds: 60,
+  },
+  async (req, res) => {
+    if (req.method !== "POST") {
+      res.status(405).json({ error: { code: "method_not_allowed", message: "Use POST" } });
+      return;
+    }
+
+    const hasAuthHeader = Boolean(req.headers.authorization);
+    const uid = await verifyToken(req);
+    if (hasAuthHeader && !uid) {
+      res.status(401).json({
+        error: { code: "unauthorized", message: "Invalid or expired ID token" },
+      });
+      return;
+    }
+
+    let ocrText;
+    try {
+      const body = typeof req.body === "string" ? JSON.parse(req.body) : req.body;
+      ocrText = String(body?.text ?? "").trim();
+      if (!ocrText) throw new Error("text required");
+      if (ocrText.length > 20000) throw new Error("text too long");
+    } catch (e) {
+      res.status(400).json({ error: { code: "bad_request", message: e.message } });
+      return;
+    }
+
+    try {
+      const result = await callExtractModel(ocrText, GEMINI_API_KEY.value());
+      res.status(200).json({
+        hints: Array.isArray(result.hints) ? result.hints : [],
+        extractedBy: uid || "anonymous",
+      });
+    } catch (e) {
+      console.error("extract failed", e);
+      res.status(502).json({
+        error: { code: "analysis_failed", message: "Upstream extraction failed" },
+      });
+    }
+  }
+);

@@ -10,6 +10,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -40,6 +41,9 @@ fun MedicationEditorDialog(
     var scientificName by remember { mutableStateOf(initial?.scientificName.orEmpty()) }
     var strength by remember { mutableStateOf(initial?.strength.orEmpty()) }
     var form by remember { mutableStateOf(initial?.form.orEmpty()) }
+    var dose by remember { mutableStateOf(initial?.dose.orEmpty()) }
+    var route by remember { mutableStateOf(initial?.route.orEmpty()) }
+    var duration by remember { mutableStateOf(initial?.duration.orEmpty()) }
     var type by remember { mutableStateOf(initial?.type ?: MedicationType.UNKNOWN) }
     var typeExpanded by remember { mutableStateOf(false) }
 
@@ -87,6 +91,48 @@ fun MedicationEditorDialog(
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true
                 )
+                OutlinedTextField(
+                    value = dose,
+                    onValueChange = { dose = it },
+                    label = { Text(stringResource(R.string.label_dose)) },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true
+                )
+                OutlinedTextField(
+                    value = route,
+                    onValueChange = { route = it },
+                    label = { Text(stringResource(R.string.label_route)) },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true
+                )
+                OutlinedTextField(
+                    value = duration,
+                    onValueChange = { duration = it },
+                    label = { Text(stringResource(R.string.label_duration)) },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true
+                )
+                // Alternative readings offered for uncertain handwriting.
+                if (!initial?.alternatives.isNullOrEmpty()) {
+                    Text(
+                        text = stringResource(R.string.label_alternatives),
+                        style = MaterialTheme.typography.labelLarge
+                    )
+                    initial!!.alternatives.forEach { alt ->
+                        TextButton(
+                            onClick = {
+                                name = alt.name
+                                alt.scientificName?.let { scientificName = it }
+                            }
+                        ) {
+                            Text(
+                                "${alt.name}" +
+                                    (alt.scientificName?.let { " — $it" } ?: "") +
+                                    " (${(alt.score * 100).toInt()}%)"
+                            )
+                        }
+                    }
+                }
                 ExposedDropdownMenuBox(
                     expanded = typeExpanded,
                     onExpandedChange = { typeExpanded = it }
@@ -148,8 +194,13 @@ fun MedicationEditorDialog(
                             type = type,
                             strength = strength.trim().takeIf { it.isNotEmpty() },
                             form = form.trim().takeIf { it.isNotEmpty() },
+                            dose = dose.trim().takeIf { it.isNotEmpty() },
+                            route = route.trim().takeIf { it.isNotEmpty() },
+                            duration = duration.trim().takeIf { it.isNotEmpty() },
                             confidence = initial?.confidence ?: 1f,
-                            rawText = initial?.rawText
+                            rawText = initial?.rawText,
+                            isUncertain = initial?.isUncertain ?: false,
+                            alternatives = initial?.alternatives ?: emptyList()
                         )
                     )
                 }

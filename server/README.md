@@ -30,6 +30,56 @@ Authorization: Bearer <Firebase ID token>   (اختياري، ويُتحقّق �
 خطأ: 4xx/5xx مع {"error": {"code": "...", "message": "..."}}
 ```
 
+```
+POST {baseUrl}/ocr                    (طبقة OCR — المرحلة 3)
+Content-Type: multipart/form-data   (حقل "image": JPEG ≤ 8MB)
+Authorization: Bearer <Firebase ID token>   (اختياري، ويُتحقّق منه إن وُجد)
+
+200 OK:
+{
+  "requestId": "…",
+  "language": "ar|en|mixed",
+  "text": "النص الكامل منسوباً كما هو",
+  "lines": [{ "text": "سطر واحد", "confidence": 1.0 }]
+}
+
+القواعد: النسخ الحرفي فقط — لا تفسير ولا ترجمة ولا اختراع؛ غير المقروء يُكتب بـ «?».
+```
+
+```
+POST {baseUrl}/extract                (طبقة الاستخراج بالذكاء الاصطناعي — المراحل 5-8)
+Content-Type: application/json      {"text": "… نص OCR …"}
+
+200 OK:
+{
+  "hints": [
+    {
+      "name": "بنادول اكسترا",
+      "scientificName": "Paracetamol + Caffeine",
+      "type": "BRAND",
+      "strength": "500mg",
+      "form": "tablet",
+      "dose": "قرص مرتين يومياً",
+      "route": "oral",
+      "duration": "5 أيام",
+      "rawText": "بنادول اكسترا 500",
+      "unclear": false,
+      "alternatives": []
+    }
+  ]
+}
+
+القواعد: الاستخراج من النص فقط — ممنوع اختراع اسم أو جرعة؛ عند الغموض unclear=true مع قائمة بدائل.
+```
+
+```
+POST {baseUrl}/chat                   (المساعد الصيدلي — اختياري)
+Body: {"messages":[{"role":"user","content":"…"}]}
+200 OK: {"reply":"…"}
+```
+
+**ملاحظة أمنية:** مفتاح Gemini يُخزَّن كسرّ بيئة فقط (`firebase functions:secrets:set GEMINI_API_KEY`) — لا يُكتب داخل الكود إطلاقاً.
+
 ## النشر
 
 ```bash
