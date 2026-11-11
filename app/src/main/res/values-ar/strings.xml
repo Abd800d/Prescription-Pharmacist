@@ -190,16 +190,45 @@
     <string name="product_delete_message">سيتم حذف صورة المنتج نهائياً.</string>
 
     <!-- Import / Export -->
-    <string name="transfer_title">استيراد وتصدير</string>
-    <string name="transfer_export_title">تصدير البيانات</string>
-    <string name="transfer_export_desc">صدّر جميع الوصفات وكتالوج الأدوية كملف JSON يمكنك حفظه بأمان أو نقله إلى جهاز آخر.</string>
-    <string name="transfer_export_button">تصدير ملف JSON</string>
-    <string name="transfer_import_title">استيراد البيانات</string>
-    <string name="transfer_import_desc">استيراد ملف JSON تم تصديره سابقاً. السجلات الموجودة بالمعرّف نفسه سيتم تحديثها.</string>
-    <string name="transfer_import_button">استيراد ملف JSON</string>
-    <string name="transfer_export_success">تم تصدير الملف بنجاح</string>
-    <string name="transfer_import_success">تم استيراد %1$d وصفة و%2$d دواء</string>
-    <string name="transfer_import_error">فشل الاستيراد — تنسيق الملف غير صالح.</string>
+    <string name="transfer_title">استيراد وتصدير البيانات</string>
+    <string name="transfer_import_section">استيراد البيانات</string>
+    <string name="transfer_import_hint">اختر ملفاً بصيغة CSV أو XLSX أو JSON — بعناوين أعمدة عربية أو إنجليزية. ستظهر معاينة كاملة قبل الاستيراد، ولن يتم حذف أي بيانات سابقة.</string>
+    <string name="transfer_pick_file">اختيار ملف</string>
+    <string name="transfer_preview_summary">ملف: %1$s (%2$s) — %3$d صفاً • %4$d جاهزة للاستيراد • %5$d بأخطاء • %6$d تنبيهات</string>
+    <string name="transfer_no_delete_note">لا يؤدي الاستيراد إلى حذف أو تعديل أي بيانات سابقة، إلا بموافقتك الصريحة على الصفوف المكررة.</string>
+    <string name="transfer_import_confirm">استيراد %1$d صفاً بعد الموافقة</string>
+    <string name="transfer_import_done">تم الاستيراد: %1$d سجلاً جديداً، وتحديث %2$d سجل موجود</string>
+    <string name="transfer_saved">تم حفظ الملف بنجاح</string>
+    <string name="transfer_edit_row">تعديل الصف</string>
+    <string name="transfer_edit_save">حفظ التعديل</string>
+    <string name="transfer_error_missing_name">اسم الدواء مفقود</string>
+    <string name="transfer_error_bad_barcode">الباركود يحتوي على رموز غير صالحة</string>
+    <string name="transfer_error_bad_boolean">قيمة التوثيق غير مفهومة</string>
+    <string name="transfer_warn_dup_file">مكرر داخل الملف (الصف %1$s)</string>
+    <string name="transfer_warn_dup_db">مكرر مع سجل موجود — تضمينه يعني تحديث السجل الحالي</string>
+    <string name="transfer_export_section">تصدير البيانات</string>
+    <string name="transfer_export_drugs">تصدير قاعدة الأدوية</string>
+    <string name="transfer_export_prescriptions">تصدير الوصفات</string>
+    <string name="transfer_backup_section">النسخ الاحتياطي المشفّر</string>
+    <string name="transfer_backup_hint">نسخة كاملة (وصفات + أدوية) مشفّرة بعبارة مرور — تُستعاد بالدمج دون حذف أي بيانات.</string>
+    <string name="transfer_backup_create">إنشاء نسخة احتياطية</string>
+    <string name="transfer_backup_restore">استعادة نسخة</string>
+    <string name="transfer_backup_passphrase">عبارة المرور</string>
+    <string name="transfer_backup_passphrase_hint">اختر عبارة مرور قوية واحتفظ بها — لا يمكن فتح النسخة بدونها.</string>
+    <string name="transfer_history_section">سجل عمليات الاستيراد والتصدير</string>
+    <string name="transfer_history_empty">لا توجد عمليات بعد</string>
+    <string name="transfer_log_import">استيراد</string>
+    <string name="transfer_log_export">تصدير</string>
+    <string name="transfer_log_backup">نسخة احتياطية</string>
+    <string name="transfer_log_restore">استعادة</string>
+    <string name="transfer_log_rows">نجحت %1$d • فشلت %2$d</string>
+    <string name="transfer_error_unreadable">تعذر قراءة الملف</string>
+    <string name="transfer_error_write">تعذر حفظ الملف</string>
+    <string name="transfer_error_empty">الملف لا يحتوي على بيانات</string>
+    <string name="transfer_error_no_rows">لم يتم اختيار أي صف للاستيراد</string>
+    <string name="transfer_error_passphrase">عبارة المرور غير صحيحة أو الملف تالف</string>
+    <string name="transfer_error_invalid">تنسيق الملف غير صالح</string>
+    <string name="transfer_error_generic">حدث خطأ غير متوقع</string>
 
     <!-- AI Assistant -->
     <string name="assistant_title">المساعد الصيدلي الذكي</string>

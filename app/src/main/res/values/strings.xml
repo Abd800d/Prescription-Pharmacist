@@ -191,15 +191,44 @@
 
     <!-- Import / Export -->
     <string name="transfer_title">Import &amp; Export</string>
-    <string name="transfer_export_title">Export data</string>
-    <string name="transfer_export_desc">Export all prescriptions and your drug catalog as a JSON file that you can store safely or move to another device.</string>
-    <string name="transfer_export_button">Export JSON file</string>
-    <string name="transfer_import_title">Import data</string>
-    <string name="transfer_import_desc">Import a previously exported JSON file. Existing records with the same ID will be updated.</string>
-    <string name="transfer_import_button">Import JSON file</string>
-    <string name="transfer_export_success">File exported successfully</string>
-    <string name="transfer_import_success">Imported %1$d prescriptions and %2$d drugs</string>
-    <string name="transfer_import_error">Import failed — the file format is invalid.</string>
+    <string name="transfer_import_section">Import data</string>
+    <string name="transfer_import_hint">Pick a CSV, XLSX or JSON file — with Arabic or English column names. You will see a full preview before importing, and no previous data is ever deleted.</string>
+    <string name="transfer_pick_file">Pick file</string>
+    <string name="transfer_preview_summary">File: %1$s (%2$s) — %3$d rows • %4$d ready to import • %5$d with errors • %6$d warnings</string>
+    <string name="transfer_no_delete_note">Importing never deletes or modifies existing data — except for duplicate rows you explicitly approve.</string>
+    <string name="transfer_import_confirm">Import %1$d rows after approval</string>
+    <string name="transfer_import_done">Imported: %1$d new records, %2$d existing records updated</string>
+    <string name="transfer_saved">File saved</string>
+    <string name="transfer_edit_row">Edit row</string>
+    <string name="transfer_edit_save">Save changes</string>
+    <string name="transfer_error_missing_name">Drug name is missing</string>
+    <string name="transfer_error_bad_barcode">Barcode contains invalid characters</string>
+    <string name="transfer_error_bad_boolean">Unrecognized verification value</string>
+    <string name="transfer_warn_dup_file">Duplicate in file (row %1$s)</string>
+    <string name="transfer_warn_dup_db">Duplicate of an existing record — including it updates that record</string>
+    <string name="transfer_export_section">Export data</string>
+    <string name="transfer_export_drugs">Export drug database</string>
+    <string name="transfer_export_prescriptions">Export prescriptions</string>
+    <string name="transfer_backup_section">Encrypted backup</string>
+    <string name="transfer_backup_hint">A full backup (prescriptions + drugs) encrypted with a passphrase — restored by merging, never by deleting.</string>
+    <string name="transfer_backup_create">Create backup</string>
+    <string name="transfer_backup_restore">Restore backup</string>
+    <string name="transfer_backup_passphrase">Passphrase</string>
+    <string name="transfer_backup_passphrase_hint">Choose a strong passphrase and keep it safe — the backup cannot be opened without it.</string>
+    <string name="transfer_history_section">Import/export history</string>
+    <string name="transfer_history_empty">No operations yet</string>
+    <string name="transfer_log_import">Import</string>
+    <string name="transfer_log_export">Export</string>
+    <string name="transfer_log_backup">Backup</string>
+    <string name="transfer_log_restore">Restore</string>
+    <string name="transfer_log_rows">%1$d ok • %2$d failed</string>
+    <string name="transfer_error_unreadable">Could not read the file</string>
+    <string name="transfer_error_write">Could not save the file</string>
+    <string name="transfer_error_empty">The file contains no data</string>
+    <string name="transfer_error_no_rows">No rows selected for import</string>
+    <string name="transfer_error_passphrase">Wrong passphrase or corrupted file</string>
+    <string name="transfer_error_invalid">Invalid file format</string>
+    <string name="transfer_error_generic">An unexpected error occurred</string>
 
     <!-- AI Assistant -->
     <string name="assistant_title">AI Pharmacist Assistant</string>
