@@ -279,7 +279,7 @@ class TransferRepositoryImpl @Inject constructor(
         return TransferFormat.CSV
     }
 
-    private fun planJson(fileName: String, bytes: ByteArray): ImportPreview {
+    private suspend fun planJson(fileName: String, bytes: ByteArray): ImportPreview {
         val element = Json.parseToJsonElement(String(bytes, Charsets.UTF_8))
         val array: JsonArray = when (element) {
             is JsonArray -> element
@@ -315,7 +315,7 @@ class TransferRepositoryImpl @Inject constructor(
         )
     }
 
-    private fun exportFile(
+    private suspend fun exportFile(
         action: TransferLogAction,
         format: TransferFormat,
         baseName: String,
