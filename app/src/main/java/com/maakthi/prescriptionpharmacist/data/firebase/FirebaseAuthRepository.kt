@@ -78,8 +78,11 @@ class FirebaseAuthRepository @Inject constructor(
         val result = awaitAuth { firebaseAuth.createUserWithEmailAndPassword(email, password) }
         // Send the verification link immediately after registration.
         if (result.isSuccess) {
-            runCatching {
-                Tasks.await(firebaseAuth.currentUser?.sendEmailVerification(), 20, TimeUnit.SECONDS)
+            val created = firebaseAuth.currentUser
+            if (created != null) {
+                runCatching {
+                    Tasks.await(created.sendEmailVerification(), 20, TimeUnit.SECONDS)
+                }
             }
         }
         return result
