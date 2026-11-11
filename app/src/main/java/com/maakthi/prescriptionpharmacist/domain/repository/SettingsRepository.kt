@@ -14,4 +14,5 @@ interface SettingsRepository {
     suspend fun setLanguage(language: AppLanguage)
     suspend fun setBackendUrl(url: String)
     suspend fun setOnboardingDone(done: Boolean)
+    suspend fun setMediaSyncEnabled(enabled: Boolean)
 }

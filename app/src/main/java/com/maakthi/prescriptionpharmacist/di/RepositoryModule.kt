@@ -67,4 +67,8 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindTransferRepository(impl: TransferRepositoryImpl): TransferRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindMediaRepository(impl: com.maakthi.prescriptionpharmacist.data.repository.MediaRepositoryImpl): com.maakthi.prescriptionpharmacist.domain.repository.MediaRepository
 }

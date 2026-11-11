@@ -1,0 +1,15 @@
+rules_version = '2';
+
+// Prescription Pharmacist — Storage security rules.
+//
+// Every user's media lives under users/{userId}/… and is readable/writable
+// ONLY by that signed-in user (admins included per user, not by link). There
+// are no public paths and no unauthenticated access: images are never exposed
+// through unprotected URLs.
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /users/{userId}/{allPaths=**} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+  }
+}

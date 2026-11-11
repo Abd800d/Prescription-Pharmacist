@@ -189,6 +189,35 @@
     <string name="product_delete_title">حذف الصورة؟</string>
     <string name="product_delete_message">سيتم حذف صورة المنتج نهائياً.</string>
 
+    <!-- ============ Media library ============ -->
+    <string name="action_media">الصور المحفوظة</string>
+    <string name="media_title">الصور المحفوظة</string>
+    <string name="media_saved">تم حفظ الصورة</string>
+    <string name="media_deleted">تم حذف الصورة نهائياً</string>
+    <string name="media_sync_done">اكتملت المزامنة</string>
+    <string name="media_product_title">عنوان المنتج</string>
+    <string name="media_add_save">حفظ</string>
+    <string name="media_delete_title">حذف الصورة؟</string>
+    <string name="media_delete_message">سيتم حذف الصورة نهائياً من هذا الجهاز ومن النسخة السحابية. لا يمكن التراجع عن ذلك.</string>
+    <string name="media_delete_confirm">حذف نهائي</string>
+    <string name="media_sync_now">مزامنة الآن</string>
+    <string name="media_sync_title">المزامنة الآمنة</string>
+    <string name="media_sync_hint">عند التفعيل، تُرفع الصور إلى تخزين خاص آمن (لا يصل إليها إلا حسابك). تبقى نسخة محلية دائماً — وإيقاف المزامنة لا يحذف أي شيء.</string>
+    <string name="media_filter_all">الكل</string>
+    <string name="media_filter_prescriptions">الوصفات</string>
+    <string name="media_filter_products">المنتجات</string>
+    <string name="media_add_prescription">إضافة صورة وصفة</string>
+    <string name="media_add_product">إضافة صورة منتج</string>
+    <string name="media_empty">لا توجد صور محفوظة بعد.</string>
+    <string name="media_meta">%1$s • حفظها %2$s</string>
+    <string name="media_status_synced">تمت المزامنة</string>
+    <string name="media_status_pending">بانتظار المزامنة</string>
+    <string name="media_status_failed">فشلت المزامنة — ستُعاد</string>
+    <string name="media_status_local">نسخة محلية فقط</string>
+    <string name="media_encrypted_note">🔒 مخزّنة مشفّرة على هذا الجهاز</string>
+    <string name="close">إغلاق</string>
+    <!-- ============ Media library ============ -->
+
     <!-- Import / Export -->
     <string name="transfer_title">استيراد وتصدير البيانات</string>
     <string name="transfer_import_section">استيراد البيانات</string>

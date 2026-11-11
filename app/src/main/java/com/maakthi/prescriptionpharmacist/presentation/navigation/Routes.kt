@@ -10,6 +10,7 @@ object Routes {
     const val DRUG_SEARCH = "drug_search"
     const val SAVED = "saved"
     const val PRODUCTS = "products"
+    const val MEDIA = "media"
     const val SETTINGS = "settings"
 
     // Auth

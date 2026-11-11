@@ -45,6 +45,10 @@ object DatabaseModule {
         database.assistantLogDao()
 
     @Provides
+    fun provideMediaAssetDao(database: AppDatabase): com.maakthi.prescriptionpharmacist.data.local.dao.MediaAssetDao =
+        database.mediaAssetDao()
+
+    @Provides
     fun provideProductImageDao(database: AppDatabase): ProductImageDao =
         database.productImageDao()
 }

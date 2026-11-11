@@ -46,6 +46,7 @@ import com.maakthi.prescriptionpharmacist.presentation.home.HomeScreen
 import com.maakthi.prescriptionpharmacist.presentation.legal.PrivacyScreen
 import com.maakthi.prescriptionpharmacist.presentation.legal.TermsScreen
 import com.maakthi.prescriptionpharmacist.presentation.onboarding.OnboardingScreen
+import com.maakthi.prescriptionpharmacist.presentation.media.MediaManagerScreen
 import com.maakthi.prescriptionpharmacist.presentation.products.ProductsScreen
 import com.maakthi.prescriptionpharmacist.presentation.review.AnalysisScreen
 import com.maakthi.prescriptionpharmacist.presentation.review.ConfirmEditScreen
@@ -358,6 +359,9 @@ fun AppNavHost(
             }
 
             // ---------- Misc ----------
+            composable(Routes.MEDIA) {
+                MediaManagerScreen(onBack = { navController.popBackStack() })
+            }
             composable(Routes.TRANSFER) {
                 TransferScreen(onBack = { navController.popBackStack() })
             }

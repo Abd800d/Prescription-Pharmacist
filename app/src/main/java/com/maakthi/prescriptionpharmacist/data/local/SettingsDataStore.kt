@@ -27,6 +27,7 @@ class SettingsDataStore @Inject constructor(
         val LANGUAGE = stringPreferencesKey("language")
         val BACKEND_URL = stringPreferencesKey("backend_url")
         val ONBOARDING_DONE = booleanPreferencesKey("onboarding_done")
+        val MEDIA_SYNC_ENABLED = booleanPreferencesKey("media_sync_enabled")
     }
 
     override val settings: Flow<AppSettings> = context.dataStore.data.map { prefs ->
@@ -38,7 +39,8 @@ class SettingsDataStore @Inject constructor(
                 ?.let { runCatching { AppLanguage.valueOf(it) }.getOrNull() }
                 ?: AppLanguage.SYSTEM,
             backendUrl = prefs[Keys.BACKEND_URL] ?: "",
-            onboardingDone = prefs[Keys.ONBOARDING_DONE] ?: false
+            onboardingDone = prefs[Keys.ONBOARDING_DONE] ?: false,
+            mediaSyncEnabled = prefs[Keys.MEDIA_SYNC_ENABLED] ?: false
         )
     }
 
@@ -56,5 +58,9 @@ class SettingsDataStore @Inject constructor(
 
     override suspend fun setOnboardingDone(done: Boolean) {
         context.dataStore.edit { it[Keys.ONBOARDING_DONE] = done }
+    }
+
+    override suspend fun setMediaSyncEnabled(enabled: Boolean) {
+        context.dataStore.edit { it[Keys.MEDIA_SYNC_ENABLED] = enabled }
     }
 }

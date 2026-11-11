@@ -5,7 +5,8 @@ data class AppSettings(
     val themeMode: ThemeMode = ThemeMode.SYSTEM,
     val language: AppLanguage = AppLanguage.SYSTEM,
     val backendUrl: String = "",
-    val onboardingDone: Boolean = false
+    val onboardingDone: Boolean = false,
+    val mediaSyncEnabled: Boolean = false
 )
 
 enum class ThemeMode { SYSTEM, LIGHT, DARK }

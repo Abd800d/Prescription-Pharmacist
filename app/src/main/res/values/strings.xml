@@ -189,6 +189,35 @@
     <string name="product_delete_title">Delete image?</string>
     <string name="product_delete_message">This product image will be permanently deleted.</string>
 
+    <!-- ============ Media library ============ -->
+    <string name="action_media">Saved images</string>
+    <string name="media_title">Saved images</string>
+    <string name="media_saved">Image saved</string>
+    <string name="media_deleted">Image permanently deleted</string>
+    <string name="media_sync_done">Sync finished</string>
+    <string name="media_product_title">Product title</string>
+    <string name="media_add_save">Save</string>
+    <string name="media_delete_title">Delete image?</string>
+    <string name="media_delete_message">The image will be permanently deleted from this device and from the cloud copy. This cannot be undone.</string>
+    <string name="media_delete_confirm">Delete permanently</string>
+    <string name="media_sync_now">Sync now</string>
+    <string name="media_sync_title">Secure sync</string>
+    <string name="media_sync_hint">When enabled, images are uploaded to secure private storage (only your account can access them). A local copy is always kept — disabling sync never deletes anything.</string>
+    <string name="media_filter_all">All</string>
+    <string name="media_filter_prescriptions">Prescriptions</string>
+    <string name="media_filter_products">Products</string>
+    <string name="media_add_prescription">Add prescription image</string>
+    <string name="media_add_product">Add product image</string>
+    <string name="media_empty">No saved images yet.</string>
+    <string name="media_meta">%1$s • saved by %2$s</string>
+    <string name="media_status_synced">Synced</string>
+    <string name="media_status_pending">Waiting to sync</string>
+    <string name="media_status_failed">Sync failed — will retry</string>
+    <string name="media_status_local">Local copy only</string>
+    <string name="media_encrypted_note">🔒 Stored encrypted on this device</string>
+    <string name="close">Close</string>
+    <!-- ============ Media library ============ -->
+
     <!-- Import / Export -->
     <string name="transfer_title">Import &amp; Export</string>
     <string name="transfer_import_section">Import data</string>

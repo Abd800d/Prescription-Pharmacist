@@ -75,6 +75,7 @@ fun HomeScreen(
         QuickAction(Icons.Filled.Add, R.string.action_add_drug, Routes.DRUG_ADD),
         QuickAction(Icons.Filled.Save, R.string.action_saved, Routes.SAVED),
         QuickAction(Icons.Filled.ImageSearch, R.string.action_products, Routes.PRODUCTS),
+        QuickAction(Icons.Filled.Collections, R.string.action_media, Routes.MEDIA),
         QuickAction(Icons.Filled.FileUpload, R.string.action_transfer, Routes.TRANSFER),
         QuickAction(Icons.Filled.Chat, R.string.action_assistant, Routes.ASSISTANT),
         QuickAction(Icons.Filled.Backup, R.string.action_backup, Routes.BACKUP),
