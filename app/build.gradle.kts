@@ -96,6 +96,12 @@ android {
     }
 }
 
+// Drop Guava's empty listenablefuture stub everywhere — the full Guava
+// artifact (declared in :app) provides the real ListenableFuture class.
+configurations.all {
+    exclude(group = "com.google.guava", module = "listenablefuture")
+}
+
 dependencies {
     // Compose
     val composeBom = platform(libs.compose.bom)
@@ -156,6 +162,11 @@ dependencies {
     implementation(libs.firebase.auth)
     implementation(libs.firebase.storage)
     implementation(libs.firebase.firestore)
+
+    // Firestore (via grpc) and CameraX both need Guava's ListenableFuture;
+    // force the full Guava artifact and drop the empty stub to avoid a
+    // "Cannot access class ListenableFuture" classpath conflict.
+    implementation("com.google.guava:guava:32.1.3-android")
     implementation(libs.play.services.auth)
 
     // Unit tests
