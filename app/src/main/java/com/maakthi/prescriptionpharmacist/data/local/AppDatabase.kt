@@ -2,11 +2,13 @@ package com.maakthi.prescriptionpharmacist.data.local
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import com.maakthi.prescriptionpharmacist.data.local.dao.AssistantLogDao
 import com.maakthi.prescriptionpharmacist.data.local.dao.DrugAuditDao
 import com.maakthi.prescriptionpharmacist.data.local.dao.DrugDao
 import com.maakthi.prescriptionpharmacist.data.local.dao.PrescriptionDao
 import com.maakthi.prescriptionpharmacist.data.local.dao.ProductImageDao
 import com.maakthi.prescriptionpharmacist.data.local.dao.TransferLogDao
+import com.maakthi.prescriptionpharmacist.data.local.entity.AssistantLogEntity
 import com.maakthi.prescriptionpharmacist.data.local.entity.DrugAuditEntity
 import com.maakthi.prescriptionpharmacist.data.local.entity.DrugEntity
 import com.maakthi.prescriptionpharmacist.data.local.entity.MedicationEntity
@@ -21,9 +23,10 @@ import com.maakthi.prescriptionpharmacist.data.local.entity.TransferLogEntity
         DrugEntity::class,
         DrugAuditEntity::class,
         ProductImageEntity::class,
-        TransferLogEntity::class
+        TransferLogEntity::class,
+        AssistantLogEntity::class
     ],
-    version = 4,
+    version = 5,
     exportSchema = true
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -32,6 +35,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun drugAuditDao(): DrugAuditDao
     abstract fun productImageDao(): ProductImageDao
     abstract fun transferLogDao(): TransferLogDao
+    abstract fun assistantLogDao(): AssistantLogDao
 
     companion object {
         const val NAME = "prescription_pharmacist.db"

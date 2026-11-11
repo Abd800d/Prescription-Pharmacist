@@ -239,6 +239,14 @@
     <string name="assistant_error">The assistant could not answer. Please try again.</string>
     <string name="assistant_not_configured">The AI assistant requires the secure backend. Add its URL from Settings → Secure backend URL.</string>
     <string name="assistant_disclaimer">Informational only — never a substitute for professional clinical judgment.</string>
+    <string name="assistant_disclaimer_banner">⚠️ This assistant does not replace a doctor or pharmacist. It provides informational answers from reliable sources only — never a final diagnosis, and never a change to a dose or medication.</string>
+    <string name="assistant_welcome">Ask about a medication: its uses, warnings, side effects, or interactions. The answer is built from your drug database and official sources, and every answer shows its sources.</string>
+    <string name="assistant_sources_title">Sources</string>
+    <string name="assistant_delete_title">Delete chat history?</string>
+    <string name="assistant_delete_message">The whole conversation log will be permanently deleted from this device.</string>
+    <string name="assistant_delete_confirm">Delete</string>
+    <string name="assistant_rate_limited">Too many requests — please wait a moment and try again.</string>
+    <string name="assistant_error_network">No internet connection. Check your connection and try again.</string>
 
     <!-- Settings -->
     <string name="settings_title">Settings</string>

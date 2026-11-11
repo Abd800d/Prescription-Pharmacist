@@ -32,5 +32,6 @@ enum class ErrorCode {
     VALIDATION,
     DUPLICATE,
     NOT_FOUND,
+    RATE_LIMITED,
     UNKNOWN
 }

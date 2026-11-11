@@ -1,12 +1,11 @@
 package com.maakthi.prescriptionpharmacist.presentation.assistant
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
@@ -16,6 +15,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Send
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -25,28 +26,36 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.maakthi.prescriptionpharmacist.R
-import com.maakthi.prescriptionpharmacist.domain.model.ChatMessage
+import com.maakthi.prescriptionpharmacist.domain.model.AssistantCitation
 import com.maakthi.prescriptionpharmacist.domain.model.ChatRole
 import com.maakthi.prescriptionpharmacist.domain.model.ErrorCode
-import com.maakthi.prescriptionpharmacist.presentation.components.EmptyStateView
-import com.maakthi.prescriptionpharmacist.presentation.components.ErrorView
 
 /**
- * AI pharmacist assistant chat. Real requests go to the secure backend
- * (`/chat`); when no backend is configured the screen explains exactly how
- * to enable the feature.
+ * Bilingual (AR/EN) chat with the RAG drug assistant.
+ *
+ * Every answer shows source name + link + update date; answers without
+ * reliable evidence show the explicit "not enough reliable information"
+ * message; a permanent banner reminds the user the assistant does not
+ * replace a doctor or pharmacist; the local history can be deleted at any time.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -57,12 +66,55 @@ fun AssistantScreen(
     val messages by viewModel.messages.collectAsStateWithLifecycle()
     val input by viewModel.input.collectAsStateWithLifecycle()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val snackbarHostState = remember { SnackbarHostState() }
     val listState = rememberLazyListState()
+    var confirmDelete by remember { mutableStateOf(false) }
+
+    val errorGeneric = stringResource(R.string.assistant_error)
+    val errorNotConfigured = stringResource(R.string.assistant_not_configured)
+    val errorRateLimited = stringResource(R.string.assistant_rate_limited)
+    val errorNetwork = stringResource(R.string.assistant_error_network)
+
+    LaunchedEffect(uiState) {
+        val state = uiState
+        if (state is AssistantUiState.Error) {
+            snackbarHostState.showSnackbar(
+                when (state.code) {
+                    ErrorCode.NOT_CONFIGURED -> errorNotConfigured
+                    ErrorCode.RATE_LIMITED -> errorRateLimited
+                    ErrorCode.NETWORK -> errorNetwork
+                    else -> errorGeneric
+                }
+            )
+            viewModel.dismissError()
+        }
+    }
 
     LaunchedEffect(messages.size) {
         if (messages.isNotEmpty()) {
-            listState.animateScrollToItem(messages.lastIndex)
+            listState.animateScrollToItem(messages.size - 1)
         }
+    }
+
+    if (confirmDelete) {
+        AlertDialog(
+            onDismissRequest = { confirmDelete = false },
+            title = { Text(stringResource(R.string.assistant_delete_title)) },
+            text = { Text(stringResource(R.string.assistant_delete_message)) },
+            confirmButton = {
+                TextButton(onClick = {
+                    confirmDelete = false
+                    viewModel.deleteHistory()
+                }) {
+                    Text(stringResource(R.string.assistant_delete_confirm))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { confirmDelete = false }) {
+                    Text(stringResource(R.string.cancel))
+                }
+            }
+        )
     }
 
     Scaffold(
@@ -71,86 +123,88 @@ fun AssistantScreen(
                 title = { Text(stringResource(R.string.assistant_title)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(
-                            Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(R.string.back)
-                        )
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back))
+                    }
+                },
+                actions = {
+                    IconButton(onClick = { confirmDelete = true }) {
+                        Icon(Icons.Filled.Delete, contentDescription = stringResource(R.string.assistant_delete_title))
                     }
                 }
             )
-        }
+        },
+        snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { padding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .padding(horizontal = 12.dp)
         ) {
-            Text(
-                text = stringResource(R.string.assistant_disclaimer),
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.padding(vertical = 6.dp)
-            )
-
-            if (messages.isEmpty()) {
-                EmptyStateView(
-                    message = stringResource(R.string.assistant_subtitle),
-                    modifier = Modifier.weight(1f)
+            // ---- permanent disclaimer banner ----
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 12.dp, vertical = 6.dp),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.tertiaryContainer)
+            ) {
+                Text(
+                    text = stringResource(R.string.assistant_disclaimer_banner),
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier.padding(10.dp)
                 )
-            } else {
-                LazyColumn(
-                    state = listState,
-                    modifier = Modifier.weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                    contentPadding = androidx.compose.foundation.layout.PaddingValues(vertical = 8.dp)
-                ) {
-                    items(messages, key = { it.timestamp }) { message ->
-                        ChatBubble(message)
+            }
+
+            LazyColumn(
+                state = listState,
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+                    .padding(horizontal = 12.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                if (messages.isEmpty()) {
+                    item {
+                        Text(
+                            text = stringResource(R.string.assistant_welcome),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.outline,
+                            modifier = Modifier.padding(16.dp)
+                        )
                     }
-                    if (uiState == AssistantUiState.Thinking) {
-                        item {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                CircularProgressIndicator(modifier = Modifier.height(20.dp))
-                                Text(
-                                    text = stringResource(R.string.assistant_thinking),
-                                    style = MaterialTheme.typography.bodySmall,
-                                    modifier = Modifier.padding(start = 8.dp)
-                                )
-                            }
+                }
+                items(messages.size) { index ->
+                    ChatBubbleCard(messages[index])
+                }
+                if (uiState == AssistantUiState.Thinking) {
+                    item {
+                        Row(
+                            modifier = Modifier.padding(8.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            CircularProgressIndicator(modifier = Modifier.widthIn(max = 20.dp))
+                            Text(
+                                text = stringResource(R.string.assistant_thinking),
+                                style = MaterialTheme.typography.bodySmall
+                            )
                         }
                     }
                 }
             }
 
-            when (val state = uiState) {
-                is AssistantUiState.Error -> ErrorView(
-                    message = stringResource(
-                        when (state.code) {
-                            ErrorCode.NOT_CONFIGURED -> R.string.assistant_not_configured
-                            ErrorCode.NETWORK -> R.string.error_network
-                            ErrorCode.UNAUTHORIZED -> R.string.error_unauthorized
-                            ErrorCode.SERVER -> R.string.error_server
-                            else -> R.string.assistant_error
-                        }
-                    ),
-                    modifier = Modifier.padding(vertical = 6.dp),
-                    onRetry = { viewModel.dismissError() }
-                )
-                else -> Unit
-            }
-
+            // ---- input ----
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 8.dp),
-                verticalAlignment = Alignment.CenterVertically
+                    .padding(12.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 OutlinedTextField(
                     value = input,
                     onValueChange = viewModel::onInputChange,
-                    placeholder = { Text(stringResource(R.string.assistant_input_hint)) },
                     modifier = Modifier.weight(1f),
+                    placeholder = { Text(stringResource(R.string.assistant_input_hint)) },
                     maxLines = 4
                 )
                 IconButton(
@@ -159,8 +213,7 @@ fun AssistantScreen(
                 ) {
                     Icon(
                         Icons.AutoMirrored.Filled.Send,
-                        contentDescription = stringResource(R.string.assistant_send),
-                        tint = MaterialTheme.colorScheme.primary
+                        contentDescription = stringResource(R.string.assistant_send)
                     )
                 }
             }
@@ -169,31 +222,66 @@ fun AssistantScreen(
 }
 
 @Composable
-private fun ChatBubble(message: ChatMessage) {
-    val isUser = message.role == ChatRole.USER
+private fun ChatBubbleCard(bubble: ChatBubble) {
+    val isUser = bubble.role == ChatRole.USER
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = if (isUser) Arrangement.End else Arrangement.Start
     ) {
         Card(
+            modifier = Modifier.widthIn(max = 320.dp),
             shape = RoundedCornerShape(
-                topStart = 16.dp,
-                topEnd = 16.dp,
-                bottomStart = if (isUser) 16.dp else 4.dp,
-                bottomEnd = if (isUser) 4.dp else 16.dp
+                topStart = 14.dp,
+                topEnd = 14.dp,
+                bottomStart = if (isUser) 14.dp else 4.dp,
+                bottomEnd = if (isUser) 4.dp else 14.dp
             ),
-            colors = CardDefaults.cardColors(
-                containerColor = if (isUser) MaterialTheme.colorScheme.primaryContainer
-                else MaterialTheme.colorScheme.surfaceVariant
-            ),
-            modifier = Modifier.widthIn(max = 300.dp)
+            colors = if (isUser) {
+                CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
+            } else if (bubble.insufficient) {
+                CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer)
+            } else {
+                CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
+            }
         ) {
-            Text(
-                text = message.content,
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.padding(12.dp)
-            )
+            Column(modifier = Modifier.padding(10.dp)) {
+                Text(
+                    text = bubble.content,
+                    style = MaterialTheme.typography.bodyMedium
+                )
+                if (!isUser && bubble.citations.isNotEmpty()) {
+                    Text(
+                        text = stringResource(R.string.assistant_sources_title),
+                        style = MaterialTheme.typography.labelMedium,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(top = 6.dp)
+                    )
+                    bubble.citations.forEach { citation ->
+                        CitationLine(citation)
+                    }
+                }
+            }
         }
     }
-    Spacer(Modifier.height(2.dp))
+}
+
+@Composable
+private fun CitationLine(citation: AssistantCitation) {
+    val parts = buildList {
+        add(citation.sourceName)
+        if (citation.sourceDate.isNotBlank()) add(citation.sourceDate)
+    }.joinToString(" • ")
+    Text(
+        text = parts,
+        style = MaterialTheme.typography.labelSmall,
+        modifier = Modifier.padding(top = 2.dp)
+    )
+    if (citation.sourceUrl.isNotBlank()) {
+        Text(
+            text = citation.sourceUrl,
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.padding(top = 1.dp)
+        )
+    }
 }

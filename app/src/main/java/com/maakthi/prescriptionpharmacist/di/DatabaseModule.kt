@@ -41,6 +41,10 @@ object DatabaseModule {
         database.transferLogDao()
 
     @Provides
+    fun provideAssistantLogDao(database: AppDatabase): com.maakthi.prescriptionpharmacist.data.local.dao.AssistantLogDao =
+        database.assistantLogDao()
+
+    @Provides
     fun provideProductImageDao(database: AppDatabase): ProductImageDao =
         database.productImageDao()
 }

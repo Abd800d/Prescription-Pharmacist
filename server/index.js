@@ -43,10 +43,77 @@ const GEMINI_API_KEY = defineSecret("GEMINI_API_KEY");
 const MAX_IMAGE_BYTES = 8 * 1024 * 1024;
 
 /**
- * POST {baseUrl}/chat — AI pharmacist assistant.
- * Body: {"messages":[{"role":"user|assistant","content":"..."}]}
- * Resp: {"reply":"..."}
+ * POST {baseUrl}/chat — RAG drug assistant (Arabic + English).
+ *
+ * Body: {
+ *   "messages": [{"role":"user|assistant","content":"…"}],
+ *   "evidence": [{"id":1,"text":"…","sourceName":"…","sourceUrl":"…","sourceDate":"…"}],
+ *   "language": "ar|en"
+ * }
+ * Resp: {"reply":"…","citations":[{"sourceName":"…","sourceUrl":"…","sourceDate":"…"}]}
+ *
+ * The model answers FROM the provided evidence only. Citations can only point
+ * at provided evidence items — fabricated sources/links are stripped. With no
+ * evidence the endpoint answers with an explicit refusal and never invents
+ * information. Rate limited per caller (uid or IP).
  */
+const CHAT_RATE_PER_MINUTE = 10;
+const CHAT_RATE_PER_HOUR = 60;
+const chatBuckets = new Map();
+
+function chatRateOk(key) {
+  const now = Date.now();
+  const bucket = chatBuckets.get(key) ?? [];
+  const recent = bucket.filter((t) => now - t < 60 * 60 * 1000);
+  if (
+    recent.length >= CHAT_RATE_PER_HOUR ||
+    recent.filter((t) => now - t < 60 * 1000).length >= CHAT_RATE_PER_MINUTE
+  ) {
+    chatBuckets.set(key, recent);
+    return false;
+  }
+  recent.push(now);
+  chatBuckets.set(key, recent);
+  return true;
+}
+
+const URL_REGEX = /https?:\/\/[^\s)\]>"'`]+/g;
+const MARKDOWN_LINK_REGEX = /\[([^\]]+)]\((https?:\/\/[^)\s]+)\)/g;
+const CITED_ID_REGEX = /\[(\d{1,2})]/g;
+
+function stripForeignLinks(text, allowedUrls) {
+  let out = String(text ?? "").replace(MARKDOWN_LINK_REGEX, (m, label, url) =>
+    allowedUrls.has(url) ? m : label
+  );
+  out = out.replace(URL_REGEX, (m) => (allowedUrls.has(m.replace(/\.$/, "")) ? m : ""));
+  return out;
+}
+
+function buildCitations(reply, evidence) {
+  const ids = new Set();
+  String(reply ?? "").replace(CITED_ID_REGEX, (m, n) => {
+    ids.add(Number(n));
+    return m;
+  });
+  const picked = ids.size
+    ? evidence.filter((e) => ids.has(Number(e.id)))
+    : evidence;
+  const seen = new Set();
+  const out = [];
+  for (const e of picked) {
+    const key = `${e.sourceName}|${e.sourceUrl}`;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    out.push({
+      sourceName: String(e.sourceName ?? ""),
+      sourceUrl: String(e.sourceUrl ?? ""),
+      sourceDate: String(e.sourceDate ?? ""),
+    });
+    if (out.length >= 6) break;
+  }
+  return out;
+}
+
 exports.chat = onRequest(
   {
     region: "europe-west1",
@@ -70,15 +137,57 @@ exports.chat = onRequest(
       return;
     }
 
+    // ---- rate limiting (per user, falling back to client IP) ----
+    const callerKey = uid || req.ip || "anonymous";
+    if (!chatRateOk(`chat:${callerKey}`)) {
+      res.status(429).json({
+        error: { code: "rate_limited", message: "Too many requests — try again later" },
+      });
+      return;
+    }
+
     let messages;
+    let evidence = [];
+    let language = "en";
     try {
       const body = typeof req.body === "string" ? JSON.parse(req.body) : req.body;
       messages = body?.messages;
       if (!Array.isArray(messages) || messages.length === 0) throw new Error("messages required");
+      if (Array.isArray(body?.evidence)) {
+        evidence = body.evidence
+          .filter((e) => e && Number.isInteger(Number(e.id)) && String(e.text ?? "").trim())
+          .map((e, i) => ({
+            id: Number(e.id) || i + 1,
+            text: String(e.text).slice(0, 500),
+            sourceName: String(e.sourceName ?? "").slice(0, 120),
+            sourceUrl: String(e.sourceUrl ?? "").slice(0, 300),
+            sourceDate: String(e.sourceDate ?? "").slice(0, 40),
+          }))
+          .slice(0, 30);
+      }
+      if (body?.language === "ar" || body?.language === "en") language = body.language;
     } catch (e) {
       res.status(400).json({ error: { code: "bad_request", message: e.message } });
       return;
     }
+
+    const refusal =
+      language === "ar"
+        ? "لا توجد معلومات موثوقة كافية للإجابة عن هذا السؤال. يرجى الرجوع إلى الطبيب أو الصيدلي."
+        : "There is not enough reliable information to answer this question. Please consult a doctor or pharmacist.";
+
+    // ---- no evidence → explicit refusal, never a free-form guess ----
+    if (evidence.length === 0) {
+      res.status(200).json({ reply: refusal, citations: [] });
+      return;
+    }
+
+    const allowedUrls = new Set(
+      evidence.map((e) => e.sourceUrl).filter(Boolean)
+    );
+    const evidenceBlock = evidence
+      .map((e) => `[${e.id}] ${e.text} (source: ${e.sourceName}${e.sourceDate ? ", " + e.sourceDate : ""})`)
+      .join("\n");
 
     try {
       const endpoint =
@@ -88,10 +197,18 @@ exports.chat = onRequest(
           parts: [
             {
               text:
-                "You are a clinical pharmacist assistant. Give concise, accurate, " +
-                "evidence-based information about medications. Always remind the user " +
-                "that a licensed pharmacist must confirm any dispensing decision. " +
-                "Answer in the language of the question (Arabic or English).",
+                "You are a clinical pharmacist assistant answering STRICTLY from the " +
+                "evidence provided below. Rules:\n" +
+                "1. Use ONLY facts stated in the evidence. Never use outside knowledge.\n" +
+                "2. Cite evidence ids inline like [1], [2] for every factual claim.\n" +
+                "3. If the evidence does not contain the answer, reply exactly: \"" +
+                refusal +
+                "\"\n" +
+                "4. Never provide a final diagnosis. Never tell the user to change a dose " +
+                "or stop a medication — always refer them to their doctor for any change.\n" +
+                "5. Never invent sources, names, links or dates. Only cite the evidence ids.\n" +
+                "6. Answer in " + (language === "ar" ? "Arabic" : "English") + ".\n\n" +
+                "Evidence:\n" + evidenceBlock,
             },
           ],
         },
@@ -99,7 +216,7 @@ exports.chat = onRequest(
           role: m.role === "assistant" ? "model" : "user",
           parts: [{ text: String(m.content ?? "") }],
         })),
-        generationConfig: { temperature: 0.3 },
+        generationConfig: { temperature: 0.2 },
       };
 
       const response = await fetch(endpoint, {
@@ -121,14 +238,18 @@ exports.chat = onRequest(
       }
 
       const data = await response.json();
-      const reply = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+      let reply = data?.candidates?.[0]?.content?.parts?.[0]?.text;
       if (!reply) {
         res.status(502).json({
           error: { code: "analysis_failed", message: "Empty upstream reply" },
         });
         return;
       }
-      res.status(200).json({ reply });
+
+      // ---- guard: strip fabricated links; citations from evidence only ----
+      reply = stripForeignLinks(reply, allowedUrls);
+      const citations = buildCitations(reply, evidence);
+      res.status(200).json({ reply, citations });
     } catch (e) {
       console.error("chat failed", e);
       res.status(502).json({

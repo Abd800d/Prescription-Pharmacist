@@ -239,6 +239,14 @@
     <string name="assistant_error">تعذّر على المساعد الإجابة. حاول مرة أخرى.</string>
     <string name="assistant_not_configured">المساعد الذكي يتطلب الخادم الآمن. أضف رابطه من الإعدادات ← رابط الخادم الآمن.</string>
     <string name="assistant_disclaimer">للإرشاد فقط — لا يغني أبداً عن الحكم السريري المهني.</string>
+    <string name="assistant_disclaimer_banner">⚠️ هذا المساعد لا يغني عن الطبيب أو الصيدلي. يقدم إجابات إرشادية من مصادر موثوقة فقط — دون تشخيص نهائي، ودون تغيير أي جرعة أو دواء.</string>
+    <string name="assistant_welcome">اسأل عن دواء: استعمالاته، تحذيراته، آثاره الجانبية، أو تداخلاته. تُبنى الإجابة من قاعدة بياناتك والمصادر الرسمية، ويظهر المصدر مع كل إجابة.</string>
+    <string name="assistant_sources_title">المصادر</string>
+    <string name="assistant_delete_title">حذف سجل المحادثة؟</string>
+    <string name="assistant_delete_message">سيتم حذف سجل المحادثة بالكامل نهائياً من هذا الجهاز.</string>
+    <string name="assistant_delete_confirm">حذف</string>
+    <string name="assistant_rate_limited">طلبات كثيرة — يرجى الانتظار قليلاً ثم المحاولة.</string>
+    <string name="assistant_error_network">لا يوجد اتصال بالإنترنت. تحقق من الاتصال وحاول مرة أخرى.</string>
 
     <!-- Settings -->
     <string name="settings_title">الإعدادات</string>
