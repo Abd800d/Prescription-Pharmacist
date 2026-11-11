@@ -33,6 +33,10 @@ object DatabaseModule {
         database.drugDao()
 
     @Provides
+    fun provideDrugAuditDao(database: AppDatabase): com.maakthi.prescriptionpharmacist.data.local.dao.DrugAuditDao =
+        database.drugAuditDao()
+
+    @Provides
     fun provideProductImageDao(database: AppDatabase): ProductImageDao =
         database.productImageDao()
 }

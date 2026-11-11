@@ -31,6 +31,39 @@ Authorization: Bearer <Firebase ID token>   (اختياري، ويُتحقّق �
 ```
 
 ```
+GET {baseUrl}/drugs?q=<query>&dosageForm=<form>&manufacturer=<name>&verified=<true|false>
+Authorization: Bearer <Firebase ID token>   (اختياري)
+
+200 OK: قائمة السجلات الدوائية:
+[
+  {
+    "id": "…",
+    "tradeNameArabic": "بنادول",
+    "tradeNameEnglish": "Panadol",
+    "genericNameArabic": "باراسيتامول",
+    "genericNameEnglish": "Paracetamol",
+    "activeIngredient": "Paracetamol",
+    "strength": "500 mg",
+    "dosageForm": "tablet",
+    "manufacturer": "GSK",
+    "barcode": "1234567890",
+    "indications": "…", "contraindications": "…", "warnings": "…",
+    "sideEffects": "…", "interactions": "…",
+    "pregnancyInformation": "…", "lactationInformation": "…",
+    "productImageUrl": "…",
+    "sourceName": "openFDA", "sourceUrl": "…", "sourceDate": "…",
+    "updatedAt": 1700000000000, "createdBy": "…", "isVerified": true
+  }
+]
+
+GET    {baseUrl}/drugs/{id}   → سجل واحد
+POST   {baseUrl}/drugs        → إنشاء (409 عند تكرار الباركود)
+PUT    {baseUrl}/drugs/{id}   → تحديث كامل
+DELETE {baseUrl}/drugs/{id}   → حذف
+خطأ: 4xx/5xx مع {"error": {"code": "...", "message": "..."}}
+```
+
+```
 POST {baseUrl}/ocr                    (طبقة OCR — المرحلة 3)
 Content-Type: multipart/form-data   (حقل "image": JPEG ≤ 8MB)
 Authorization: Bearer <Firebase ID token>   (اختياري، ويُتحقّق منه إن وُجد)

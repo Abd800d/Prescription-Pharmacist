@@ -1,8 +1,6 @@
 package com.maakthi.prescriptionpharmacist.presentation.navigation
 
 import android.net.Uri
-import com.maakthi.prescriptionpharmacist.domain.model.Drug
-import kotlinx.serialization.json.Json
 
 object Routes {
     // Top level
@@ -37,12 +35,9 @@ object Routes {
     // Drugs
     const val DRUG_ADD = "drug_add"
     const val DRUG_EDIT = "drug_edit/{drugId}"
-    const val DRUG_DETAILS = "drug_details/{drugJson}"
+    const val DRUG_DETAILS = "drug_details/{drugId}"
     fun drugEdit(drugId: String) = "drug_edit/${Uri.encode(drugId)}"
-    fun drugDetails(drug: Drug): String {
-        val json = Json.encodeToString(Drug.serializer(), drug)
-        return "drug_details/${Uri.encode(json)}"
-    }
+    fun drugDetails(drugId: String): String = "drug_details/${Uri.encode(drugId)}"
 
     // Prescriptions
     const val DETAIL = "detail/{prescriptionId}"

@@ -21,5 +21,6 @@ data class OpenFdaDrug(
 data class OpenFdaInfo(
     @SerialName("brand_name") val brandName: List<String> = emptyList(),
     @SerialName("generic_name") val genericName: List<String> = emptyList(),
-    @SerialName("manufacturer_name") val manufacturerName: List<String> = emptyList()
+    @SerialName("manufacturer_name") val manufacturerName: List<String> = emptyList(),
+    @SerialName("route") val route: List<String> = emptyList()
 )

@@ -54,6 +54,10 @@ abstract class RepositoryModule {
 
     @Binds
     @Singleton
+    abstract fun bindDrugEntryRepository(impl: DrugRepositoryImpl): com.maakthi.prescriptionpharmacist.domain.repository.DrugEntryRepository
+
+    @Binds
+    @Singleton
     abstract fun bindProductRepository(impl: ProductRepositoryImpl): ProductRepository
 
     @Binds

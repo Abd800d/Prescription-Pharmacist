@@ -1,234 +1,280 @@
 package com.maakthi.prescriptionpharmacist.presentation.drugs
 
-import android.net.Uri
+import android.graphics.BitmapFactory
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.maakthi.prescriptionpharmacist.R
 import com.maakthi.prescriptionpharmacist.domain.model.Drug
-import com.maakthi.prescriptionpharmacist.domain.model.MedicationType
-import com.maakthi.prescriptionpharmacist.domain.repository.DrugRepository
+import com.maakthi.prescriptionpharmacist.domain.model.DrugAuditAction
+import com.maakthi.prescriptionpharmacist.domain.model.DrugAuditEntry
+import com.maakthi.prescriptionpharmacist.presentation.components.LoadingView
 import com.maakthi.prescriptionpharmacist.presentation.components.SectionHeader
-import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
-import kotlinx.serialization.json.Json
-import javax.inject.Inject
+import java.text.DateFormat
+import java.util.Date
 
-@HiltViewModel
-class DrugDetailsViewModel @Inject constructor(
-    private val drugRepository: DrugRepository
-) : ViewModel() {
-
-    private val _drug = MutableStateFlow<Drug?>(null)
-    val drug: StateFlow<Drug?> = _drug.asStateFlow()
-
-    fun load(drugJson: String?) {
-        if (_drug.value != null || drugJson.isNullOrBlank()) return
-        val decoded = runCatching {
-            Json.decodeFromString<Drug>(Uri.decode(drugJson))
-        }.getOrNull()
-        _drug.value = decoded
-    }
-
-    fun deleteLocal(onDeleted: () -> Unit) {
-        val current = _drug.value ?: return
-        if (!current.isLocal) return
-        viewModelScope.launch {
-            drugRepository.deleteDrug(current.id)
-            onDeleted()
-        }
-    }
-}
-
-/** Drug details: works for local drugs and openFDA results. */
-@OptIn(ExperimentalMaterial3Api::class)
+/**
+ * Full drug record: names, composition, usage, safety text, product image,
+ * source/verification status and the change history. Delete asks for
+ * confirmation first.
+ */
 @Composable
 fun DrugDetailsScreen(
-    drugJson: String?,
-    onBack: () -> Unit,
     onEditDrug: (String) -> Unit,
+    onBack: () -> Unit,
     viewModel: DrugDetailsViewModel = hiltViewModel()
 ) {
-    viewModel.load(drugJson)
-    val drug by viewModel.drug.collectAsStateWithLifecycle()
-    var confirmDelete by remember { mutableStateOf(false) }
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val confirmDelete by viewModel.confirmDelete.collectAsStateWithLifecycle()
+    val deleted by viewModel.deleted.collectAsStateWithLifecycle()
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.drug_details_title)) },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(
-                            Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(R.string.back)
-                        )
-                    }
-                },
-                actions = {
-                    val current = drug
-                    if (current?.isLocal == true) {
-                        IconButton(onClick = { onEditDrug(current.id) }) {
-                            Icon(
-                                Icons.Filled.Edit,
-                                contentDescription = stringResource(R.string.review_edit),
-                                tint = MaterialTheme.colorScheme.primary
-                            )
-                        }
-                        IconButton(onClick = { confirmDelete = true }) {
-                            Icon(
-                                Icons.Filled.Delete,
-                                contentDescription = stringResource(R.string.review_delete),
-                                tint = MaterialTheme.colorScheme.error
-                            )
-                        }
-                    }
-                }
-            )
-        }
-    ) { padding ->
-        val current = drug
-        if (current == null) {
-            Text(
-                text = stringResource(R.string.error_generic),
-                modifier = Modifier
-                    .padding(padding)
-                    .padding(24.dp)
-            )
-            return@Scaffold
-        }
-
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .verticalScroll(rememberScrollState())
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            Text(text = current.name, style = MaterialTheme.typography.headlineSmall)
-            current.scientificName?.let {
-                Text(
-                    text = it,
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                DetailChip(
-                    stringResource(
-                        when (current.type) {
-                            MedicationType.BRAND -> R.string.medication_type_brand
-                            MedicationType.GENERIC -> R.string.medication_type_generic
-                            MedicationType.UNKNOWN -> R.string.medication_type_unknown
-                        }
-                    )
-                )
-                DetailChip(
-                    stringResource(
-                        if (current.isLocal) R.string.drug_source_local
-                        else R.string.drug_source_remote
-                    )
-                )
-            }
-
-            current.manufacturer?.let {
-                DetailSection(stringResource(R.string.drug_manufacturer_hint), it)
-            }
-            current.strength?.let { DetailSection(stringResource(R.string.medication_strength), it) }
-            current.form?.let { DetailSection(stringResource(R.string.medication_form), it) }
-            current.indications?.let {
-                DetailSection(stringResource(R.string.drug_indications_hint), it)
-            }
-            current.dosage?.let { DetailSection(stringResource(R.string.drug_dosage_hint), it) }
-            current.warnings?.let { DetailSection(stringResource(R.string.drug_warnings_hint), it) }
-            current.notes?.let { DetailSection(stringResource(R.string.drug_notes_hint), it) }
-
-            if (current.isLocal) {
-                OutlinedButton(
-                    onClick = { onEditDrug(current.id) },
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(stringResource(R.string.review_edit))
-                }
-            }
-        }
+    LaunchedEffect(deleted) {
+        if (deleted) onBack()
     }
 
     if (confirmDelete) {
         AlertDialog(
-            onDismissRequest = { confirmDelete = false },
+            onDismissRequest = viewModel::dismissDelete,
             title = { Text(stringResource(R.string.drug_delete_title)) },
             text = { Text(stringResource(R.string.drug_delete_message)) },
             confirmButton = {
-                TextButton(
-                    onClick = {
-                        confirmDelete = false
-                        viewModel.deleteLocal(onDeleted = onBack)
-                    }
-                ) {
-                    Text(stringResource(R.string.history_delete_confirm))
+                TextButton(onClick = viewModel::confirmDelete) {
+                    Text(stringResource(R.string.drug_action_delete))
                 }
             },
             dismissButton = {
-                TextButton(onClick = { confirmDelete = false }) {
+                TextButton(onClick = viewModel::dismissDelete) {
                     Text(stringResource(R.string.cancel))
                 }
             }
         )
     }
+
+    when (val state = uiState) {
+        DrugDetailsUiState.Loading -> LoadingView(
+            message = stringResource(R.string.analysis_running),
+            modifier = Modifier.fillMaxSize()
+        )
+
+        DrugDetailsUiState.NotFound -> Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Text(stringResource(R.string.drug_search_no_results))
+            Button(onClick = onBack) { Text(stringResource(R.string.back)) }
+        }
+
+        is DrugDetailsUiState.Loaded -> DrugDetailsContent(
+            state = state,
+            onEditDrug = onEditDrug,
+            onDelete = viewModel::requestDelete
+        )
+    }
 }
 
 @Composable
-private fun DetailSection(title: String, body: String) {
-    Card(modifier = Modifier.fillMaxWidth()) {
-        Column(modifier = Modifier.padding(12.dp)) {
-            SectionHeader(title = title)
-            Text(text = body, style = MaterialTheme.typography.bodyMedium)
+private fun DrugDetailsContent(
+    state: DrugDetailsUiState.Loaded,
+    onEditDrug: (String) -> Unit,
+    onDelete: () -> Unit
+) {
+    val drug = state.drug
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            Text(
+                text = drug.name,
+                style = MaterialTheme.typography.headlineSmall,
+                modifier = Modifier.weight(1f)
+            )
+            Text(
+                text = stringResource(
+                    if (drug.isVerified) R.string.drug_badge_verified
+                    else R.string.drug_badge_manual
+                ),
+                style = MaterialTheme.typography.labelLarge,
+                color = if (drug.isVerified) MaterialTheme.colorScheme.primary
+                else MaterialTheme.colorScheme.outline
+            )
+        }
+
+        SectionHeader(title = stringResource(R.string.drug_details_basic))
+        Field(R.string.drug_trade_name_arabic, drug.tradeNameArabic)
+        Field(R.string.drug_trade_name_english, drug.tradeNameEnglish)
+        Field(R.string.drug_generic_name_arabic, drug.genericNameArabic)
+        Field(R.string.drug_generic_name_english, drug.genericNameEnglish)
+
+        SectionHeader(title = stringResource(R.string.drug_details_composition))
+        Field(R.string.drug_active_ingredient, drug.activeIngredient)
+        Field(R.string.medication_strength, drug.strength)
+        Field(R.string.drug_dosage_form, drug.dosageForm ?: drug.form)
+        Field(R.string.drug_manufacturer_hint, drug.manufacturer)
+        Field(R.string.drug_barcode, drug.barcode)
+
+        SectionHeader(title = stringResource(R.string.drug_details_usage))
+        Field(R.string.drug_indications_hint, drug.indications)
+        Field(R.string.drug_dosage_hint, drug.dosage)
+
+        SectionHeader(title = stringResource(R.string.drug_details_safety))
+        Field(R.string.drug_contraindications, drug.contraindications)
+        Field(R.string.drug_warnings_hint, drug.warnings)
+        Field(R.string.drug_side_effects, drug.sideEffects)
+        Field(R.string.drug_interactions, drug.interactions)
+        Field(R.string.drug_pregnancy, drug.pregnancyInformation)
+        Field(R.string.drug_lactation, drug.lactationInformation)
+
+        drug.productImageUrl?.let { path ->
+            SectionHeader(title = stringResource(R.string.drug_product_image))
+            val bitmap = remember(path) {
+                runCatching {
+                    val options = BitmapFactory.Options().apply { inSampleSize = 4 }
+                    BitmapFactory.decodeFile(path, options)
+                }.getOrNull()
+            }
+            bitmap?.let {
+                Image(
+                    bitmap = it.asImageBitmap(),
+                    contentDescription = stringResource(R.string.drug_product_image_desc),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(max = 260.dp)
+                )
+            }
+        }
+
+        SectionHeader(title = stringResource(R.string.drug_source_section))
+        Field(R.string.drug_source_name, drug.sourceName)
+        Field(R.string.drug_source_url, drug.sourceUrl)
+        Field(R.string.drug_source_date, drug.sourceDate)
+        Field(R.string.drug_created_by, drug.createdBy)
+        Field(
+            R.string.drug_updated_at,
+            drug.updatedAt.takeIf { it > 0 }?.let { formatTime(it) }
+        )
+
+        SectionHeader(title = stringResource(R.string.drug_audit_section))
+        if (state.audit.isEmpty()) {
+            Text(
+                text = stringResource(R.string.drug_audit_empty),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.outline
+            )
+        } else {
+            state.audit.forEach { entry -> AuditRow(entry) }
+        }
+
+        Button(
+            onClick = { onEditDrug(drug.id) },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Icon(Icons.Filled.Edit, contentDescription = null)
+            Text(
+                text = stringResource(R.string.drug_action_edit),
+                modifier = Modifier.padding(start = 8.dp)
+            )
+        }
+        OutlinedButton(
+            onClick = onDelete,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Icon(
+                Icons.Filled.Delete,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.error
+            )
+            Text(
+                text = stringResource(R.string.drug_action_delete),
+                color = MaterialTheme.colorScheme.error,
+                modifier = Modifier.padding(start = 8.dp)
+            )
         }
     }
 }
 
 @Composable
-private fun DetailChip(text: String) {
-    Text(
-        text = text,
-        style = MaterialTheme.typography.labelMedium,
-        color = MaterialTheme.colorScheme.primary
-    )
+private fun Field(label: Int, value: String?) {
+    if (!value.isNullOrBlank()) {
+        Card(modifier = Modifier.fillMaxWidth()) {
+            Column(modifier = Modifier.padding(10.dp)) {
+                Text(
+                    text = stringResource(label),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.outline
+                )
+                Text(text = value, style = MaterialTheme.typography.bodyMedium)
+            }
+        }
+    }
 }
+
+@Composable
+private fun AuditRow(entry: DrugAuditEntry) {
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.padding(10.dp)) {
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text(
+                    text = stringResource(
+                        when (entry.action) {
+                            DrugAuditAction.ADD -> R.string.drug_audit_add
+                            DrugAuditAction.UPDATE -> R.string.drug_audit_update
+                            DrugAuditAction.DELETE -> R.string.drug_audit_delete
+                        }
+                    ),
+                    style = MaterialTheme.typography.labelLarge,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.weight(1f)
+                )
+                Text(
+                    text = formatTime(entry.timestamp),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.outline
+                )
+            }
+            Text(text = entry.changes, style = MaterialTheme.typography.bodySmall)
+            Text(
+                text = stringResource(R.string.drug_audit_by, entry.performedBy),
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.outline
+            )
+        }
+    }
+}
+
+private fun formatTime(millis: Long): String =
+    DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT).format(Date(millis))

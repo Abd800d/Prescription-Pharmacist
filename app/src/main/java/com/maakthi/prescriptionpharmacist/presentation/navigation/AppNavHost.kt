@@ -187,7 +187,7 @@ fun AppNavHost(
             }
             composable(Routes.DRUG_SEARCH) {
                 DrugSearchScreen(
-                    onOpenDrug = { drug -> navController.navigate(Routes.drugDetails(drug)) },
+                    onOpenDrug = { drugId -> navController.navigate(Routes.drugDetails(drugId)) },
                     onAddDrug = { navController.navigate(Routes.DRUG_ADD) }
                 )
             }
@@ -296,7 +296,6 @@ fun AppNavHost(
             // ---------- Drugs ----------
             composable(Routes.DRUG_ADD) {
                 AddEditDrugScreen(
-                    isEdit = false,
                     onBack = { navController.popBackStack() },
                     onSaved = { navController.popBackStack() }
                 )
@@ -306,17 +305,15 @@ fun AppNavHost(
                 arguments = listOf(navArgument("drugId") { type = NavType.StringType })
             ) {
                 AddEditDrugScreen(
-                    isEdit = true,
                     onBack = { navController.popBackStack() },
                     onSaved = { navController.popBackStack() }
                 )
             }
             composable(
                 route = Routes.DRUG_DETAILS,
-                arguments = listOf(navArgument("drugJson") { type = NavType.StringType })
-            ) { entry ->
+                arguments = listOf(navArgument("drugId") { type = NavType.StringType })
+            ) {
                 DrugDetailsScreen(
-                    drugJson = entry.arguments?.getString("drugJson"),
                     onBack = { navController.popBackStack() },
                     onEditDrug = { drugId ->
                         navController.navigate(Routes.drugEdit(drugId))

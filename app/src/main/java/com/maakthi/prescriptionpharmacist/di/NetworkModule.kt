@@ -3,6 +3,7 @@ package com.maakthi.prescriptionpharmacist.di
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import com.maakthi.prescriptionpharmacist.data.remote.AnalysisApi
 import com.maakthi.prescriptionpharmacist.data.remote.AssistantApi
+import com.maakthi.prescriptionpharmacist.data.remote.DrugApi
 import com.maakthi.prescriptionpharmacist.data.remote.OpenFdaApi
 import dagger.Module
 import dagger.Provides
@@ -64,6 +65,12 @@ object NetworkModule {
     @Singleton
     fun provideAssistantApi(retrofit: Retrofit): AssistantApi =
         retrofit.create(AssistantApi::class.java)
+
+    /** CRUD API of the shared drug database backend (same per-call `@Url` style). */
+    @Provides
+    @Singleton
+    fun provideDrugApi(retrofit: Retrofit): DrugApi =
+        retrofit.create(DrugApi::class.java)
 
     /** Public openFDA drug label API (no API key). */
     @Provides

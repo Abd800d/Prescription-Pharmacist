@@ -29,5 +29,8 @@ enum class ErrorCode {
     SERVER,
     ANALYSIS_FAILED,
     IMAGE_UNREADABLE,
+    VALIDATION,
+    DUPLICATE,
+    NOT_FOUND,
     UNKNOWN
 }
