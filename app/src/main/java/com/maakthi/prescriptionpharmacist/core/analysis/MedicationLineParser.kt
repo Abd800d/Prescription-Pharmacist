@@ -211,7 +211,7 @@ object MedicationLineParser {
         }
         remainder = instructionNoise.replace(remainder, " ")
         // Standalone numbers only — attached digits (Vitamin B12) stay.
-        remainder = Regex("(?<!\\p{L})\\d+(?:[.,]\\d+)?(?!\\p{L})").replace(remainder, " ")
+        remainder = Regex("(?<![\\p{L}\\d])\\d+(?:[.,]\\d+)?(?![\\p{L}\\d])").replace(remainder, " ")
         remainder = edgeNoise.replace(remainder.trim(), "")
         remainder = remainder.replace(Regex("\\s+"), " ").trim(' ', '-', '•', '*', ':', ';', '.')
         return remainder.takeIf { it.isNotBlank() }
