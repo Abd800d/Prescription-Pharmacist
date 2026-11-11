@@ -15,4 +15,7 @@ interface SettingsRepository {
     suspend fun setBackendUrl(url: String)
     suspend fun setOnboardingDone(done: Boolean)
     suspend fun setMediaSyncEnabled(enabled: Boolean)
+    suspend fun setAutoBackupEnabled(enabled: Boolean)
+    suspend fun setLastSyncAt(at: Long)
+    suspend fun setLastBackupAt(at: Long)
 }

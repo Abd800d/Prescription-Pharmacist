@@ -47,6 +47,9 @@ interface MediaRepository {
     /** Uploads pending assets (safe to call on reconnect / app start). */
     suspend fun syncNow(): AppResult<Int>
 
+    /** Downloads remote images missing on this device (pull side of sync). */
+    suspend fun pullRemoteImages(): AppResult<Int>
+
     /** Toggling sync on marks local copies for upload; off never deletes. */
     suspend fun setSyncEnabled(enabled: Boolean)
 }

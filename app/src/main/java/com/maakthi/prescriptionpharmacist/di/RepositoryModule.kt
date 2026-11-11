@@ -71,4 +71,8 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindMediaRepository(impl: com.maakthi.prescriptionpharmacist.data.repository.MediaRepositoryImpl): com.maakthi.prescriptionpharmacist.domain.repository.MediaRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindSyncRepository(impl: com.maakthi.prescriptionpharmacist.data.sync.SyncRepositoryImpl): com.maakthi.prescriptionpharmacist.domain.repository.SyncRepository
 }

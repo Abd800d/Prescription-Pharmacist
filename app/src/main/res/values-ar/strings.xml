@@ -218,6 +218,41 @@
     <string name="close">إغلاق</string>
     <!-- ============ Media library ============ -->
 
+    <!-- ============ Sync center ============ -->
+    <string name="sync_title">المزامنة والنسخ الاحتياطي</string>
+    <string name="sync_online">متصل</string>
+    <string name="sync_offline">غير متصل — بياناتك المحلية متاحة بالكامل</string>
+    <string name="sync_unknown">جارٍ التحقق…</string>
+    <string name="sync_last_sync">آخر مزامنة: %1$s</string>
+    <string name="sync_last_backup">آخر نسخة احتياطية: %1$s</string>
+    <string name="sync_never">أبداً</string>
+    <string name="sync_now">مزامنة الآن</string>
+    <string name="sync_done">اكتملت المزامنة</string>
+    <string name="sync_offline_note">يعمل التطبيق بالكامل دون إنترنت — وتُزامَن التغييرات تلقائياً عند عودة الاتصال.</string>
+    <string name="sync_conflicts_title">تعارضات تحتاج قرارك</string>
+    <string name="sync_no_conflicts">لا توجد تعارضات — لم يُستبدل شيء.</string>
+    <string name="sync_conflict_item">تعارض في السجل %1$s</string>
+    <string name="sync_conflict_times">نسختك: %1$s • نسخة الخادم: %2$s</string>
+    <string name="sync_conflict_warning">تعديلاتك لم تُستبدَل — اختر النسخة التي تريد الاحتفاظ بها.</string>
+    <string name="sync_keep_local">الاحتفاظ بنسختي</string>
+    <string name="sync_keep_remote">أخذ نسخة الخادم</string>
+    <string name="sync_backup_title">النسخ الاحتياطي المشفّر</string>
+    <string name="sync_backup_hint">النسخ الاحتياطية مشفّرة (PBKDF2 + AES-256-GCM) وتُحفظ محلياً وفي مساحتك السحابية الخاصة. يعمل النسخ التلقائي بعد المزامنة الناجحة ومرة يومياً.</string>
+    <string name="sync_auto_backup">النسخ التلقائي</string>
+    <string name="sync_set_passphrase">تعيين عبارة مرور النسخ</string>
+    <string name="sync_change_passphrase">تغيير عبارة المرور</string>
+    <string name="sync_backup_now">نسخ احتياطي الآن</string>
+    <string name="sync_backup_done">تم إنشاء نسخة احتياطية مشفّرة</string>
+    <string name="sync_restore_cloud">الاستعادة من السحابة</string>
+    <string name="sync_restore_file">الاستعادة من ملف</string>
+    <string name="sync_restored">تمت استعادة النسخة (دمج — لم يُحذف شيء)</string>
+    <string name="sync_passphrase_saved">حُفظت عبارة المرور (مشفّرة)</string>
+    <string name="sync_passphrase_hint">اختر عبارة مرور قوية — تشفّر نسخك الاحتياطية ولا يمكن استرجاعها إذا فُقدت.</string>
+    <string name="sync_error_offline">لا يوجد اتصال — ستعمل المزامنة تلقائياً عند عودتك للإنترنت.</string>
+    <string name="sync_error_passphrase">عيّن عبارة مرور النسخ الاحتياطي أولاً.</string>
+    <string name="sync_error_generic">حدث خطأ ما — يرجى المحاولة.</string>
+    <!-- ============ Sync center ============ -->
+
     <!-- Import / Export -->
     <string name="transfer_title">استيراد وتصدير البيانات</string>
     <string name="transfer_import_section">استيراد البيانات</string>

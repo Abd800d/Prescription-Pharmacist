@@ -8,6 +8,7 @@ data class PrescriptionEntity(
     @PrimaryKey val id: String,
     val imagePath: String,
     val createdAt: Long,
+    val updatedAt: Long,
     val status: String,
     val notes: String?,
     val analysisLanguage: String?,

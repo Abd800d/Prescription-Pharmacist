@@ -10,6 +10,7 @@ data class Prescription(
     val id: String,
     val imagePath: String,
     val createdAt: Long,
+    val updatedAt: Long = createdAt,
     val status: PrescriptionStatus = PrescriptionStatus.PENDING,
     val notes: String? = null,
     val analysisLanguage: String? = null,

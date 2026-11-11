@@ -218,6 +218,41 @@
     <string name="close">Close</string>
     <!-- ============ Media library ============ -->
 
+    <!-- ============ Sync center ============ -->
+    <string name="sync_title">Sync &amp; backup</string>
+    <string name="sync_online">Connected</string>
+    <string name="sync_offline">Offline — local data is fully available</string>
+    <string name="sync_unknown">Checking…</string>
+    <string name="sync_last_sync">Last sync: %1$s</string>
+    <string name="sync_last_backup">Last backup: %1$s</string>
+    <string name="sync_never">never</string>
+    <string name="sync_now">Sync now</string>
+    <string name="sync_done">Sync complete</string>
+    <string name="sync_offline_note">The app works fully offline — changes are queued and sync automatically when the connection returns.</string>
+    <string name="sync_conflicts_title">Conflicts need your decision</string>
+    <string name="sync_no_conflicts">No conflicts — nothing was overwritten.</string>
+    <string name="sync_conflict_item">Conflict on record %1$s</string>
+    <string name="sync_conflict_times">Your version: %1$s • Server version: %2$s</string>
+    <string name="sync_conflict_warning">Your edits were NOT replaced — choose which version to keep.</string>
+    <string name="sync_keep_local">Keep my version</string>
+    <string name="sync_keep_remote">Take the server version</string>
+    <string name="sync_backup_title">Encrypted backup</string>
+    <string name="sync_backup_hint">Backups are encrypted (PBKDF2 + AES-256-GCM) and stored locally and in your private cloud space. Automatic backup runs after successful syncs and once a day.</string>
+    <string name="sync_auto_backup">Automatic backup</string>
+    <string name="sync_set_passphrase">Set backup passphrase</string>
+    <string name="sync_change_passphrase">Change passphrase</string>
+    <string name="sync_backup_now">Back up now</string>
+    <string name="sync_backup_done">Encrypted backup created</string>
+    <string name="sync_restore_cloud">Restore from cloud</string>
+    <string name="sync_restore_file">Restore from file</string>
+    <string name="sync_restored">Backup restored (merge — nothing was deleted)</string>
+    <string name="sync_passphrase_saved">Passphrase saved (encrypted)</string>
+    <string name="sync_passphrase_hint">Choose a strong passphrase — it encrypts your backups and cannot be recovered if lost.</string>
+    <string name="sync_error_offline">No connection — sync will run automatically when you are back online.</string>
+    <string name="sync_error_passphrase">Set the backup passphrase first.</string>
+    <string name="sync_error_generic">Something went wrong — please try again.</string>
+    <!-- ============ Sync center ============ -->
+
     <!-- Import / Export -->
     <string name="transfer_title">Import &amp; Export</string>
     <string name="transfer_import_section">Import data</string>

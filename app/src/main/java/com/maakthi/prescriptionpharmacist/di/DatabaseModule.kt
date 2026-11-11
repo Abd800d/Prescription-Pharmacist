@@ -49,6 +49,10 @@ object DatabaseModule {
         database.mediaAssetDao()
 
     @Provides
+    fun provideSyncConflictDao(database: AppDatabase): com.maakthi.prescriptionpharmacist.data.local.dao.SyncConflictDao =
+        database.syncConflictDao()
+
+    @Provides
     fun provideProductImageDao(database: AppDatabase): ProductImageDao =
         database.productImageDao()
 }

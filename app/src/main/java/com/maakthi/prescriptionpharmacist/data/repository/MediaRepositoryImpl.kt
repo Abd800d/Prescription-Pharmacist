@@ -227,6 +227,60 @@ class MediaRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun pullRemoteImages(): AppResult<Int> {
+        if (!firebaseSupport.isAvailable) return AppResult.error(ErrorCode.NOT_CONFIGURED)
+        val owner = currentUser()
+        if (owner.uid == LOCAL_OWNER) return AppResult.error(ErrorCode.UNAUTHORIZED)
+        return try {
+            val storage = FirebaseStorage.getInstance()
+            val base = storage.reference.child("users/${owner.uid}/media")
+            val kinds = base.listAll().await()
+            var pulled = 0
+            kinds.prefixes.forEach { kindRef ->
+                val kind = runCatching { MediaKind.valueOf(kindRef.name.uppercase()) }
+                    .getOrDefault(MediaKind.PRODUCT_IMAGE)
+                val items = kindRef.listAll().await()
+                items.items.forEach { item ->
+                    val id = item.name.substringBeforeLast('.')
+                    if (dao.getById(id) == null) {
+                        val bytes = item.getBytes(10L * 1024 * 1024).await()
+                        val key = deviceKeyStore.keyBytes()
+                        if (kind == MediaKind.PRESCRIPTION_IMAGE) {
+                            // Encrypted remote files decrypt with the device key;
+                            // unreadable ones (other devices) are skipped safely.
+                            MediaCrypto.decrypt(key, bytes) ?: return@forEach
+                        }
+                        val dir = File(context.filesDir, "media").apply { mkdirs() }
+                        val file = File(dir, "$id.${if (kind == MediaKind.PRESCRIPTION_IMAGE) "bin" else "jpg"}")
+                        file.writeBytes(bytes)
+                        dao.upsert(
+                            MediaAssetEntity(
+                                id = id,
+                                kind = kind.name,
+                                ownerId = owner.uid,
+                                ownerNameEncrypted = MediaCrypto.encryptString(key, currentUserName()),
+                                title = "",
+                                capturedAt = item.metadata.await().getUpdatedTimeMillis().takeIf { it > 0 }
+                                    ?: System.currentTimeMillis(),
+                                localPath = file.absolutePath,
+                                remotePath = item.path,
+                                mimeType = "image/jpeg",
+                                sizeBytes = bytes.size.toLong(),
+                                encrypted = kind == MediaKind.PRESCRIPTION_IMAGE,
+                                syncState = SyncState.SYNCED.name,
+                                lastSyncAt = System.currentTimeMillis()
+                            )
+                        )
+                        pulled++
+                    }
+                }
+            }
+            AppResult.success(pulled)
+        } catch (e: Exception) {
+            AppResult.error(ErrorCode.NETWORK, cause = e)
+        }
+    }
+
     override suspend fun setSyncEnabled(enabled: Boolean) {
         settingsRepository.setMediaSyncEnabled(enabled)
         if (enabled) {

@@ -8,6 +8,7 @@ import com.maakthi.prescriptionpharmacist.data.local.dao.DrugDao
 import com.maakthi.prescriptionpharmacist.data.local.dao.MediaAssetDao
 import com.maakthi.prescriptionpharmacist.data.local.dao.PrescriptionDao
 import com.maakthi.prescriptionpharmacist.data.local.dao.ProductImageDao
+import com.maakthi.prescriptionpharmacist.data.local.dao.SyncConflictDao
 import com.maakthi.prescriptionpharmacist.data.local.dao.TransferLogDao
 import com.maakthi.prescriptionpharmacist.data.local.entity.AssistantLogEntity
 import com.maakthi.prescriptionpharmacist.data.local.entity.DrugAuditEntity
@@ -16,6 +17,7 @@ import com.maakthi.prescriptionpharmacist.data.local.entity.MediaAssetEntity
 import com.maakthi.prescriptionpharmacist.data.local.entity.MedicationEntity
 import com.maakthi.prescriptionpharmacist.data.local.entity.PrescriptionEntity
 import com.maakthi.prescriptionpharmacist.data.local.entity.ProductImageEntity
+import com.maakthi.prescriptionpharmacist.data.local.entity.SyncConflictEntity
 import com.maakthi.prescriptionpharmacist.data.local.entity.TransferLogEntity
 
 @Database(
@@ -27,9 +29,10 @@ import com.maakthi.prescriptionpharmacist.data.local.entity.TransferLogEntity
         ProductImageEntity::class,
         TransferLogEntity::class,
         AssistantLogEntity::class,
-        MediaAssetEntity::class
+        MediaAssetEntity::class,
+        SyncConflictEntity::class
     ],
-    version = 6,
+    version = 7,
     exportSchema = true
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -40,6 +43,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun transferLogDao(): TransferLogDao
     abstract fun assistantLogDao(): AssistantLogDao
     abstract fun mediaAssetDao(): MediaAssetDao
+    abstract fun syncConflictDao(): SyncConflictDao
 
     companion object {
         const val NAME = "prescription_pharmacist.db"

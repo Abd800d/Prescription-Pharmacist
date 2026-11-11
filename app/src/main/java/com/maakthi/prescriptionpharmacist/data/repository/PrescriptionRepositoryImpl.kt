@@ -33,7 +33,7 @@ class PrescriptionRepositoryImpl @Inject constructor(
     }
 
     override suspend fun updateStatus(id: String, status: PrescriptionStatus) {
-        dao.updateStatus(id, status.name)
+        dao.updateStatus(id, status.name, System.currentTimeMillis())
     }
 
     override suspend fun deletePrescription(id: String) {

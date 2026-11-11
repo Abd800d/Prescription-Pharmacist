@@ -35,6 +35,16 @@ service cloud.firestore {
     match /users/{uid} {
       allow read: if signedIn() && (request.auth.uid == uid || isAdmin());
 
+      // Phone↔server sync records: owner-only, never public.
+      match /sync/{type}/{document=**} {
+        allow read, write: if signedIn() && request.auth.uid == uid;
+      }
+
+      // Encrypted backup files metadata: owner-only.
+      match /backups/{document=**} {
+        allow read, write: if signedIn() && request.auth.uid == uid;
+      }
+
       // A user may create their own profile, but only with the default role.
       allow create: if signedIn()
         && request.auth.uid == uid

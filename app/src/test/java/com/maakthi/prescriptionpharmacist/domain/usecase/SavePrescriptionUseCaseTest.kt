@@ -74,6 +74,7 @@ class SavePrescriptionUseCaseTest {
 
         override suspend fun deleteAsset(assetId: String): AppResult<Unit> = AppResult.success(Unit)
         override suspend fun syncNow(): AppResult<Int> = AppResult.success(0)
+        override suspend fun pullRemoteImages(): AppResult<Int> = AppResult.success(0)
         override suspend fun setSyncEnabled(enabled: Boolean) = Unit
     }
 

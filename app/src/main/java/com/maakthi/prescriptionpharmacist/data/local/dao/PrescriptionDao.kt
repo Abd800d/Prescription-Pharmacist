@@ -31,8 +31,8 @@ interface PrescriptionDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertMedications(medications: List<MedicationEntity>)
 
-    @Query("UPDATE prescriptions SET status = :status WHERE id = :id")
-    suspend fun updateStatus(id: String, status: String)
+    @Query("UPDATE prescriptions SET status = :status, updatedAt = :updatedAt WHERE id = :id")
+    suspend fun updateStatus(id: String, status: String, updatedAt: Long)
 
     @Query("DELETE FROM medications WHERE prescriptionId = :prescriptionId")
     suspend fun deleteMedications(prescriptionId: String)

@@ -18,7 +18,9 @@ class SavePrescriptionUseCase @Inject constructor(
     private val mediaRepository: MediaRepository
 ) {
     suspend operator fun invoke(prescription: Prescription, imageBytes: ByteArray?) {
-        prescriptionRepository.savePrescription(prescription)
+        // stamp the change time so sync can detect local edits
+        val saved = prescription.copy(updatedAt = System.currentTimeMillis())
+        prescriptionRepository.savePrescription(saved)
         if (imageBytes != null && imageBytes.isNotEmpty()) {
             mediaRepository.savePrescriptionImage(
                 imageBytes = imageBytes,
@@ -27,7 +29,7 @@ class SavePrescriptionUseCase @Inject constructor(
             )
         }
         if (backupRepository.isAvailable()) {
-            backupRepository.backupPrescription(prescription, imageBytes)
+            backupRepository.backupPrescription(saved, imageBytes)
         }
     }
 }

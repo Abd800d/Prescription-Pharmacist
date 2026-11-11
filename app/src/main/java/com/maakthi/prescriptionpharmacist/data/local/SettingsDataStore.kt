@@ -28,6 +28,9 @@ class SettingsDataStore @Inject constructor(
         val BACKEND_URL = stringPreferencesKey("backend_url")
         val ONBOARDING_DONE = booleanPreferencesKey("onboarding_done")
         val MEDIA_SYNC_ENABLED = booleanPreferencesKey("media_sync_enabled")
+        val AUTO_BACKUP_ENABLED = booleanPreferencesKey("auto_backup_enabled")
+        val LAST_SYNC_AT = androidx.datastore.preferences.core.longPreferencesKey("last_sync_at")
+        val LAST_BACKUP_AT = androidx.datastore.preferences.core.longPreferencesKey("last_backup_at")
     }
 
     override val settings: Flow<AppSettings> = context.dataStore.data.map { prefs ->
@@ -40,7 +43,10 @@ class SettingsDataStore @Inject constructor(
                 ?: AppLanguage.SYSTEM,
             backendUrl = prefs[Keys.BACKEND_URL] ?: "",
             onboardingDone = prefs[Keys.ONBOARDING_DONE] ?: false,
-            mediaSyncEnabled = prefs[Keys.MEDIA_SYNC_ENABLED] ?: false
+            mediaSyncEnabled = prefs[Keys.MEDIA_SYNC_ENABLED] ?: false,
+            autoBackupEnabled = prefs[Keys.AUTO_BACKUP_ENABLED] ?: true,
+            lastSyncAt = prefs[Keys.LAST_SYNC_AT] ?: 0L,
+            lastBackupAt = prefs[Keys.LAST_BACKUP_AT] ?: 0L
         )
     }
 
@@ -62,5 +68,17 @@ class SettingsDataStore @Inject constructor(
 
     override suspend fun setMediaSyncEnabled(enabled: Boolean) {
         context.dataStore.edit { it[Keys.MEDIA_SYNC_ENABLED] = enabled }
+    }
+
+    override suspend fun setAutoBackupEnabled(enabled: Boolean) {
+        context.dataStore.edit { it[Keys.AUTO_BACKUP_ENABLED] = enabled }
+    }
+
+    override suspend fun setLastSyncAt(at: Long) {
+        context.dataStore.edit { it[Keys.LAST_SYNC_AT] = at }
+    }
+
+    override suspend fun setLastBackupAt(at: Long) {
+        context.dataStore.edit { it[Keys.LAST_BACKUP_AT] = at }
     }
 }
