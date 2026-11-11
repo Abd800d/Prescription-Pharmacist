@@ -54,15 +54,15 @@ jobs:
         if: failure()
         run: |
           {
+            echo "### Failing unit tests"
+            python3 .github/ci_report_tests.py || true
             for f in /tmp/gradle-build.log /tmp/gradle-bundle.log /tmp/gradle-test.log /tmp/gradle-lint.log; do
               if [ -f "$f" ]; then
                 echo "### Errors from $f"
                 { grep -E "^e: " "$f" || true; awk '/FAILURE: Build failed|FAILURE: Build completed/{flag=1} flag' "$f" || true; } | head -60
               fi
             done
-            echo "### Failing unit tests"
-            python3 .github/ci_report_tests.py || true
-          } | tee -a "$GITHUB_STEP_SUMMARY" | while IFS= read -r line; do
+          } | tee -a "$GITHUB_STEP_SUMMARY" | head -10 | while IFS= read -r line; do
             echo "::error::${line}"
           done
 

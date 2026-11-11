@@ -10,12 +10,14 @@ package com.maakthi.prescriptionpharmacist.core.analysis
  */
 object PrescriptionSegmenter {
 
+    // NOTE: \b does not work with Arabic letters (they are not \w), so the
+    // boundaries use (?![\p{L}\d]) instead.
     private val noisePatterns = listOf(
-        Regex("^(date|التاريخ|تاريخ)\\b", RegexOption.IGNORE_CASE),
-        Regex("^(signature|التوقيع|توقيع)\\b", RegexOption.IGNORE_CASE),
-        Regex("^(tel|phone|fax|هاتف|فاكس)\\b", RegexOption.IGNORE_CASE),
-        Regex("^(dr\\.?|doctor|د\\.?|طبيب)\\b", RegexOption.IGNORE_CASE),
-        Regex("^(clinic|hospital|عيادة|مستشفى|صيدلية|pharmacy)\\b", RegexOption.IGNORE_CASE),
+        Regex("^(date|التاريخ|تاريخ)(?![\\p{L}\\d])", RegexOption.IGNORE_CASE),
+        Regex("^(signature|التوقيع|توقيع)(?![\\p{L}\\d])", RegexOption.IGNORE_CASE),
+        Regex("^(tel|phone|fax|هاتف|فاكس)(?![\\p{L}\\d])", RegexOption.IGNORE_CASE),
+        Regex("^(dr\\.?|doctor|د\\.?|طبيب)(?![\\p{L}\\d])", RegexOption.IGNORE_CASE),
+        Regex("^(clinic|hospital|عيادة|مستشفى|صيدلية|pharmacy)(?![\\p{L}\\d])", RegexOption.IGNORE_CASE),
         Regex("^\\d{2,4}[-/.]\\d{1,2}[-/.]\\d{1,4}$"), // pure dates
         Regex("^[+()\\d\\s-]{7,}$") // pure phone-like
     )
