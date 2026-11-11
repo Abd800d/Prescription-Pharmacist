@@ -54,7 +54,7 @@ object AnswerGuard {
             "stop the medication", "stop taking", "quit the medication", "discontinue"
         )
         val doseChange = Regex(
-            """غي.?ر.{0,20}جرعة|ازيد.{0,20}جرعة|انقص.{0,20}جرعة|اضاعف.{0,20}جرعة|ضعف.{0,20}جرعة|""" +
+            """غي.?ر.{0,20}جرعه|ازيد.{0,20}جرعه|انقص.{0,20}جرعه|اضاعف.{0,20}جرعه|ضعف.{0,20}جرعه|""" +
                 """change.{0,20}dose|increase.{0,20}dose|double.{0,20}dose|reduce.{0,20}dose|lower.{0,20}dose"""
         )
         val normalized = EvidenceRetriever.normalize(question)
