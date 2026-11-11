@@ -3,6 +3,7 @@ package com.maakthi.prescriptionpharmacist.data.media
 import android.content.Context
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
+import dagger.hilt.android.qualifiers.ApplicationContext
 import java.security.KeyStore
 import java.security.SecureRandom
 import javax.crypto.Cipher
@@ -22,7 +23,7 @@ import javax.inject.Singleton
  */
 @Singleton
 class DeviceKeyStore @Inject constructor(
-    private val context: Context
+    @ApplicationContext private val context: Context
 ) {
 
     @Volatile

@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import com.google.firebase.storage.FirebaseStorage
+import dagger.hilt.android.qualifiers.ApplicationContext
 import com.maakthi.prescriptionpharmacist.core.media.ImageCompression
 import com.maakthi.prescriptionpharmacist.core.media.MediaAccess
 import com.maakthi.prescriptionpharmacist.core.media.MediaCrypto
@@ -44,7 +45,7 @@ import javax.inject.Singleton
  */
 @Singleton
 class MediaRepositoryImpl @Inject constructor(
-    private val context: Context,
+    @ApplicationContext private val context: Context,
     private val dao: MediaAssetDao,
     private val deviceKeyStore: DeviceKeyStore,
     private val authRepository: AuthRepository,
