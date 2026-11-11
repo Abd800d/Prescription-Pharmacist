@@ -269,9 +269,32 @@ open app/build/reports/tests/testDebugUnitTest/index.html
 | `DrugDatabaseUseCasesTest` | **قاعدة البيانات الدوائية**: الإضافة/التعديل/الحذف، منع التكرار، سجل التعديلات، البحث والتصفية، التمييز بين الموثق واليدوي |
 | `DrugKnowledgeServiceTest` | **طبقة البحث الدوائي**: إسناد المصادر، التعارض دون اختيار تلقائي، انقطاع المصدر/المهلة/إعادة المحاولة، غياب Google كمصدر |
 | `SearchDrugKnowledgeUseCaseTest` | التحقق من الاستعلام، التقرير الرشيق للانقطاعات، **عدم الحفظ في القاعدة المعتمدة قبل المراجعة** |
+| `AuthErrorMapperTest` | **المصادقة**: ترجمة أخطاء Firebase إلى رسائل ودّية + تحليل أدوار `user`/`pharmacist`/`admin` |
 
 **اختبارات آلية (Instrumentation)** يمكن تشغيلها من Android Studio على جهاز/محاكي —
 اختبارات الوحدات تعمل بدون أي إعدادات.
+
+---
+
+## 🔐 إعداد Firebase والمصادقة (خطوة بخطوة)
+
+المصادقة حقيقية عبر **Firebase Authentication** (بريد/كلمة مرور + تحقق من البريد + Google + استعادة كلمة المرور + حذف الحساب) مع أدوار `user` / `pharmacist` / `admin`. **لا توجد أسرار أو مفاتيح داخل المستودع** — كل التهيئة تُجلب من Firebase محلياً.
+
+1. **أنشئ مشروعاً** في [Firebase Console](https://console.firebase.google.com) ثم فعّل **Authentication → Sign-in method**: `Email/Password` و `Google`.
+2. **الإعداد النموذجي:** انسخ `app/google-services.json.example` إلى `app/google-services.json` (ملف متجاهَل في Git — لا يُرفع أبداً) وضع قيم مشروعك. أو حمّل الملف الحقيقي من Firebase Console → Project settings → Your apps.
+3. **Google Sign-In:** أضِف بصمة SHA-1 لحاسوبك (`./gradlew signingReport`) في Firebase Console → Project settings → Android app. معرّف العميل الويب (`default_web_client_id`) يُولَّد تلقائياً من `google-services.json` عند البناء.
+4. **تحقّق من البريد وكلمة المرور:** مفعّلان افتراضياً — رسالة التحقق تُرسل تلقائياً بعد التسجيل، ورابط الاستعادة من زر «نسيت كلمة المرور؟».
+5. **الأدوار والصلاحيات:**
+   - الدور يُخزَّن في **custom claim** اسمه `role` — يضبطه الخادم فقط (`POST /setrole`، للمسؤولين).
+   - قواعد Firestore (`firestore.rules`) تُطبّق الدور: `user` يدير بياناته فقط، `pharmacist` يدير قاعدة الأدوية وسجل التعديلات، `admin` يدير كل شيء. النشر: `firebase deploy --only firestore:rules`.
+   - **المسؤول الأول:** من Firebase Console → Authentication أو عبر Admin SDK:
+     ```js
+     admin.auth().setCustomUserClaims(uid, { role: "admin" });
+     ```
+6. **سرّات الخادم:** `firebase functions:secrets:set GEMINI_API_KEY` و `firebase functions:secrets:set AUTHORITY_API_KEY` — تُخزَّن في Firebase secrets ولا تُكتب في الكود.
+7. **بدون Firebase:** يعمل التطبيق بالوضع المحلي (بيانات الجهاز فقط) وتظهر رسالة «Firebase غير مهيأ» في شاشات الدخول.
+
+**حماية الشاشات:** عند تهيئة Firebase، جميع الشاشات الداخلية تتطلب تسجيل دخول — يُعاد التوجيه إلى شاشة الدخول تلقائياً (بوابة `AuthGateViewModel` + قرار `SplashViewModel`).
 
 ---
 

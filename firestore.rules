@@ -1,0 +1,80 @@
+rules_version = '2';
+
+// ============================================================================
+// Firestore security rules — role-based access control (RBAC)
+//
+// Roles live in the Firebase ID-token custom claim `role`:
+//   user       — manage only their own data
+//   pharmacist — manage the shared drug database and audit trail
+//   admin      — manage everything, including user profiles
+//
+// The role claim is set ONLY by the backend (server/index.js `setrole`,
+// admin-only) — a client can never elevate itself. Deploy with:
+//   firebase deploy --only firestore:rules
+// ============================================================================
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function role() {
+      return request.auth.token.role;
+    }
+
+    function isPharmacist() {
+      return signedIn() && (role() == 'pharmacist' || role() == 'admin');
+    }
+
+    function isAdmin() {
+      return signedIn() && role() == 'admin';
+    }
+
+    // ---- User profiles ----------------------------------------------------
+    match /users/{uid} {
+      allow read: if signedIn() && (request.auth.uid == uid || isAdmin());
+
+      // A user may create their own profile, but only with the default role.
+      allow create: if signedIn()
+        && request.auth.uid == uid
+        && request.resource.data.role == 'user';
+
+      // Users can edit their profile but can never change their own role.
+      allow update: if signedIn()
+        && request.auth.uid == uid
+        && request.resource.data.role == resource.data.role;
+
+      allow delete: if isAdmin() || (signedIn() && request.auth.uid == uid);
+    }
+
+    // ---- Shared drug database (approved records) --------------------------
+    match /drugs/{drugId} {
+      allow read: if signedIn();
+      allow create, update, delete: if isPharmacist();
+    }
+
+    // ---- Drug change history (audit log) ---------------------------------
+    match /drug_audit/{entryId} {
+      allow read: if isPharmacist();
+      allow create: if isPharmacist();
+      // The audit trail is immutable.
+      allow update, delete: if false;
+    }
+
+    // ---- Prescriptions: owner-only, admins read all ----------------------
+    match /prescriptions/{prescriptionId} {
+      allow read, delete: if signedIn()
+        && (resource.data.ownerId == request.auth.uid || isAdmin());
+      allow create: if signedIn()
+        && request.resource.data.ownerId == request.auth.uid;
+      allow update: if signedIn()
+        && (resource.data.ownerId == request.auth.uid || isAdmin());
+    }
+
+    // ---- Everything else is closed ---------------------------------------
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

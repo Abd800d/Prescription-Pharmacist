@@ -1,6 +1,7 @@
 package com.maakthi.prescriptionpharmacist.presentation.splash
 
 import androidx.lifecycle.ViewModel
+import com.maakthi.prescriptionpharmacist.domain.repository.AuthRepository
 import com.maakthi.prescriptionpharmacist.domain.repository.SettingsRepository
 import com.maakthi.prescriptionpharmacist.presentation.navigation.Routes
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -9,12 +10,20 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SplashViewModel @Inject constructor(
-    private val settingsRepository: SettingsRepository
+    private val settingsRepository: SettingsRepository,
+    private val authRepository: AuthRepository
 ) : ViewModel() {
 
-    /** Routes to onboarding on first launch, otherwise to home. */
+    /**
+     * Routes to onboarding on first launch, to the login screen when Firebase
+     * auth is configured but nobody is signed in, otherwise to home.
+     */
     suspend fun decideDestination(): String {
         val settings = settingsRepository.settings.first()
-        return if (settings.onboardingDone) Routes.HOME else Routes.ONBOARDING
+        if (!settings.onboardingDone) return Routes.ONBOARDING
+        if (authRepository.isAvailable() && authRepository.currentUser.first() == null) {
+            return Routes.LOGIN
+        }
+        return Routes.HOME
     }
 }

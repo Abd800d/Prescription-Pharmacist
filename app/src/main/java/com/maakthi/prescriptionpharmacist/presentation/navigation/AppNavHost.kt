@@ -13,6 +13,7 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -57,6 +58,7 @@ import com.maakthi.prescriptionpharmacist.presentation.settings.SupportScreen
 import com.maakthi.prescriptionpharmacist.presentation.splash.SplashScreen
 import com.maakthi.prescriptionpharmacist.presentation.transfer.TransferScreen
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 private data class TopLevelDestination(
     val route: String,
@@ -71,6 +73,23 @@ fun AppNavHost(
     val navController = rememberNavController()
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = backStackEntry?.destination?.route
+
+    // ---------- Auth gate: internal screens require a signed-in user ----------
+    val authGate: com.maakthi.prescriptionpharmacist.presentation.auth.AuthGateViewModel =
+        androidx.hilt.navigation.compose.hiltViewModel()
+    val authUser by authGate.user.collectAsStateWithLifecycle()
+    LaunchedEffect(authUser, currentRoute) {
+        val route = currentRoute ?: return@LaunchedEffect
+        val publicRoutes = setOf(
+            Routes.SPLASH, Routes.ONBOARDING, Routes.LOGIN,
+            Routes.REGISTER, Routes.GOOGLE_SIGN_IN
+        )
+        if (authGate.firebaseAvailable && authUser == null && route !in publicRoutes) {
+            navController.navigate(Routes.LOGIN) {
+                popUpTo(route) { inclusive = true }
+            }
+        }
+    }
 
     val topLevelDestinations = listOf(
         TopLevelDestination(Routes.HOME, R.string.nav_home) {

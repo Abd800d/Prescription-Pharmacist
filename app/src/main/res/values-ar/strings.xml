@@ -383,4 +383,27 @@
     <string name="knowledge_conflict_pick">اختر القيمة التي ستُعتمد بعد المراجعة:</string>
     <string name="knowledge_source_line">المصدر: %1$s • %2$s • %3$s</string>
     <string name="knowledge_import">استيراد إلى نموذج المراجعة</string>
+    <string name="auth_error_email_exists">يوجد حساب بهذا البريد الإلكتروني بالفعل.</string>
+    <string name="auth_error_invalid_email">البريد الإلكتروني غير صالح.</string>
+    <string name="auth_error_weak_password">كلمة المرور ضعيفة جداً. استخدم 6 أحرف على الأقل.</string>
+    <string name="auth_error_wrong_credentials">البريد الإلكتروني أو كلمة المرور غير صحيحة.</string>
+    <string name="auth_error_user_not_found">لا يوجد حساب بهذا البريد الإلكتروني.</string>
+    <string name="auth_error_user_disabled">تم تعطيل هذا الحساب.</string>
+    <string name="auth_error_too_many">محاولات كثيرة جداً. حاول مرة أخرى لاحقاً.</string>
+    <string name="auth_error_recent_login">لأسباب أمنية، سجّل الدخول مرة أخرى قبل حذف الحساب.</string>
+    <string name="auth_verify_notice">لم يتم التحقق من بريدك الإلكتروني بعد. رابط التحقق في بريدك الوارد.</string>
+    <string name="auth_resend_verification">إعادة إرسال رسالة التحقق</string>
+    <string name="auth_verification_sent">تم إرسال رسالة التحقق.</string>
+    <string name="auth_reset_title">نسيت كلمة المرور؟</string>
+    <string name="auth_reset_message">أدخل بريدك الإلكتروني وسنرسل لك رابط إعادة التعيين.</string>
+    <string name="auth_reset_button">إرسال رابط الإعادة</string>
+    <string name="auth_reset_sent">تم إرسال رسالة إعادة تعيين كلمة المرور. تحقق من بريدك.</string>
+    <string name="auth_delete_account">حذف الحساب</string>
+    <string name="auth_delete_account_title">حذف حسابك؟</string>
+    <string name="auth_delete_account_message">سيُحذف حسابك نهائياً وتُمسح بيانات التطبيق على هذا الجهاز. لا يمكن التراجع عن ذلك.</string>
+    <string name="auth_account_deleted">تم حذف حسابك.</string>
+    <string name="settings_role">الدور: %1$s</string>
+    <string name="role_user">مستخدم</string>
+    <string name="role_pharmacist">صيدلي</string>
+    <string name="role_admin">مسؤول</string>
 </resources>

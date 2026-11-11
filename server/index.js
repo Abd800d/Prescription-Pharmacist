@@ -640,3 +640,70 @@ exports.druginfo = onRequest(
     }
   }
 );
+
+/**
+ * Role helpers — roles live in the Firebase ID-token custom claim `role`
+ * (user | pharmacist | admin). They are set ONLY through the admin endpoint
+ * below, never by clients. Firestore rules read the same claim.
+ */
+async function requireRole(req, allowed) {
+  const uid = await verifyToken(req);
+  if (!uid) return null;
+  const user = await admin.auth().getUser(uid);
+  const role = (user.customClaims && user.customClaims.role) || "user";
+  const allowedList = Array.isArray(allowed) ? allowed : [allowed];
+  if (!allowedList.includes(role)) return null;
+  return { uid, role };
+}
+
+/**
+ * POST {baseUrl}/setrole — admin only.
+ * Body: {"uid": "...", "role": "user|pharmacist|admin"}
+ * Sets the target user's `role` custom claim (used by Firestore rules and
+ * the app). Bootstrap the first admin with the Firebase Admin SDK or the
+ * console — see README "أدوار المستخدمين".
+ */
+exports.setrole = onRequest(
+  {
+    region: "europe-west1",
+    cors: true,
+    memory: "256MiB",
+    timeoutSeconds: 60,
+  },
+  async (req, res) => {
+    if (req.method !== "POST") {
+      res.status(405).json({ error: { code: "method_not_allowed", message: "Use POST" } });
+      return;
+    }
+
+    const adminCaller = await requireRole(req, "admin");
+    if (!adminCaller) {
+      res.status(403).json({
+        error: { code: "forbidden", message: "Admin role required" },
+      });
+      return;
+    }
+
+    let uid, role;
+    try {
+      const body = typeof req.body === "string" ? JSON.parse(req.body) : req.body;
+      uid = String(body?.uid ?? "").trim();
+      role = String(body?.role ?? "").trim().toLowerCase();
+      if (!uid) throw new Error("uid required");
+      if (!["user", "pharmacist", "admin"].includes(role)) throw new Error("invalid role");
+    } catch (e) {
+      res.status(400).json({ error: { code: "bad_request", message: e.message } });
+      return;
+    }
+
+    try {
+      await admin.auth().setCustomUserClaims(uid, { role });
+      res.status(200).json({ uid, role, updatedBy: adminCaller.uid });
+    } catch (e) {
+      console.error("setrole failed", e);
+      res.status(502).json({
+        error: { code: "role_update_failed", message: "Could not update the user role" },
+      });
+    }
+  }
+);

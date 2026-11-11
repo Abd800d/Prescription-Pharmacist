@@ -100,9 +100,18 @@ fun GoogleSignInScreen(
                 is AuthEvent.Error -> {
                     val base = context.getString(authErrorMessage(event.code))
                     snackbarHostState.showSnackbar(
-                        event.detail?.let { "$base — $it" } ?: base
+                        if (event.code == com.maakthi.prescriptionpharmacist.core.auth.AuthErrorType.UNKNOWN) {
+                            event.detail?.let { "$base — $it" } ?: base
+                        } else {
+                            base
+                        }
                     )
                 }
+                AuthEvent.VerificationEmailSent ->
+                    snackbarHostState.showSnackbar(context.getString(R.string.auth_verification_sent))
+                AuthEvent.PasswordResetSent ->
+                    snackbarHostState.showSnackbar(context.getString(R.string.auth_reset_sent))
+                AuthEvent.AccountDeleted -> onSignedIn()
             }
         }
     }

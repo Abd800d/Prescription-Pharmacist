@@ -11,6 +11,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.HorizontalDivider
@@ -20,6 +21,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -45,10 +47,46 @@ fun SettingsScreen(
 ) {
     val settings by viewModel.settings.collectAsStateWithLifecycle()
     val currentUser by viewModel.currentUser.collectAsStateWithLifecycle()
+    val role by viewModel.role.collectAsStateWithLifecycle()
 
     var backendUrl by remember { mutableStateOf(settings.backendUrl) }
     var backendError by remember { mutableStateOf(false) }
     var backendSaved by remember { mutableStateOf(false) }
+    var deleteConfirm by remember { mutableStateOf(false) }
+    var accountMessage by remember { mutableStateOf<Int?>(null) }
+
+    LaunchedEffect(Unit) {
+        viewModel.accountEvents.collect { event ->
+            accountMessage = when (event) {
+                AccountEvent.VerificationSent -> R.string.auth_verification_sent
+                AccountEvent.AccountDeleted -> R.string.auth_account_deleted
+                AccountEvent.Failed -> R.string.login_failed
+            }
+        }
+    }
+
+    if (deleteConfirm) {
+        AlertDialog(
+            onDismissRequest = { deleteConfirm = false },
+            title = { Text(stringResource(R.string.auth_delete_account_title)) },
+            text = { Text(stringResource(R.string.auth_delete_account_message)) },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        deleteConfirm = false
+                        viewModel.deleteAccount()
+                    }
+                ) {
+                    Text(stringResource(R.string.auth_delete_account))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { deleteConfirm = false }) {
+                    Text(stringResource(R.string.cancel))
+                }
+            }
+        )
+    }
 
     LaunchedEffect(settings.backendUrl) {
         if (!backendSaved) backendUrl = settings.backendUrl
@@ -170,6 +208,30 @@ fun SettingsScreen(
                         text = stringResource(R.string.settings_signed_in, user.uid),
                         style = MaterialTheme.typography.bodyMedium
                     )
+                    Text(
+                        text = stringResource(
+                            R.string.settings_role,
+                            stringResource(
+                                when (role) {
+                                    com.maakthi.prescriptionpharmacist.domain.model.UserRole.ADMIN -> R.string.role_admin
+                                    com.maakthi.prescriptionpharmacist.domain.model.UserRole.PHARMACIST -> R.string.role_pharmacist
+                                    com.maakthi.prescriptionpharmacist.domain.model.UserRole.USER -> R.string.role_user
+                                }
+                            )
+                        ),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    if (!user.isAnonymous && !user.isEmailVerified) {
+                        Text(
+                            text = stringResource(R.string.auth_verify_notice),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.error
+                        )
+                        OutlinedButton(onClick = viewModel::resendVerification) {
+                            Text(stringResource(R.string.auth_resend_verification))
+                        }
+                    }
                 }
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     if (currentUser == null) {
@@ -180,7 +242,20 @@ fun SettingsScreen(
                         OutlinedButton(onClick = { viewModel.signOut() }) {
                             Text(stringResource(R.string.settings_sign_out))
                         }
+                        OutlinedButton(onClick = { deleteConfirm = true }) {
+                            Text(
+                                text = stringResource(R.string.auth_delete_account),
+                                color = MaterialTheme.colorScheme.error
+                            )
+                        }
                     }
+                }
+                accountMessage?.let { message ->
+                    Text(
+                        text = stringResource(message),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.primary
+                    )
                 }
             }
             SettingsLinkRow(

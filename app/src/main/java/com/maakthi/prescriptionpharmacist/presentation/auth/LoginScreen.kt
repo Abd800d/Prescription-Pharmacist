@@ -16,6 +16,7 @@ import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -61,7 +62,9 @@ fun LoginScreen(
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
+    var forgotOpen by remember { mutableStateOf(false) }
     val loading by viewModel.loading.collectAsStateWithLifecycle()
+    val needsVerification by viewModel.needsVerification.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
 
@@ -72,11 +75,55 @@ fun LoginScreen(
                 is AuthEvent.Error -> {
                     val base = context.getString(authErrorMessage(event.code))
                     snackbarHostState.showSnackbar(
-                        event.detail?.let { "$base — $it" } ?: base
+                        if (event.code == com.maakthi.prescriptionpharmacist.core.auth.AuthErrorType.UNKNOWN) {
+                            event.detail?.let { "$base — $it" } ?: base
+                        } else {
+                            base
+                        }
                     )
                 }
+                AuthEvent.VerificationEmailSent ->
+                    snackbarHostState.showSnackbar(context.getString(R.string.auth_verification_sent))
+                AuthEvent.PasswordResetSent ->
+                    snackbarHostState.showSnackbar(context.getString(R.string.auth_reset_sent))
+                AuthEvent.AccountDeleted -> onBack()
             }
         }
+    }
+
+    if (forgotOpen) {
+        AlertDialog(
+            onDismissRequest = { forgotOpen = false },
+            title = { Text(stringResource(R.string.auth_reset_title)) },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text(stringResource(R.string.auth_reset_message))
+                    OutlinedTextField(
+                        value = email,
+                        onValueChange = { email = it },
+                        label = { Text(stringResource(R.string.email_hint)) },
+                        singleLine = true,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        forgotOpen = false
+                        viewModel.forgotPassword(email)
+                    }
+                ) {
+                    Text(stringResource(R.string.auth_reset_button))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { forgotOpen = false }) {
+                    Text(stringResource(R.string.cancel))
+                }
+            }
+        )
     }
 
     Scaffold(
@@ -160,6 +207,25 @@ fun LoginScreen(
                 }
             }
 
+            if (needsVerification) {
+                FeatureNotReadyCard(message = stringResource(R.string.auth_verify_notice))
+                OutlinedButton(
+                    onClick = viewModel::resendVerification,
+                    enabled = !loading,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(stringResource(R.string.auth_resend_verification))
+                }
+            }
+
+            TextButton(
+                onClick = { forgotOpen = true },
+                enabled = viewModel.firebaseAvailable,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(stringResource(R.string.auth_reset_title))
+            }
+
             OutlinedButton(
                 onClick = onGoGoogle,
                 enabled = viewModel.firebaseAvailable,
@@ -184,10 +250,19 @@ fun LoginScreen(
     }
 }
 
-internal fun authErrorMessage(code: ErrorCode): Int = when (code) {
-    ErrorCode.NOT_CONFIGURED -> R.string.auth_not_ready
-    ErrorCode.NETWORK -> R.string.error_network
-    ErrorCode.UNAUTHORIZED -> R.string.wrong_credentials
-    ErrorCode.SERVER -> R.string.error_server
-    else -> R.string.login_failed
-}
+internal fun authErrorMessage(code: com.maakthi.prescriptionpharmacist.core.auth.AuthErrorType): Int =
+    when (code) {
+        com.maakthi.prescriptionpharmacist.core.auth.AuthErrorType.NOT_CONFIGURED -> R.string.auth_not_ready
+        com.maakthi.prescriptionpharmacist.core.auth.AuthErrorType.NETWORK_ERROR -> R.string.error_network
+        com.maakthi.prescriptionpharmacist.core.auth.AuthErrorType.WRONG_CREDENTIALS,
+        com.maakthi.prescriptionpharmacist.core.auth.AuthErrorType.INVALID_CREDENTIAL -> R.string.auth_error_wrong_credentials
+        com.maakthi.prescriptionpharmacist.core.auth.AuthErrorType.EMAIL_EXISTS -> R.string.auth_error_email_exists
+        com.maakthi.prescriptionpharmacist.core.auth.AuthErrorType.INVALID_EMAIL -> R.string.auth_error_invalid_email
+        com.maakthi.prescriptionpharmacist.core.auth.AuthErrorType.WEAK_PASSWORD -> R.string.auth_error_weak_password
+        com.maakthi.prescriptionpharmacist.core.auth.AuthErrorType.USER_NOT_FOUND -> R.string.auth_error_user_not_found
+        com.maakthi.prescriptionpharmacist.core.auth.AuthErrorType.USER_DISABLED -> R.string.auth_error_user_disabled
+        com.maakthi.prescriptionpharmacist.core.auth.AuthErrorType.TOO_MANY_REQUESTS -> R.string.auth_error_too_many
+        com.maakthi.prescriptionpharmacist.core.auth.AuthErrorType.REQUIRES_RECENT_LOGIN -> R.string.auth_error_recent_login
+        com.maakthi.prescriptionpharmacist.core.auth.AuthErrorType.EMAIL_NOT_VERIFIED -> R.string.auth_verify_notice
+        com.maakthi.prescriptionpharmacist.core.auth.AuthErrorType.UNKNOWN -> R.string.login_failed
+    }
