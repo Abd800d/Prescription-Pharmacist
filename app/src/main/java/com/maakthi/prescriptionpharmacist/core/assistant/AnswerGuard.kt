@@ -48,16 +48,18 @@ object AnswerGuard {
             // final diagnosis
             "التشخيص", "شخّصني", "شخصني", "ما مرضي", "ما هو مرضي",
             "diagnose", "diagnosis", "what disease", "what illness",
-            // stop / change dose
+            // stop medication
             "أوقف الدواء", "اقطع الدواء", "اتوقف عن الدواء", "توقف عن الدواء",
-            "اغير الجرعة", "غيّر الجرعة", "غير الجرعة", "ازيد الجرعة", "أنقص الجرعة",
-            "انقص الجرعة", "اضاعف الجرعة", "هل اوقف", "هل أوقف",
-            "stop the medication", "stop taking", "change the dose", "change my dose",
-            "increase the dose", "double the dose", "reduce the dose", "lower the dose",
-            "quit the medication", "discontinue"
+            "هل اوقف", "هل أوقف", "اوقف الدواء",
+            "stop the medication", "stop taking", "quit the medication", "discontinue"
+        )
+        val doseChange = Regex(
+            """غي.?ر.{0,20}جرعة|ازيد.{0,20}جرعة|انقص.{0,20}جرعة|اضاعف.{0,20}جرعة|ضعف.{0,20}جرعة|""" +
+                """change.{0,20}dose|increase.{0,20}dose|double.{0,20}dose|reduce.{0,20}dose|lower.{0,20}dose"""
         )
         val normalized = EvidenceRetriever.normalize(question)
-        return patterns.any { normalized.contains(EvidenceRetriever.normalize(it)) }
+        return patterns.any { normalized.contains(EvidenceRetriever.normalize(it)) } ||
+            doseChange.containsMatchIn(normalized)
     }
 
     /** Strips markdown links and URLs that are not part of the real evidence. */

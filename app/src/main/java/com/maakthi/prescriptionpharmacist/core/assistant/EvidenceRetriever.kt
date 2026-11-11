@@ -83,8 +83,9 @@ object EvidenceRetriever {
         question: String,
         drugs: List<Drug>,
         knowledge: DrugKnowledgeResult?,
-        language: String = "en"
+        language: String? = null
     ): EvidencePack {
+        val lang = language ?: AnswerGuard.languageOf(question)
         val normalizedQuestion = normalize(question)
         if (normalizedQuestion.isEmpty()) return EvidencePack(emptyList())
 
@@ -108,9 +109,9 @@ object EvidenceRetriever {
                     items.add(
                         EvidenceItem(
                             id = items.size + 1,
-                            text = truncate("$label — ${fieldLabel(field, language)}: $value"),
+                            text = truncate("$label — ${fieldLabel(field, lang)}: $value"),
                             sourceName = drug.sourceName ?: LOCAL_SOURCE.let {
-                                if (language == "ar") it.first else it.second
+                                if (lang == "ar") it.first else it.second
                             },
                             sourceUrl = drug.sourceUrl ?: "",
                             sourceDate = drug.sourceDate ?: ""
@@ -130,7 +131,7 @@ object EvidenceRetriever {
                     items.add(
                         EvidenceItem(
                             id = items.size + 1,
-                            text = truncate("${fieldLabel(fact.field, language)}: ${fact.value}"),
+                            text = truncate("${fieldLabel(fact.field, lang)}: ${fact.value}"),
                             sourceName = fact.source.name,
                             sourceUrl = fact.source.url,
                             sourceDate = formatDate(fact.source.retrievedAt)
@@ -147,7 +148,7 @@ object EvidenceRetriever {
                     items.add(
                         EvidenceItem(
                             id = items.size + 1,
-                            text = truncate("⚠ ${fieldLabel(conflict.field, language)}: ${conflict.facts.joinToString(" | ") { it.value }} ($names)"),
+                            text = truncate("⚠ ${fieldLabel(conflict.field, lang)}: ${conflict.facts.joinToString(" | ") { it.value }} ($names)"),
                             sourceName = names,
                             sourceUrl = conflict.facts.firstOrNull()?.source?.url ?: "",
                             sourceDate = formatDate(conflict.facts.firstOrNull()?.source?.retrievedAt ?: 0L)

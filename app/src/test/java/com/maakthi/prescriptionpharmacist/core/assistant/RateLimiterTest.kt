@@ -30,7 +30,7 @@ class RateLimiterTest {
         val limiter = RateLimiter(maxPerWindow = 1, windowMillis = 60_000)
         assertTrue(limiter.tryAcquire(10_000))
         val wait = limiter.retryAfterMillis(15_000)
-        assertTrue(wait in 50_000..50_001)
+        assertTrue("got $wait", wait in 55_000..55_001)
         assertEqualsish(0L, limiter.retryAfterMillis(71_000))
     }
 
