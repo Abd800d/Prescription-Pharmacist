@@ -81,4 +81,8 @@ class SettingsDataStore @Inject constructor(
     override suspend fun setLastBackupAt(at: Long) {
         context.dataStore.edit { it[Keys.LAST_BACKUP_AT] = at }
     }
+
+    override suspend fun clearAll() {
+        context.dataStore.edit { it.clear() }
+    }
 }

@@ -9,7 +9,10 @@ import com.google.firebase.storage.FirebaseStorage
 import com.maakthi.prescriptionpharmacist.core.sync.BackupPolicy
 import com.maakthi.prescriptionpharmacist.core.sync.ConflictResolver
 import com.maakthi.prescriptionpharmacist.core.sync.SyncEngine
+import com.maakthi.prescriptionpharmacist.core.security.AuditEvent
+import com.maakthi.prescriptionpharmacist.core.security.UploadGuard
 import com.maakthi.prescriptionpharmacist.data.local.dao.SyncConflictDao
+import com.maakthi.prescriptionpharmacist.data.privacy.AuditLogger
 import com.maakthi.prescriptionpharmacist.domain.model.AppResult
 import com.maakthi.prescriptionpharmacist.domain.model.ConflictChoice
 import com.maakthi.prescriptionpharmacist.domain.model.ConnectionState
@@ -51,7 +54,8 @@ class SyncRepositoryImpl @Inject constructor(
     private val settingsRepository: SettingsRepository,
     private val authRepository: AuthRepository,
     private val syncConflictDao: SyncConflictDao,
-    private val backupVault: BackupVault
+    private val backupVault: BackupVault,
+    private val auditLogger: AuditLogger
 ) : SyncRepository {
 
     private val engine = SyncEngine(gateway, localStore)
@@ -70,7 +74,16 @@ class SyncRepositoryImpl @Inject constructor(
                 runCatching { mediaRepository.syncNow() }
                 runCatching { mediaRepository.pullRemoteImages() }
                 settingsRepository.setLastSyncAt(now)
+                auditLogger.log(
+                    AuditEvent.Sync(
+                        action = "completed",
+                        subjectId = "run",
+                        count = report.pushed + report.pulled
+                    )
+                )
                 autoBackupIfNeeded()
+            } else {
+                auditLogger.log(AuditEvent.Sync(action = "interrupted", subjectId = "run"))
             }
             AppResult.success(report)
         } catch (e: IOException) {
@@ -140,6 +153,7 @@ class SyncRepositoryImpl @Inject constructor(
                 .getBytes(20L * 1024 * 1024)
                 .await()
             transferRepository.restoreEncryptedBackup(passphrase, bytes)
+            auditLogger.log(AuditEvent.Backup(action = "restored", subjectId = "cloud"))
             AppResult.success(Unit)
         } catch (e: Exception) {
             AppResult.error(ErrorCode.NETWORK, cause = e)
@@ -157,6 +171,11 @@ class SyncRepositoryImpl @Inject constructor(
         return try {
             val file = transferRepository.createEncryptedBackup(passphrase)
             if (file is AppResult.Success) {
+                // Upload guard: only well-formed .ppbak payloads, size-capped.
+                val check = UploadGuard.checkBackup("latest.ppbak", file.data.bytes)
+                if (check is UploadGuard.Decision.Rejected) {
+                    return AppResult.error(ErrorCode.VALIDATION, "backup_${check.reason}")
+                }
                 // encrypted cloud copy — private per-user path only
                 runCatching {
                     val uid = currentUid()
@@ -168,6 +187,7 @@ class SyncRepositoryImpl @Inject constructor(
                     }
                 }
                 settingsRepository.setLastBackupAt(System.currentTimeMillis())
+                auditLogger.log(AuditEvent.Backup(action = "created", subjectId = "latest"))
                 AppResult.success(Unit)
             } else {
                 AppResult.error(ErrorCode.SERVER, "backup_failed")

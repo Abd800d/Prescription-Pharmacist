@@ -6,7 +6,9 @@ import androidx.core.content.FileProvider
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.maakthi.prescriptionpharmacist.BuildConfig
+import com.maakthi.prescriptionpharmacist.core.security.AuditEvent
 import com.maakthi.prescriptionpharmacist.core.support.SupportReportBuilder
+import com.maakthi.prescriptionpharmacist.data.privacy.AuditLogger
 import com.maakthi.prescriptionpharmacist.domain.model.SupportReport
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -40,7 +42,8 @@ sealed interface SupportEvent {
  */
 @HiltViewModel
 class SupportViewModel @Inject constructor(
-    @ApplicationContext private val context: Context
+    @ApplicationContext private val context: Context,
+    private val auditLogger: AuditLogger
 ) : ViewModel() {
 
     /** Stable report number shown in the form and sent with the report. */
@@ -122,6 +125,8 @@ class SupportViewModel @Inject constructor(
                         attachments = attachments
                     )
                 )
+                // audit: report ID only — never the message content
+                auditLogger.log(AuditEvent.Support(action = "report.sent", subjectId = report.reportId))
             } catch (e: Exception) {
                 _events.send(SupportEvent.Failed(e.message))
             } finally {

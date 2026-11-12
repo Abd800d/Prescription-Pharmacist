@@ -53,6 +53,10 @@ object DatabaseModule {
         database.syncConflictDao()
 
     @Provides
+    fun provideAuditEventDao(database: AppDatabase): com.maakthi.prescriptionpharmacist.data.local.dao.AuditEventDao =
+        database.auditEventDao()
+
+    @Provides
     fun provideProductImageDao(database: AppDatabase): ProductImageDao =
         database.productImageDao()
 }

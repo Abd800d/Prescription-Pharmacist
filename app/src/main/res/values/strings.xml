@@ -383,6 +383,15 @@
     <!-- Privacy -->
     <string name="privacy_title">Privacy Policy</string>
     <string name="privacy_body">Your privacy matters to us.\n\n• All prescriptions, photos, and drug data are stored locally on your device by default.\n• Photos are sent to the secure analysis backend only when you run an analysis, and they are used only to produce the extraction result — they are not sold or shared with third parties.\n• Optional cloud backup (Firebase) is encrypted in transit and stored in your own private storage.\n• The app does not contain advertising or tracking SDKs.\n• Authentication data (when Firebase is enabled) is managed by Firebase Authentication and subject to Google\'s privacy policy.\n• You can delete any record at any time from within the app; deleting a prescription also deletes its local image.\n\nFor privacy questions, contact us through the Technical Support screen.</string>
+    <string name="privacy_delete_title">Account &amp; data deletion</string>
+    <string name="privacy_delete_body">You can delete all your data at any time:\n• On this device: the drug database, prescriptions, encrypted images, settings, keys and caches are deleted immediately.\n• Cloud copies (sync, media, encrypted backups) and your account: request deletion here and it is completed within 30 days.\n• Backup files you exported (.ppbak) are under your own control.</string>
+    <string name="privacy_delete_local">Delete data on this device</string>
+    <string name="privacy_delete_cloud">Request cloud &amp; account deletion</string>
+    <string name="privacy_delete_confirm_title">Delete all data on this device?</string>
+    <string name="privacy_delete_confirm_text">This deletes the drug database, prescriptions, images, settings and keys immediately. This cannot be undone.</string>
+    <string name="privacy_delete_confirm_yes">Delete</string>
+    <string name="privacy_deleted">All local data deleted</string>
+    <string name="privacy_delete_email_subject">Request account &amp; data deletion</string>
 
     <!-- Terms -->
     <string name="terms_title">Terms &amp; Medical Disclaimer</string>

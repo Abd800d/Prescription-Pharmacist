@@ -8,6 +8,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import com.maakthi.prescriptionpharmacist.core.media.ImageCompression
 import com.maakthi.prescriptionpharmacist.core.media.MediaAccess
 import com.maakthi.prescriptionpharmacist.core.media.MediaCrypto
+import com.maakthi.prescriptionpharmacist.core.security.UploadGuard
 import com.maakthi.prescriptionpharmacist.core.media.SyncPlanner
 import com.maakthi.prescriptionpharmacist.data.firebase.FirebaseSupport
 import com.maakthi.prescriptionpharmacist.data.local.dao.MediaAssetDao
@@ -88,8 +89,19 @@ class MediaRepositoryImpl @Inject constructor(
         encrypt: Boolean
     ): AppResult<MediaAsset> {
         return try {
+            // Upload guard: size-capped, never executable, real image output.
+            if (bytes.isEmpty()) return AppResult.error(ErrorCode.VALIDATION, "empty_file")
+            if (bytes.size > UploadGuard.MAX_IMAGE_BYTES) {
+                return AppResult.error(ErrorCode.VALIDATION, "too_large")
+            }
+            if (UploadGuard.looksExecutable(bytes)) {
+                return AppResult.error(ErrorCode.VALIDATION, "executable_content")
+            }
             val key = deviceKeyStore.keyBytes()
             val compressed = ImageCompressor.compress(bytes)
+            if (!UploadGuard.looksLikeImage(compressed)) {
+                return AppResult.error(ErrorCode.VALIDATION, "bad_type")
+            }
             val stored = if (encrypt) MediaCrypto.encrypt(key, compressed) else compressed
             val id = UUID.randomUUID().toString()
             val extension = if (encrypt) "bin" else "jpg"
@@ -213,6 +225,13 @@ class MediaRepositoryImpl @Inject constructor(
     private suspend fun upload(asset: MediaAsset): Boolean {
         return try {
             val bytes = File(asset.localPath).readBytes()
+            // Upload guard at the network edge: size cap + executable block;
+            // plain images must still be real images (encrypted ones are
+            // ciphertext by design and pass on size alone).
+            if (bytes.isEmpty() || bytes.size > UploadGuard.MAX_IMAGE_BYTES) return false
+            if (!asset.encrypted) {
+                if (UploadGuard.looksExecutable(bytes) || !UploadGuard.looksLikeImage(bytes)) return false
+            }
             val metadata = com.google.firebase.storage.StorageMetadata.Builder()
                 .setContentType(asset.mimeType)
                 .setCustomMetadata("encrypted", asset.encrypted.toString())
@@ -245,6 +264,16 @@ class MediaRepositoryImpl @Inject constructor(
                     if (dao.getById(id) == null) {
                         val bytes = item.getBytes(10L * 1024 * 1024).await()
                         val key = deviceKeyStore.keyBytes()
+                        // Download guard: reject oversized or executable
+                        // payloads coming from the network.
+                        if (bytes.isEmpty() || bytes.size > UploadGuard.MAX_IMAGE_BYTES) {
+                            return@forEach
+                        }
+                        if (kind == MediaKind.PRODUCT_IMAGE &&
+                            (UploadGuard.looksExecutable(bytes) || !UploadGuard.looksLikeImage(bytes))
+                        ) {
+                            return@forEach
+                        }
                         if (kind == MediaKind.PRESCRIPTION_IMAGE) {
                             // Encrypted remote files decrypt with the device key;
                             // unreadable ones (other devices) are skipped safely.

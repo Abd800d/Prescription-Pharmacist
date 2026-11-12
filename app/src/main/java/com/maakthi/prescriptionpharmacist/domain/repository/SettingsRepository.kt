@@ -18,4 +18,7 @@ interface SettingsRepository {
     suspend fun setAutoBackupEnabled(enabled: Boolean)
     suspend fun setLastSyncAt(at: Long)
     suspend fun setLastBackupAt(at: Long)
+
+    /** Privacy: wipes every stored preference. */
+    suspend fun clearAll()
 }
