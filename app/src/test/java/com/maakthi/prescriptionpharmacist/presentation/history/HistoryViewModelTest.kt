@@ -99,7 +99,7 @@ class HistoryViewModelTest {
     }
 
     @Test
-    fun `offline: the stream works with no network at all`() = runTest {
+    fun `offline - the stream works with no network at all`() = runTest {
         // The repository is purely local — this models the offline experience:
         // the screen always renders what is on the device.
         val repository = FakePrescriptionRepository()
