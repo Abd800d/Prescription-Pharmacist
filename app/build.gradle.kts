@@ -72,7 +72,7 @@ android {
         }
         // Staging: QA/ internal-testing build — same code, distinct app id so
         // it installs next to production, debuggable, no minification.
-        staging {
+        create("staging") {
             applicationIdSuffix = ".staging"
             versionNameSuffix = "-staging"
             isDebuggable = true
