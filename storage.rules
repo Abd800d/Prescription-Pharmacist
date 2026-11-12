@@ -1,0 +1,37 @@
+rules_version = '2';
+
+// Prescription Pharmacist — Storage security rules.
+//
+// Every user's media lives under users/{userId}/… and is readable/writable
+// ONLY by that signed-in user (admins included per user, not by link). There
+// are no public paths and no unauthenticated access: images are never exposed
+// through unprotected URLs.
+//
+// Upload hardening (defense in depth next to the client-side UploadGuard):
+// - media files: image content only, < 10 MB, fixed image extensions;
+// - backups: .ppbak only, < 25 MB;
+// - nested paths keep the owner check.
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /users/{userId}/media/{kind}/{file} {
+      allow read: if request.auth != null && request.auth.uid == userId;
+      allow write: if request.auth != null && request.auth.uid == userId
+        && request.resource.size < 10 * 1024 * 1024
+        && (request.resource.contentType.matches('image/.*')
+            || request.resource.contentType.matches('application/octet-stream'))
+        && file.matches('.*\\.(jpg|jpeg|png|webp|bin)$');
+    }
+
+    match /users/{userId}/backups/{file} {
+      allow read: if request.auth != null && request.auth.uid == userId;
+      allow write: if request.auth != null && request.auth.uid == userId
+        && request.resource.size < 25 * 1024 * 1024
+        && file.matches('.*\\.ppbak$');
+    }
+
+    // Anything else under a user space is closed.
+    match /users/{userId}/{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

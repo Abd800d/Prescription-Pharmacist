@@ -1,0 +1,542 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App -->
+    <string name="app_name">Prescription Pharmacist</string>
+    <string name="developer_credit">Developed by Dr. Abdulmajid Al-Maakthi</string>
+    <string name="app_tagline">AI-powered prescription analysis</string>
+
+    <!-- Navigation -->
+    <string name="nav_home">Home</string>
+    <string name="nav_drug_search">Drugs</string>
+    <string name="nav_saved">Saved</string>
+    <string name="nav_products">Products</string>
+    <string name="nav_capture">Capture</string>
+    <string name="nav_history">History</string>
+    <string name="nav_settings">Settings</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_page1_title">Photograph prescriptions instantly</string>
+    <string name="onboarding_page1_body">Use the camera or your gallery to add any prescription in seconds.</string>
+    <string name="onboarding_page2_title">AI reads handwriting</string>
+    <string name="onboarding_page2_body">Advanced AI extracts medication names — trade and generic — with confidence scores.</string>
+    <string name="onboarding_page3_title">You stay in control</string>
+    <string name="onboarding_page3_body">Every result needs your confirmation as a pharmacist before it is saved.</string>
+    <string name="onboarding_skip">Skip</string>
+    <string name="onboarding_next">Next</string>
+    <string name="onboarding_get_started">Get started</string>
+
+    <!-- Auth -->
+    <string name="login_title">Sign in</string>
+    <string name="login_subtitle">Sign in to sync your data, or continue without an account.</string>
+    <string name="login_button">Sign in</string>
+    <string name="login_failed">Sign-in failed. Please try again.</string>
+    <string name="register_title">Create account</string>
+    <string name="register_subtitle">Create an account with your email and password.</string>
+    <string name="register_button">Create account</string>
+    <string name="register_link">Don\'t have an account? Register</string>
+    <string name="have_account_link">Already have an account? Sign in</string>
+    <string name="email_hint">Email</string>
+    <string name="password_hint">Password</string>
+    <string name="confirm_password_hint">Confirm password</string>
+    <string name="weak_password">Password must be at least 6 characters.</string>
+    <string name="passwords_dont_match">Passwords do not match.</string>
+    <string name="wrong_credentials">Incorrect email or password.</string>
+    <string name="continue_guest">Continue without an account</string>
+    <string name="auth_not_ready">Firebase is not configured in this build. Add app/google-services.json to enable authentication.</string>
+    <string name="google_signin_title">Google Sign-In</string>
+    <string name="google_signin_subtitle">Sign in quickly and securely with your Google account.</string>
+    <string name="google_signin_button">Sign in with Google</string>
+    <string name="google_signin_failed">Google sign-in failed. Please try again.</string>
+    <string name="google_signin_not_ready">Google Sign-In requires Firebase configuration (google-services.json). See the README for setup steps.</string>
+
+    <!-- Home -->
+    <string name="home_welcome">Welcome, pharmacist</string>
+    <string name="home_quick_actions">Quick actions</string>
+    <string name="home_recent">Recent prescriptions</string>
+    <string name="home_view_all">View all</string>
+    <string name="account_guest">Local mode — no account</string>
+    <string name="account_signed_in">Signed in: %1$s</string>
+    <string name="action_capture">Capture</string>
+    <string name="action_gallery">Gallery</string>
+    <string name="action_drug_search">Drug search</string>
+    <string name="action_add_drug">Add drug</string>
+    <string name="action_saved">Saved</string>
+    <string name="action_products">Products</string>
+    <string name="action_transfer">Import/Export</string>
+    <string name="action_assistant">AI Assistant</string>
+    <string name="action_backup">Backup</string>
+    <string name="action_support">Support</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_language">Language</string>
+
+    <!-- Capture -->
+    <string name="capture_title">Capture a prescription</string>
+    <string name="capture_instruction">Take a photo of the prescription or pick it from your gallery. AI will extract the medication names.</string>
+    <string name="capture_take_photo">Take photo</string>
+    <string name="capture_pick_gallery">Pick from gallery</string>
+    <string name="capture_permission_rationale">Camera permission is required to photograph prescriptions.</string>
+    <string name="capture_permission_denied">Camera permission was denied. You can grant it from system settings or pick an image from the gallery.</string>
+    <string name="capture_camera_unavailable">Camera could not be started on this device.</string>
+    <string name="capture_open_settings">Grant permission</string>
+
+    <!-- Gallery -->
+    <string name="gallery_title">Select image from gallery</string>
+    <string name="gallery_instruction">Choose a clear photo of the prescription, then continue to crop and edit.</string>
+    <string name="gallery_pick_button">Choose image</string>
+    <string name="gallery_no_image">No image selected yet</string>
+    <string name="next_edit">Continue to crop &amp; edit</string>
+
+    <!-- Crop & Edit -->
+    <string name="crop_title">Crop &amp; edit image</string>
+    <string name="crop_rotate_left">Rotate left</string>
+    <string name="crop_rotate_right">Rotate right</string>
+    <string name="crop_flip">Flip horizontally</string>
+    <string name="crop_reset">Reset</string>
+    <string name="crop_apply">Apply and analyze</string>
+    <string name="crop_aspect_free">Free</string>
+    <string name="crop_aspect_1_1">1:1</string>
+    <string name="crop_aspect_4_3">4:3</string>
+    <string name="crop_aspect_3_4">3:4</string>
+
+    <!-- Analysis -->
+    <string name="analysis_running">Analyzing the prescription with AI…</string>
+    <string name="analysis_step_upload">Uploading image securely</string>
+    <string name="analysis_step_read">Reading handwritten text</string>
+    <string name="analysis_step_extract">Extracting medications and confidence</string>
+    <string name="analysis_title">Analysis result</string>
+
+    <!-- Extracted -->
+    <string name="extracted_title">Extracted medicines</string>
+    <string name="extracted_subtitle">These medications were extracted by AI. Review the confidence levels and continue to confirm.</string>
+    <string name="extracted_continue">Continue to confirm &amp; edit</string>
+    <string name="extracted_empty">No medicines were extracted from this image.</string>
+
+    <!-- Review -->
+    <string name="review_title">Confirm and edit results</string>
+    <string name="review_subtitle">Edit, add, or remove medications, then confirm before saving. You are the final judge.</string>
+    <string name="review_confirm">Approve and save</string>
+    <string name="review_reject">Discard</string>
+    <string name="review_add_medication">Add medication</string>
+    <string name="review_edit">Edit</string>
+    <string name="review_delete">Delete</string>
+    <string name="review_empty">No medications listed. You can add them manually.</string>
+    <string name="review_saved">Prescription saved successfully</string>
+    <string name="review_save_draft">Save as draft</string>
+    <string name="review_notes_hint">Pharmacist notes (optional)</string>
+    <string name="review_new_extraction">Re-analyze image</string>
+
+    <!-- Medication -->
+    <string name="medication_name">Medication name</string>
+    <string name="medication_scientific_name">Scientific name</string>
+    <string name="medication_strength">Strength</string>
+    <string name="medication_form">Dosage form</string>
+    <string name="medication_type_label">Name type</string>
+    <string name="medication_type_brand">Brand name</string>
+    <string name="medication_type_generic">Generic name</string>
+    <string name="medication_type_unknown">Unspecified</string>
+    <string name="medication_save">Save</string>
+    <string name="medication_cancel">Cancel</string>
+
+    <!-- Confidence -->
+    <string name="confidence_label">Confidence</string>
+    <string name="confidence_high">High confidence</string>
+    <string name="confidence_medium">Medium confidence</string>
+    <string name="confidence_low">Low confidence</string>
+    <string name="confidence_percent">%1$d%%</string>
+
+    <!-- History -->
+    <string name="history_title">Saved prescriptions</string>
+    <string name="history_empty">No saved prescriptions yet.</string>
+    <string name="history_status_pending">Pending confirmation</string>
+    <string name="history_status_confirmed">Confirmed</string>
+    <string name="history_status_rejected">Rejected</string>
+    <string name="history_delete_title">Delete prescription?</string>
+    <string name="history_delete_message">The prescription and all its medications will be permanently deleted.</string>
+    <string name="history_delete_confirm">Delete</string>
+    <string name="detail_title">Prescription details</string>
+    <string name="detail_created_at">Created: %1$s</string>
+
+    <!-- Drug search -->
+    <string name="drug_search_title">Drug search</string>
+    <string name="drug_search_hint">Search by trade name, generic name, active ingredient or barcode…</string>
+    <string name="drug_search_action">Search</string>
+    <string name="drug_search_local">Local catalog</string>
+    <string name="drug_search_remote">openFDA database</string>
+    <string name="drug_search_empty">Search your local catalog and the openFDA drug database.</string>
+    <string name="drug_search_no_results">No results found. Try a different name.</string>
+    <string name="drug_search_error">Search failed. Check your connection and try again.</string>
+
+    <!-- Drug details / forms -->
+    <string name="drug_add_title">Add drug</string>
+    <string name="drug_edit_title">Edit drug</string>
+    <string name="drug_details_title">Drug details</string>
+    <string name="drug_source_local">Local</string>
+    <string name="drug_source_remote">openFDA</string>
+    <string name="drug_manufacturer_hint">Manufacturer</string>
+    <string name="drug_indications_hint">Indications</string>
+    <string name="drug_dosage_hint">Dosage</string>
+    <string name="drug_warnings_hint">Warnings</string>
+    <string name="drug_notes_hint">Notes</string>
+    <string name="drug_delete_title">Delete drug?</string>
+    <string name="drug_delete_message">This drug will be removed from your local catalog.</string>
+
+    <!-- Products -->
+    <string name="products_title">Product images</string>
+    <string name="products_empty">No product images yet. Add photos of medicine boxes or shelves.</string>
+    <string name="products_add_camera">Camera</string>
+    <string name="products_add_gallery">Gallery</string>
+    <string name="product_title_hint">Product title</string>
+    <string name="product_delete_title">Delete image?</string>
+    <string name="product_delete_message">This product image will be permanently deleted.</string>
+
+    <!-- ============ Media library ============ -->
+    <string name="action_media">Saved images</string>
+    <string name="media_title">Saved images</string>
+    <string name="media_saved">Image saved</string>
+    <string name="media_deleted">Image permanently deleted</string>
+    <string name="media_sync_done">Sync finished</string>
+    <string name="media_product_title">Product title</string>
+    <string name="media_add_save">Save</string>
+    <string name="media_delete_title">Delete image?</string>
+    <string name="media_delete_message">The image will be permanently deleted from this device and from the cloud copy. This cannot be undone.</string>
+    <string name="media_delete_confirm">Delete permanently</string>
+    <string name="media_sync_now">Sync now</string>
+    <string name="media_sync_title">Secure sync</string>
+    <string name="media_sync_hint">When enabled, images are uploaded to secure private storage (only your account can access them). A local copy is always kept — disabling sync never deletes anything.</string>
+    <string name="media_filter_all">All</string>
+    <string name="media_filter_prescriptions">Prescriptions</string>
+    <string name="media_filter_products">Products</string>
+    <string name="media_add_prescription">Add prescription image</string>
+    <string name="media_add_product">Add product image</string>
+    <string name="media_empty">No saved images yet.</string>
+    <string name="media_meta">%1$s • saved by %2$s</string>
+    <string name="media_status_synced">Synced</string>
+    <string name="media_status_pending">Waiting to sync</string>
+    <string name="media_status_failed">Sync failed — will retry</string>
+    <string name="media_status_local">Local copy only</string>
+    <string name="media_encrypted_note">🔒 Stored encrypted on this device</string>
+    <string name="close">Close</string>
+    <!-- ============ Media library ============ -->
+
+    <!-- ============ Sync center ============ -->
+    <!-- ============ Data-processing consent (Google Play) ============ -->
+    <string name="consent_title">Image &amp; data processing consent</string>
+    <string name="consent_summary">Before any analysis, we need your explicit agreement to process your prescription images and health data.</string>
+    <string name="consent_body">By continuing you agree that:\n• Prescription photos you take are sent to the app\'s secure analysis backend ONLY when you run an analysis, and only to produce the extraction result.\n• Your data is stored encrypted on your device; cloud sync and backup are optional and stay in your private space.\n• Your images and health data are never sold or used for advertising.\n• You can withdraw and delete all your data at any time from Settings → Privacy.\n\nYou can use the app offline without any data leaving your device.</string>
+    <string name="consent_accuracy_note">Note: AI extraction may be incomplete or incorrect — results always require review by a licensed pharmacist. The app does not claim absolute accuracy and never replaces professional judgement.</string>
+    <string name="consent_accept">I agree — continue</string>
+    <string name="consent_decline">I do not agree</string>
+    <string name="consent_required_note">Your agreement is required to use image analysis. Nothing is sent without it.</string>
+    <!-- ============ Data-processing consent ============ -->
+    <string name="sync_title">Sync &amp; backup</string>
+    <string name="sync_online">Connected</string>
+    <string name="sync_offline">Offline — local data is fully available</string>
+    <string name="sync_unknown">Checking…</string>
+    <string name="sync_last_sync">Last sync: %1$s</string>
+    <string name="sync_last_backup">Last backup: %1$s</string>
+    <string name="sync_never">never</string>
+    <string name="sync_now">Sync now</string>
+    <string name="sync_done">Sync complete</string>
+    <string name="sync_offline_note">The app works fully offline — changes are queued and sync automatically when the connection returns.</string>
+    <string name="sync_conflicts_title">Conflicts need your decision</string>
+    <string name="sync_no_conflicts">No conflicts — nothing was overwritten.</string>
+    <string name="sync_conflict_item">Conflict on record %1$s</string>
+    <string name="sync_conflict_times">Your version: %1$s • Server version: %2$s</string>
+    <string name="sync_conflict_warning">Your edits were NOT replaced — choose which version to keep.</string>
+    <string name="sync_keep_local">Keep my version</string>
+    <string name="sync_keep_remote">Take the server version</string>
+    <string name="sync_backup_title">Encrypted backup</string>
+    <string name="sync_backup_hint">Backups are encrypted (PBKDF2 + AES-256-GCM) and stored locally and in your private cloud space. Automatic backup runs after successful syncs and once a day.</string>
+    <string name="sync_auto_backup">Automatic backup</string>
+    <string name="sync_set_passphrase">Set backup passphrase</string>
+    <string name="sync_change_passphrase">Change passphrase</string>
+    <string name="sync_backup_now">Back up now</string>
+    <string name="sync_backup_done">Encrypted backup created</string>
+    <string name="sync_restore_cloud">Restore from cloud</string>
+    <string name="sync_restore_file">Restore from file</string>
+    <string name="sync_restored">Backup restored (merge — nothing was deleted)</string>
+    <string name="sync_passphrase_saved">Passphrase saved (encrypted)</string>
+    <string name="sync_passphrase_hint">Choose a strong passphrase — it encrypts your backups and cannot be recovered if lost.</string>
+    <string name="sync_error_offline">No connection — sync will run automatically when you are back online.</string>
+    <string name="sync_error_passphrase">Set the backup passphrase first.</string>
+    <string name="sync_error_generic">Something went wrong — please try again.</string>
+    <!-- ============ Sync center ============ -->
+
+    <!-- Import / Export -->
+    <string name="transfer_title">Import &amp; Export</string>
+    <string name="transfer_import_section">Import data</string>
+    <string name="transfer_import_hint">Pick a CSV, XLSX or JSON file — with Arabic or English column names. You will see a full preview before importing, and no previous data is ever deleted.</string>
+    <string name="transfer_pick_file">Pick file</string>
+    <string name="transfer_preview_summary">File: %1$s (%2$s) — %3$d rows • %4$d ready to import • %5$d with errors • %6$d warnings</string>
+    <string name="transfer_no_delete_note">Importing never deletes or modifies existing data — except for duplicate rows you explicitly approve.</string>
+    <string name="transfer_import_confirm">Import %1$d rows after approval</string>
+    <string name="transfer_import_done">Imported: %1$d new records, %2$d existing records updated</string>
+    <string name="transfer_saved">File saved</string>
+    <string name="transfer_edit_row">Edit row</string>
+    <string name="transfer_edit_save">Save changes</string>
+    <string name="transfer_error_missing_name">Drug name is missing</string>
+    <string name="transfer_error_bad_barcode">Barcode contains invalid characters</string>
+    <string name="transfer_error_bad_boolean">Unrecognized verification value</string>
+    <string name="transfer_warn_dup_file">Duplicate in file (row %1$s)</string>
+    <string name="transfer_warn_dup_db">Duplicate of an existing record — including it updates that record</string>
+    <string name="transfer_export_section">Export data</string>
+    <string name="transfer_export_drugs">Export drug database</string>
+    <string name="transfer_export_prescriptions">Export prescriptions</string>
+    <string name="transfer_backup_section">Encrypted backup</string>
+    <string name="transfer_backup_hint">A full backup (prescriptions + drugs) encrypted with a passphrase — restored by merging, never by deleting.</string>
+    <string name="transfer_backup_create">Create backup</string>
+    <string name="transfer_backup_restore">Restore backup</string>
+    <string name="transfer_backup_passphrase">Passphrase</string>
+    <string name="transfer_backup_passphrase_hint">Choose a strong passphrase and keep it safe — the backup cannot be opened without it.</string>
+    <string name="transfer_history_section">Import/export history</string>
+    <string name="transfer_history_empty">No operations yet</string>
+    <string name="transfer_log_import">Import</string>
+    <string name="transfer_log_export">Export</string>
+    <string name="transfer_log_backup">Backup</string>
+    <string name="transfer_log_restore">Restore</string>
+    <string name="transfer_log_rows">%1$d ok • %2$d failed</string>
+    <string name="transfer_error_unreadable">Could not read the file</string>
+    <string name="transfer_error_write">Could not save the file</string>
+    <string name="transfer_error_empty">The file contains no data</string>
+    <string name="transfer_error_no_rows">No rows selected for import</string>
+    <string name="transfer_error_passphrase">Wrong passphrase or corrupted file</string>
+    <string name="transfer_error_invalid">Invalid file format</string>
+    <string name="transfer_error_generic">An unexpected error occurred</string>
+
+    <!-- AI Assistant -->
+    <string name="assistant_title">AI Pharmacist Assistant</string>
+    <string name="assistant_subtitle">Ask about medications, interactions, or dosing. Answers come from the secure AI backend.</string>
+    <string name="assistant_input_hint">Type your question…</string>
+    <string name="assistant_send">Send</string>
+    <string name="assistant_thinking">Thinking…</string>
+    <string name="assistant_error">The assistant could not answer. Please try again.</string>
+    <string name="assistant_not_configured">The AI assistant requires the secure backend. Add its URL from Settings → Secure backend URL.</string>
+    <string name="assistant_disclaimer">Informational only — never a substitute for professional clinical judgment.</string>
+    <string name="assistant_disclaimer_banner">⚠️ This assistant does not replace a doctor or pharmacist. It provides informational answers from reliable sources only — never a final diagnosis, and never a change to a dose or medication.</string>
+    <string name="assistant_welcome">Ask about a medication: its uses, warnings, side effects, or interactions. The answer is built from your drug database and official sources, and every answer shows its sources.</string>
+    <string name="assistant_sources_title">Sources</string>
+    <string name="assistant_delete_title">Delete chat history?</string>
+    <string name="assistant_delete_message">The whole conversation log will be permanently deleted from this device.</string>
+    <string name="assistant_delete_confirm">Delete</string>
+    <string name="assistant_rate_limited">Too many requests — please wait a moment and try again.</string>
+    <string name="assistant_error_network">No internet connection. Check your connection and try again.</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_appearance">Appearance</string>
+    <string name="settings_general">General</string>
+    <string name="settings_theme">Theme</string>
+    <string name="settings_theme_system">System</string>
+    <string name="settings_theme_light">Light</string>
+    <string name="settings_theme_dark">Dark</string>
+    <string name="settings_language">Language</string>
+    <string name="settings_language_system">System language</string>
+    <string name="settings_language_ar">العربية</string>
+    <string name="settings_language_en">English</string>
+    <string name="settings_analysis">Analysis service</string>
+    <string name="settings_backend_url">Secure backend URL</string>
+    <string name="settings_backend_hint">https://your-backend.example.com</string>
+    <string name="settings_backend_save">Save URL</string>
+    <string name="settings_backend_saved">URL saved</string>
+    <string name="settings_backend_invalid">Invalid URL. It must start with https://</string>
+    <string name="settings_backend_empty">No analysis backend configured yet. See the README to set up the secure server.</string>
+    <string name="settings_account">Account</string>
+    <string name="settings_sign_in_anonymous">Sign in anonymously (Firebase)</string>
+    <string name="settings_sign_out">Sign out</string>
+    <string name="settings_firebase_disabled">Firebase is not configured in this build. Add google-services.json to enable authentication and backup.</string>
+    <string name="settings_signed_in">Signed in: %1$s</string>
+    <string name="settings_about">About</string>
+    <string name="settings_version">Version %1$s</string>
+
+    <!-- Language settings -->
+    <string name="language_settings_title">Language settings</string>
+    <string name="language_settings_desc">Choose the app interface language. Arabic is displayed right-to-left and English left-to-right.</string>
+
+    <!-- Backup -->
+    <string name="backup_title">Backup &amp; Sync</string>
+    <string name="backup_desc">Back up your prescriptions securely to Firebase Storage. Requires Firebase configuration and an account.</string>
+    <string name="backup_now">Back up now</string>
+    <string name="backup_success">Backed up %1$d prescriptions</string>
+    <string name="backup_error">Backup failed. Check your connection and try again.</string>
+    <string name="backup_not_ready">Backup requires Firebase configuration (google-services.json). See the README for setup steps.</string>
+    <string name="backup_sign_in_first">Please sign in before backing up.</string>
+    <string name="backup_all_data">All saved prescriptions and their images will be uploaded to your private storage.</string>
+
+    <!-- Support -->
+    <string name="support_title">Technical support</string>
+    <string name="support_contact">Contact us</string>
+    <string name="support_email">Email</string>
+    <string name="support_whatsapp">WhatsApp</string>
+    <string name="support_contact_hint">WhatsApp: %1$s • Email: %2$s</string>
+    <string name="support_medical_warning">Technical support helps with app problems only and does NOT provide medical diagnosis. For medical advice consult a doctor or pharmacist.</string>
+    <string name="support_form_title">Report a problem</string>
+    <string name="support_report_id">Report number: %1$s</string>
+    <string name="support_app_version">App version: %1$s (%2$d)</string>
+    <string name="support_message_label">Describe the problem</string>
+    <string name="support_contact_label">Your email for reply (optional)</string>
+    <string name="support_consent_label">Include my contact email with this report</string>
+    <string name="support_consent_note">No personal data is sent without your explicit consent.</string>
+    <string name="support_attach_log">Attach error log (optional)</string>
+    <string name="support_attach_screenshot">Attach screenshot (optional)</string>
+    <string name="support_screenshot_attached">Screenshot attached</string>
+    <string name="support_screenshot_none">No screenshot attached</string>
+    <string name="support_send">Send report</string>
+    <string name="support_error_message_required">Please describe the problem first</string>
+    <string name="support_report_sent">Report %1$s sent</string>
+    <string name="support_faq_title">Frequently asked questions</string>
+    <string name="support_faq_q1">How do I enable AI analysis?</string>
+    <string name="support_faq_a1">Deploy the secure backend from the server/ folder in the repository, then add its URL from Settings → Secure backend URL.</string>
+    <string name="support_faq_q2">Where is my data stored?</string>
+    <string name="support_faq_a2">All data is stored locally on your device. Cloud backup is optional and only works when Firebase is configured.</string>
+
+    <!-- Privacy -->
+    <string name="privacy_title">Privacy Policy</string>
+    <string name="privacy_body">Your privacy matters to us.\n\n• All prescriptions, photos, and drug data are stored locally on your device by default.\n• Photos are sent to the secure analysis backend only when you run an analysis, and they are used only to produce the extraction result — they are not sold or shared with third parties.\n• Optional cloud backup (Firebase) is encrypted in transit and stored in your own private storage.\n• The app does not contain advertising or tracking SDKs.\n• Authentication data (when Firebase is enabled) is managed by Firebase Authentication and subject to Google\'s privacy policy.\n• You can delete any record at any time from within the app; deleting a prescription also deletes its local image.\n\nFor privacy questions, contact us through the Technical Support screen.</string>
+    <string name="privacy_delete_title">Account &amp; data deletion</string>
+    <string name="privacy_delete_body">You can delete all your data at any time:\n• On this device: the drug database, prescriptions, encrypted images, settings, keys and caches are deleted immediately.\n• Cloud copies (sync, media, encrypted backups) and your account: request deletion here and it is completed within 30 days.\n• Backup files you exported (.ppbak) are under your own control.</string>
+    <string name="privacy_delete_local">Delete data on this device</string>
+    <string name="privacy_delete_cloud">Request cloud &amp; account deletion</string>
+    <string name="privacy_delete_confirm_title">Delete all data on this device?</string>
+    <string name="privacy_delete_confirm_text">This deletes the drug database, prescriptions, images, settings and keys immediately. This cannot be undone.</string>
+    <string name="privacy_delete_confirm_yes">Delete</string>
+    <string name="privacy_deleted">All local data deleted</string>
+    <string name="privacy_delete_email_subject">Request account &amp; data deletion</string>
+
+    <!-- Terms -->
+    <string name="terms_title">Terms &amp; Medical Disclaimer</string>
+    <string name="terms_body">Terms of use and medical disclaimer\n\n• Prescription Pharmacist is a decision-SUPPORT tool for licensed pharmacists. It does not replace professional clinical judgment.\n• AI extraction results may be incomplete or incorrect. Every result must be reviewed and confirmed by a licensed pharmacist before use.\n• The developer is not responsible for any dispensing errors resulting from reliance on unconfirmed AI output.\n• The AI assistant provides informational answers only and is not medical advice.\n• Drug information from the openFDA database is provided by the U.S. FDA and may not reflect local availability or guidelines.\n• By using this app you agree that the final responsibility for any dispensing decision rests with the supervising pharmacist.\n\nIf you do not agree with these terms, please stop using the application.</string>
+
+    <!-- Errors -->
+    <string name="error_generic">An unexpected error occurred. Please try again.</string>
+    <string name="error_network">Could not reach the server. Check your internet connection.</string>
+    <string name="error_not_configured">The analysis service is not configured. Add the secure backend URL in Settings.</string>
+    <string name="error_analysis_failed">Failed to analyze the prescription. Try a clearer photo.</string>
+    <string name="error_unauthorized">Authentication required. Please sign in from Settings.</string>
+    <string name="error_server">The server is temporarily unavailable. Please retry later.</string>
+    <string name="error_image_unreadable">The selected image could not be read.</string>
+    <string name="retry">Retry</string>
+
+    <!-- Actions -->
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="back">Back</string>
+    <!-- Image input: capture, crop & preview consent -->
+    <string name="error">Error</string>
+    <string name="capture_permission_permanent">Camera access is permanently denied. Enable it in app settings to take prescription photos.</string>
+    <string name="crop_zoom">Zoom</string>
+    <string name="crop_rotate">Rotate 90°</string>
+    <string name="crop_enhance">Enhancements</string>
+    <string name="crop_brightness">Brightness</string>
+    <string name="crop_contrast">Contrast</string>
+    <string name="crop_sharpness">Sharpness</string>
+    <string name="crop_auto_enhance">Auto enhance</string>
+    <string name="crop_auto_deskew">Auto deskew</string>
+    <string name="crop_save">Save &amp; preview</string>
+    <string name="preview_title">Preview &amp; approval</string>
+    <string name="preview_subtitle">Review the final image. It is never sent for analysis before you approve it.</string>
+    <string name="preview_quality_title">Image quality</string>
+    <string name="preview_quality_dimensions">Size</string>
+    <string name="preview_quality_size">File</string>
+    <string name="preview_quality_blur">Clarity</string>
+    <string name="preview_quality_light">Lighting</string>
+    <string name="preview_quality_skew">Skew</string>
+    <string name="preview_quality_good">Good</string>
+    <string name="preview_quality_bad">Blurry</string>
+    <string name="preview_quality_dark">Dark</string>
+    <string name="preview_quality_bright">Too bright</string>
+    <string name="preview_warning_hint">This image has quality issues. Consider going back to edit it for more accurate extraction.</string>
+    <string name="preview_consent">I approve sending this prescription image for analysis</string>
+    <string name="preview_back_edit">Back to editing</string>
+    <string name="preview_start_analysis">Start analysis</string>
+    <!-- Staged analysis pipeline -->
+    <string name="analysis_warning_handwriting">Handwriting recognition may be inaccurate. Verify every item against the original prescription.</string>
+    <string name="disclaimer_no_dispense">This app never dispenses medication automatically — a licensed pharmacist must approve every result.</string>
+    <string name="label_uncertain">النتيجة غير مؤكدة</string>
+    <string name="label_alternatives">Possible alternatives</string>
+    <string name="label_dose">Dose</string>
+    <string name="label_route">Route</string>
+    <string name="label_duration">Duration</string>
+    <string name="confirm_attest">I have verified every result against the original prescription</string>
+    <string name="drug_action_edit">Edit</string>
+    <string name="drug_action_delete">Delete</string>
+    <string name="drug_filter_all">All</string>
+    <string name="drug_filter_verified">Verified</string>
+    <string name="drug_filter_manual">Manual</string>
+    <string name="drug_filter_dosage_form">Dosage form</string>
+    <string name="drug_filter_manufacturer">Manufacturer</string>
+    <string name="drug_filter_any">Any</string>
+    <string name="drug_badge_verified">Verified</string>
+    <string name="drug_badge_manual">Manual</string>
+    <string name="drug_trade_name_arabic">Trade name (Arabic)</string>
+    <string name="drug_trade_name_english">Trade name (English)</string>
+    <string name="drug_generic_name_arabic">Generic name (Arabic)</string>
+    <string name="drug_generic_name_english">Generic name (English)</string>
+    <string name="drug_active_ingredient">Active ingredient</string>
+    <string name="drug_dosage_form">Dosage form</string>
+    <string name="drug_barcode">Barcode</string>
+    <string name="drug_contraindications">Contraindications</string>
+    <string name="drug_side_effects">Side effects</string>
+    <string name="drug_interactions">Interactions</string>
+    <string name="drug_pregnancy">Pregnancy information</string>
+    <string name="drug_lactation">Lactation information</string>
+    <string name="drug_product_image">Product image</string>
+    <string name="drug_product_image_pick">Choose image</string>
+    <string name="drug_product_image_remove">Remove image</string>
+    <string name="drug_product_image_desc">Product image of the drug</string>
+    <string name="drug_source_section">Source and verification</string>
+    <string name="drug_source_name">Source name</string>
+    <string name="drug_source_url">Source URL</string>
+    <string name="drug_source_date">Source date</string>
+    <string name="drug_created_by">Created by</string>
+    <string name="drug_updated_at">Last updated</string>
+    <string name="drug_audit_section">Change history</string>
+    <string name="drug_audit_add">Added</string>
+    <string name="drug_audit_update">Updated</string>
+    <string name="drug_audit_delete">Deleted</string>
+    <string name="drug_audit_by">By %1$s</string>
+    <string name="drug_audit_empty">No changes recorded yet.</string>
+    <string name="drug_duplicate_error">A drug with the same barcode or name, strength and manufacturer already exists.</string>
+    <string name="drug_name_required_error">At least one name (trade or generic) is required.</string>
+    <string name="drug_barcode_invalid_error">The barcode must contain letters and digits only.</string>
+    <string name="drug_details_basic">Names</string>
+    <string name="drug_details_composition">Composition</string>
+    <string name="drug_details_usage">Usage</string>
+    <string name="drug_details_safety">Safety</string>
+    <string name="knowledge_title">Trusted drug information</string>
+    <string name="knowledge_disclaimer">Reference information from official sources only (openFDA, authority APIs) — general web search results are never used as a medical source. This is not a substitute for professional judgement, and nothing is saved to your drug database until you review and approve it.</string>
+    <string name="knowledge_search_hint">Drug name (trade or generic)…</string>
+    <string name="knowledge_search_action">Search official sources</string>
+    <string name="knowledge_idle">Search the official drug-information sources.</string>
+    <string name="knowledge_no_results">No information found in the official sources.</string>
+    <string name="knowledge_source_unavailable">Unavailable source(s): %1$s — results may be incomplete.</string>
+    <string name="knowledge_conflict_warning">Official sources disagree. Review the values below and choose manually — nothing is selected automatically.</string>
+    <string name="knowledge_conflicts_section">Conflicting information</string>
+    <string name="knowledge_facts_section">Results with their sources</string>
+    <string name="knowledge_conflict_field">Conflicting field: %1$s</string>
+    <string name="knowledge_conflict_pick">Choose the value to keep after review:</string>
+    <string name="knowledge_source_line">Source: %1$s • %2$s • %3$s</string>
+    <string name="knowledge_import">Import to review form</string>
+    <string name="auth_error_email_exists">An account already exists with this email address.</string>
+    <string name="auth_error_invalid_email">The email address is not valid.</string>
+    <string name="auth_error_weak_password">The password is too weak. Use at least 6 characters.</string>
+    <string name="auth_error_wrong_credentials">Incorrect email or password.</string>
+    <string name="auth_error_user_not_found">No account found with this email address.</string>
+    <string name="auth_error_user_disabled">This account has been disabled.</string>
+    <string name="auth_error_too_many">Too many attempts. Please try again later.</string>
+    <string name="auth_error_recent_login">For security, please sign in again before deleting your account.</string>
+    <string name="auth_verify_notice">Your email address is not verified yet. Check your inbox for the verification link.</string>
+    <string name="auth_resend_verification">Resend verification email</string>
+    <string name="auth_verification_sent">Verification email sent.</string>
+    <string name="auth_reset_title">Forgot password?</string>
+    <string name="auth_reset_message">Enter your email address and we will send you a password-reset link.</string>
+    <string name="auth_reset_button">Send reset link</string>
+    <string name="auth_reset_sent">Password-reset email sent. Check your inbox.</string>
+    <string name="auth_delete_account">Delete account</string>
+    <string name="auth_delete_account_title">Delete your account?</string>
+    <string name="auth_delete_account_message">This permanently deletes your account and clears the app data on this device. This cannot be undone.</string>
+    <string name="auth_account_deleted">Your account has been deleted.</string>
+    <string name="settings_role">Role: %1$s</string>
+    <string name="role_user">User</string>
+    <string name="role_pharmacist">Pharmacist</string>
+    <string name="role_admin">Admin</string>
+</resources>

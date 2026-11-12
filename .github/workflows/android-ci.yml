@@ -1,0 +1,169 @@
+name: Android CI
+
+# Builds the APK, runs unit tests and lint on every push / pull request.
+# This workflow runs on GitHub-hosted runners which have full network access
+# to Google Maven and the Gradle distribution server.
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build, test & lint
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build debug APK
+        run: |
+          set -o pipefail
+          ./gradlew assembleDebug --console=plain 2>&1 | tee /tmp/gradle-build.log
+
+      - name: Build release App Bundle (AAB)
+        run: |
+          set -o pipefail
+          ./gradlew bundleRelease --console=plain 2>&1 | tee /tmp/gradle-bundle.log
+
+      - name: Build staging APK
+        run: |
+          set -o pipefail
+          ./gradlew assembleStaging --console=plain 2>&1 | tee /tmp/gradle-staging.log
+
+      - name: Build release APK
+        run: |
+          set -o pipefail
+          ./gradlew assembleRelease --console=plain 2>&1 | tee /tmp/gradle-release.log
+
+      - name: Run unit tests
+        run: |
+          set -o pipefail
+          ./gradlew testDebugUnitTest --console=plain 2>&1 | tee /tmp/gradle-test.log
+
+      - name: Run lint
+        run: |
+          set -o pipefail
+          ./gradlew lintDebug --console=plain 2>&1 | tee /tmp/gradle-lint.log
+
+      - name: Dependency check (resolution + dynamic versions)
+        run: |
+          set +o pipefail
+          ./gradlew app:dependencies --write-locks --console=plain 2>&1 | tee /tmp/gradle-deps.log
+          GRADLE_RC=${PIPESTATUS[0]}
+          if [ "$GRADLE_RC" -ne 0 ]; then
+            echo "::error title=dependency-check::gradle app:dependencies --write-locks failed (rc=$GRADLE_RC)"
+            grep -E "^e: |FAILURE|What went wrong|^> |Could not|error" /tmp/gradle-deps.log | head -20 | while read -r line; do echo "::error title=dependency-check::$line"; done
+            exit 1
+          fi
+          python3 .github/check_deps.py /tmp/gradle-deps.log
+
+      - name: Dependency vulnerability scan (Trivy, HIGH/CRITICAL)
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          scan-type: fs
+          scan-ref: .
+          scanners: vuln
+          severity: HIGH,CRITICAL
+          exit-code: "1"
+          ignore-unfixed: "true"
+
+      - name: Report errors in job summary and annotations
+        if: failure()
+        run: |
+          {
+            echo "### Failing unit tests"
+            python3 .github/ci_report_tests.py || true
+            for f in /tmp/gradle-build.log /tmp/gradle-bundle.log /tmp/gradle-test.log /tmp/gradle-lint.log; do
+              if [ -f "$f" ]; then
+                echo "### Errors from $f"
+                { grep -E "^e: " "$f" || true; awk '/FAILURE: Build failed|FAILURE: Build completed/{flag=1} flag' "$f" || true; } | head -60
+              fi
+            done
+          } | tee -a "$GITHUB_STEP_SUMMARY" | head -10 | while IFS= read -r line; do
+            echo "::error::${line}"
+          done
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-debug-apk
+          path: app/build/outputs/apk/debug/*.apk
+
+      - name: Upload staging & release APKs
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-staging-release-apks
+          path: |
+            app/build/outputs/apk/staging/*.apk
+            app/build/outputs/apk/release/*.apk
+
+      - name: Upload AAB
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release-aab
+          path: app/build/outputs/bundle/release/*.aab
+
+      - name: Upload reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-reports
+          path: |
+            app/build/reports/**
+            app/build/outputs/**
+
+      - name: Publish APKs back to the branch
+        if: contains(github.event.head_commit.message, '[publish-apk]')
+        run: |
+          mkdir -p dist
+          cp app/build/outputs/apk/debug/*.apk dist/ 2>/dev/null || true
+          cp app/build/outputs/apk/staging/*.apk dist/ 2>/dev/null || true
+          cp app/build/outputs/apk/release/*.apk dist/ 2>/dev/null || true
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f dist/
+          git diff --cached --quiet && { echo "nothing to publish"; exit 0; }
+          git commit -m "ci: publish installable APKs [skip ci]"
+          git push
+
+  api-tests:
+    name: Backend API tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: server/package-lock.json
+
+      - name: Install backend dependencies
+        working-directory: server
+        run: npm ci
+
+      - name: Run API tests
+        working-directory: server
+        run: npm test

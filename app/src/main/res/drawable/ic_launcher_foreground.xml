@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Launcher foreground: a prescription card with a medical cross cut-out. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:fillType="evenOdd"
+        android:pathData="M42,28 L66,28 C70.4,28 74,31.6 74,36 L74,72 C74,76.4 70.4,80 66,80 L42,80 C37.6,80 34,76.4 34,72 L34,36 C34,31.6 37.6,28 42,28 Z
+        M51,38 L57,38 L57,49 L68,49 L68,55 L57,55 L57,66 L51,66 L51,55 L40,55 L40,49 L51,49 Z" />
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M40,86 L68,86 L68,90 L40,90 Z" />
+</vector>
