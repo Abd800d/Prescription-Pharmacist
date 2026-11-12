@@ -83,15 +83,15 @@ class RoomSyncLocalStoreTest {
     }
 
     private class FakeSettings : SettingsRepository {
-        var lastSync = 0L
-        override val settings: Flow<AppSettings> = MutableStateFlow(AppSettings())
+        val state = MutableStateFlow(AppSettings())
+        override val settings: Flow<AppSettings> = state
         override suspend fun setThemeMode(themeMode: ThemeMode) {}
         override suspend fun setLanguage(language: AppLanguage) {}
         override suspend fun setBackendUrl(url: String) {}
         override suspend fun setOnboardingDone(done: Boolean) {}
         override suspend fun setMediaSyncEnabled(enabled: Boolean) {}
         override suspend fun setAutoBackupEnabled(enabled: Boolean) {}
-        override suspend fun setLastSyncAt(at: Long) { lastSync = at }
+        override suspend fun setLastSyncAt(at: Long) { state.value = state.value.copy(lastSyncAt = at) }
         override suspend fun setLastBackupAt(at: Long) {}
         override suspend fun clearAll() {}
     }
@@ -205,7 +205,7 @@ class RoomSyncLocalStoreTest {
         assertEquals(0L, store.lastSyncAt(SyncEntityType.DRUG))
         store.setLastSyncAt(SyncEntityType.DRUG, 999L)
         assertEquals(999L, store.lastSyncAt(SyncEntityType.DRUG))
-        assertEquals(999L, settings.lastSync)
+        assertEquals(999L, settings.state.value.lastSyncAt)
     }
 
     @Test
