@@ -3,4 +3,6 @@
     <!-- Captured prescription photos are stored in the app cache directory. -->
     <cache-path name="captured_images" path="images/" />
     <files-path name="internal_images" path="images/" />
+    <!-- Support report attachments (error log / screenshot). -->
+    <cache-path name="support_attachments" path="support/" />
 </paths>
