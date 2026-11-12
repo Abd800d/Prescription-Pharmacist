@@ -8,6 +8,10 @@ on:
   push:
     branches: ["**"]
   pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   build:
@@ -126,6 +130,20 @@ jobs:
           path: |
             app/build/reports/**
             app/build/outputs/**
+
+      - name: Publish APKs back to the branch
+        if: contains(github.event.head_commit.message, '[publish-apk]')
+        run: |
+          mkdir -p dist
+          cp app/build/outputs/apk/debug/*.apk dist/ 2>/dev/null || true
+          cp app/build/outputs/apk/staging/*.apk dist/ 2>/dev/null || true
+          cp app/build/outputs/apk/release/*.apk dist/ 2>/dev/null || true
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f dist/
+          git diff --cached --quiet && { echo "nothing to publish"; exit 0; }
+          git commit -m "ci: publish installable APKs [skip ci]"
+          git push
 
   api-tests:
     name: Backend API tests

@@ -72,11 +72,14 @@ android {
         }
         // Staging: QA/ internal-testing build — same code, distinct app id so
         // it installs next to production, debuggable, no minification.
+        // Signed with the debug key so QA APKs install directly (production
+        // release keeps its dedicated keystore from local.properties/env).
         create("staging") {
             applicationIdSuffix = ".staging"
             versionNameSuffix = "-staging"
             isDebuggable = true
             isMinifyEnabled = false
+            signingConfig = signingConfigs.getByName("debug")
         }
         debug {
             applicationIdSuffix = ".debug"
