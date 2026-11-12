@@ -6,6 +6,7 @@ object Routes {
     // Top level
     const val SPLASH = "splash"
     const val ONBOARDING = "onboarding"
+    const val CONSENT = "consent"
     const val HOME = "home"
     const val DRUG_SEARCH = "drug_search"
     const val SAVED = "saved"

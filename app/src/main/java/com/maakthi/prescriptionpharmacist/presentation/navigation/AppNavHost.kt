@@ -152,8 +152,17 @@ fun AppNavHost(
             composable(Routes.ONBOARDING) {
                 OnboardingScreen(
                     onFinished = {
-                        navController.navigate(Routes.HOME) {
+                        navController.navigate(Routes.CONSENT) {
                             popUpTo(Routes.ONBOARDING) { inclusive = true }
+                        }
+                    }
+                )
+            }
+            composable(Routes.CONSENT) {
+                com.maakthi.prescriptionpharmacist.presentation.legal.ConsentScreen(
+                    onAccepted = {
+                        navController.navigate(Routes.HOME) {
+                            popUpTo(Routes.CONSENT) { inclusive = true }
                         }
                     }
                 )

@@ -21,6 +21,10 @@ class SplashViewModel @Inject constructor(
     suspend fun decideDestination(): String {
         val settings = settingsRepository.settings.first()
         if (!settings.onboardingDone) return Routes.ONBOARDING
+        // Google Play: image/data processing requires explicit consent first.
+        if (com.maakthi.prescriptionpharmacist.core.privacy.ConsentPolicy.isConsentRequired(settings.dataConsentAt)) {
+            return Routes.CONSENT
+        }
         if (authRepository.isAvailable() && authRepository.currentUser.first() == null) {
             return Routes.LOGIN
         }

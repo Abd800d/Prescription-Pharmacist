@@ -219,6 +219,15 @@
     <!-- ============ Media library ============ -->
 
     <!-- ============ Sync center ============ -->
+    <!-- ============ Data-processing consent (Google Play) ============ -->
+    <string name="consent_title">Image &amp; data processing consent</string>
+    <string name="consent_summary">Before any analysis, we need your explicit agreement to process your prescription images and health data.</string>
+    <string name="consent_body">By continuing you agree that:\n• Prescription photos you take are sent to the app\'s secure analysis backend ONLY when you run an analysis, and only to produce the extraction result.\n• Your data is stored encrypted on your device; cloud sync and backup are optional and stay in your private space.\n• Your images and health data are never sold or used for advertising.\n• You can withdraw and delete all your data at any time from Settings → Privacy.\n\nYou can use the app offline without any data leaving your device.</string>
+    <string name="consent_accuracy_note">Note: AI extraction may be incomplete or incorrect — results always require review by a licensed pharmacist. The app does not claim absolute accuracy and never replaces professional judgement.</string>
+    <string name="consent_accept">I agree — continue</string>
+    <string name="consent_decline">I do not agree</string>
+    <string name="consent_required_note">Your agreement is required to use image analysis. Nothing is sent without it.</string>
+    <!-- ============ Data-processing consent ============ -->
     <string name="sync_title">Sync &amp; backup</string>
     <string name="sync_online">Connected</string>
     <string name="sync_offline">Offline — local data is fully available</string>

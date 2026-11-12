@@ -31,6 +31,7 @@ class SettingsDataStore @Inject constructor(
         val AUTO_BACKUP_ENABLED = booleanPreferencesKey("auto_backup_enabled")
         val LAST_SYNC_AT = androidx.datastore.preferences.core.longPreferencesKey("last_sync_at")
         val LAST_BACKUP_AT = androidx.datastore.preferences.core.longPreferencesKey("last_backup_at")
+        val DATA_CONSENT_AT = androidx.datastore.preferences.core.longPreferencesKey("data_consent_at")
     }
 
     override val settings: Flow<AppSettings> = context.dataStore.data.map { prefs ->
@@ -46,7 +47,8 @@ class SettingsDataStore @Inject constructor(
             mediaSyncEnabled = prefs[Keys.MEDIA_SYNC_ENABLED] ?: false,
             autoBackupEnabled = prefs[Keys.AUTO_BACKUP_ENABLED] ?: true,
             lastSyncAt = prefs[Keys.LAST_SYNC_AT] ?: 0L,
-            lastBackupAt = prefs[Keys.LAST_BACKUP_AT] ?: 0L
+            lastBackupAt = prefs[Keys.LAST_BACKUP_AT] ?: 0L,
+            dataConsentAt = prefs[Keys.DATA_CONSENT_AT] ?: 0L
         )
     }
 
@@ -80,6 +82,10 @@ class SettingsDataStore @Inject constructor(
 
     override suspend fun setLastBackupAt(at: Long) {
         context.dataStore.edit { it[Keys.LAST_BACKUP_AT] = at }
+    }
+
+    override suspend fun setDataConsentAt(at: Long) {
+        context.dataStore.edit { it[Keys.DATA_CONSENT_AT] = at }
     }
 
     override suspend fun clearAll() {

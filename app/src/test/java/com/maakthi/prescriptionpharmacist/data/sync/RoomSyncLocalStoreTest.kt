@@ -93,6 +93,7 @@ class RoomSyncLocalStoreTest {
         override suspend fun setAutoBackupEnabled(enabled: Boolean) {}
         override suspend fun setLastSyncAt(at: Long) { state.value = state.value.copy(lastSyncAt = at) }
         override suspend fun setLastBackupAt(at: Long) {}
+        override suspend fun setDataConsentAt(at: Long) {}
         override suspend fun clearAll() {}
     }
 

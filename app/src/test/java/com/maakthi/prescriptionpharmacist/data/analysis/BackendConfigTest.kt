@@ -32,6 +32,7 @@ class BackendConfigTest {
         override suspend fun setAutoBackupEnabled(enabled: Boolean) {}
         override suspend fun setLastSyncAt(at: Long) {}
         override suspend fun setLastBackupAt(at: Long) {}
+        override suspend fun setDataConsentAt(at: Long) {}
         override suspend fun clearAll() {}
     }
 

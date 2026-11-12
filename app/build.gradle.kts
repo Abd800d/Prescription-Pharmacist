@@ -22,7 +22,9 @@ val localProperties = Properties().apply {
     if (f.exists()) f.inputStream().use { load(it) }
 }
 fun localOrGradleProperty(key: String): String =
-    localProperties.getProperty(key) ?: (project.findProperty(key) as? String) ?: ""
+    localProperties.getProperty(key)
+        ?: (project.findProperty(key) as? String)
+        ?: (System.getenv(key) ?: "")
 
 android {
     namespace = "com.maakthi.prescriptionpharmacist"
@@ -54,8 +56,10 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            // Release is signed only when the developer supplies a keystore in
-            // local.properties (see README). Otherwise the build stays unsigned.
+            // Release is signed only when the developer supplies a keystore via
+            // local.properties or environment variables (see README) — the
+            // keystore and its passwords NEVER live in the repository.
+            // Otherwise the build stays unsigned for CI verification.
             val keystorePath = localOrGradleProperty("RELEASE_STORE_FILE")
             if (keystorePath.isNotEmpty()) {
                 signingConfig = signingConfigs.create("release") {
@@ -65,6 +69,14 @@ android {
                     keyPassword = localOrGradleProperty("RELEASE_KEY_PASSWORD")
                 }
             }
+        }
+        // Staging: QA/ internal-testing build — same code, distinct app id so
+        // it installs next to production, debuggable, no minification.
+        staging {
+            applicationIdSuffix = ".staging"
+            versionNameSuffix = "-staging"
+            isDebuggable = true
+            isMinifyEnabled = false
         }
         debug {
             applicationIdSuffix = ".debug"

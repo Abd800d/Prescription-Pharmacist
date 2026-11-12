@@ -9,7 +9,9 @@ data class AppSettings(
     val mediaSyncEnabled: Boolean = false,
     val autoBackupEnabled: Boolean = true,
     val lastSyncAt: Long = 0,
-    val lastBackupAt: Long = 0
+    val lastBackupAt: Long = 0,
+    /** 0 until the user agrees to image/data processing (consent screen). */
+    val dataConsentAt: Long = 0
 )
 
 enum class ThemeMode { SYSTEM, LIGHT, DARK }

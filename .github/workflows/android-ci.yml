@@ -40,6 +40,16 @@ jobs:
           set -o pipefail
           ./gradlew bundleRelease --console=plain 2>&1 | tee /tmp/gradle-bundle.log
 
+      - name: Build staging APK
+        run: |
+          set -o pipefail
+          ./gradlew assembleStaging --console=plain 2>&1 | tee /tmp/gradle-staging.log
+
+      - name: Build release APK
+        run: |
+          set -o pipefail
+          ./gradlew assembleRelease --console=plain 2>&1 | tee /tmp/gradle-release.log
+
       - name: Run unit tests
         run: |
           set -o pipefail
@@ -71,6 +81,14 @@ jobs:
         with:
           name: app-debug-apk
           path: app/build/outputs/apk/debug/*.apk
+
+      - name: Upload staging & release APKs
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-staging-release-apks
+          path: |
+            app/build/outputs/apk/staging/*.apk
+            app/build/outputs/apk/release/*.apk
 
       - name: Upload AAB
         uses: actions/upload-artifact@v4

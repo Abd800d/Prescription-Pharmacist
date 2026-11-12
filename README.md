@@ -262,6 +262,20 @@ RELEASE_KEY_PASSWORD=***
 - **عبارة مرور النسخ** تُخزَّن مشفّرة بمفتاح الجهاز (Android Keystore).
 - **اختبار انقطاع الإنترنت أثناء المزامنة**: المحرك يُختبَر بأن الاتصال يُقطع في منتصف المزامنة — لا فقدان للبيانات، والعدّاد لا يتقدم، والمزامنة تكتمل عند عودة الاتصال.
 
+## 📦 الإنتاج والنشر على Google Play
+
+**Build Variants:** `debug` (تجريبي) · `staging` (اختبار QA بمعرّف `.staging`) · `release` (إنتاجي بتصغير R8 + توقيع).
+
+### خطوات النشر
+1. **الاختبار:** `./gradlew testDebugUnitTest` ثم `./gradlew assembleStaging` وتثبيته على أجهزة QA.
+2. **التوقيع الآمن:** أنشئ مفتاحاً بـ `keytool` **خارج المستودع**، وقدّم بياناته عبر `local.properties` أو متغيرات البيئة (`RELEASE_STORE_FILE`, `RELEASE_STORE_PASSWORD`, `RELEASE_KEY_ALIAS`, `RELEASE_KEY_PASSWORD`) — لا تُコミَّت أبداً.
+3. **البناء:** `./gradlew assembleRelease bundleRelease` → `app-release.apk` + `app-release.aab` (R8 + ProGuard مفعّلان، راجع `app/proguard-rules.pro`).
+4. **المتجر:** ارفع AAB إلى Play Console، واستخدم مواد `play/` (أيقونة 512، جرافيك مميز، وصف عربي/إنجليزي، لقطات شاشة)، وارفع نص `PRIVACY_POLICY.md` كرابط سياسة الخصوصية.
+5. **بيانات السلامة (Data Safety):** الصور تُرسَل للتحليل فقط بموافقة المستخدم (شاشة الموافقة)، لا إعلانات ولا تتبّع، والحذف متاح بالكامل.
+6. **الإصدار التدريجي:** 10% → 50% → 100% مع مراقبة Android vitals.
+
+التفاصيل الكاملة في [`RELEASE_CHECKLIST.md`](RELEASE_CHECKLIST.md) — والمواد في مجلد [`play/`](play/).
+
 ## 🔒 الأمان والخصوصية
 
 - **مراجعة أمنية كاملة** موثقة في [`SECURITY_REPORT.md`](SECURITY_REPORT.md): لا أسرار في الكود، HTTPS مفروض، صلاحيات مالك-فقط، ومنع الرفع التنفيذي.

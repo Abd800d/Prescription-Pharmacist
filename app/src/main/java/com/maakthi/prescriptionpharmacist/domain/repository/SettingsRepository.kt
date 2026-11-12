@@ -19,6 +19,9 @@ interface SettingsRepository {
     suspend fun setLastSyncAt(at: Long)
     suspend fun setLastBackupAt(at: Long)
 
+    /** Records the moment the user agreed to image/data processing. */
+    suspend fun setDataConsentAt(at: Long)
+
     /** Privacy: wipes every stored preference. */
     suspend fun clearAll()
 }
