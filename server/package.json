@@ -7,6 +7,7 @@
     "node": "20"
   },
   "scripts": {
+    "test": "node --test api.test.js",
     "serve": "firebase emulators:start --only functions",
     "deploy": "firebase deploy --only functions",
     "logs": "firebase functions:log"

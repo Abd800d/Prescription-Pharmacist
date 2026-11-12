@@ -42,6 +42,15 @@ admin.initializeApp();
 const GEMINI_API_KEY = defineSecret("GEMINI_API_KEY");
 const MAX_IMAGE_BYTES = 8 * 1024 * 1024;
 
+/** Upload allowlist — executables and non-image types are rejected (product law). */
+const ALLOWED_IMAGE_TYPES = new Set([
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+  "image/heic",
+  "image/heif",
+]);
+
 /**
  * POST {baseUrl}/chat — RAG drug assistant (Arabic + English).
  *
@@ -280,6 +289,15 @@ function readMultipartImage(req) {
         stream.resume();
         return;
       }
+      const mimeType = String(info.mimeType || "image/jpeg").toLowerCase();
+      if (!ALLOWED_IMAGE_TYPES.has(mimeType)) {
+        stream.resume();
+        if (!resolved) {
+          resolved = true;
+          reject(new Error("Only JPEG, PNG, WebP, or HEIC images are allowed"));
+        }
+        return;
+      }
       const chunks = [];
       stream.on("data", (c) => chunks.push(c));
       stream.on("limit", () => {
@@ -291,14 +309,22 @@ function readMultipartImage(req) {
       stream.on("end", () => {
         if (!resolved) {
           resolved = true;
-          resolve({
-            buffer: Buffer.concat(chunks),
-            mimeType: info.mimeType || "image/jpeg",
-          });
+          const buffer = Buffer.concat(chunks);
+          if (buffer.length === 0) {
+            reject(new Error("Empty image"));
+          } else {
+            resolve({ buffer, mimeType });
+          }
         }
       });
     });
     busboy.on("error", reject);
+    busboy.on("finish", () => {
+      if (!resolved) {
+        resolved = true;
+        reject(new Error("No image file provided (field name must be 'image')"));
+      }
+    });
     busboy.end(req.rawBody);
   });
 }

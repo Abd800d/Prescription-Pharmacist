@@ -60,6 +60,22 @@ jobs:
           set -o pipefail
           ./gradlew lintDebug --console=plain 2>&1 | tee /tmp/gradle-lint.log
 
+      - name: Dependency check (resolution + dynamic versions)
+        run: |
+          set -o pipefail
+          ./gradlew app:dependencies --write-locks --console=plain 2>&1 | tee /tmp/gradle-deps.log
+          python3 .github/check_deps.py /tmp/gradle-deps.log
+
+      - name: Dependency vulnerability scan (Trivy, HIGH/CRITICAL)
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          scan-type: fs
+          scan-ref: .
+          scanners: vuln
+          severity: HIGH,CRITICAL
+          exit-code: "1"
+          ignore-unfixed: "true"
+
       - name: Report errors in job summary and annotations
         if: failure()
         run: |
@@ -104,3 +120,26 @@ jobs:
           path: |
             app/build/reports/**
             app/build/outputs/**
+
+  api-tests:
+    name: Backend API tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: server/package-lock.json
+
+      - name: Install backend dependencies
+        working-directory: server
+        run: npm ci
+
+      - name: Run API tests
+        working-directory: server
+        run: npm test
