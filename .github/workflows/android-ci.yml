@@ -67,7 +67,7 @@ jobs:
           python3 .github/check_deps.py /tmp/gradle-deps.log
 
       - name: Dependency vulnerability scan (Trivy, HIGH/CRITICAL)
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@v0.28.0
         with:
           scan-type: fs
           scan-ref: .
