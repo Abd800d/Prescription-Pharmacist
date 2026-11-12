@@ -6,6 +6,7 @@ Fails the build on REAL problems only:
   2. dynamic or non-reproducible versions (1.+, latest, SNAPSHOT, milestone builds)
 Prints a short summary otherwise.
 """
+import os
 import re
 import sys
 
@@ -33,6 +34,8 @@ def main(path: str) -> int:
         print(f"dependency-check: {len(errors)} REAL problem(s):")
         for e in errors[:40]:
             print("  " + e)
+            if os.environ.get("GITHUB_ACTIONS"):
+                print(f"::error title=dependency-check::{e}")
         return 1
     print("dependency-check: OK — all dependencies resolve, no dynamic versions")
     return 0

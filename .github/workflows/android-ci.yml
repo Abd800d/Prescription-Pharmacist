@@ -62,8 +62,14 @@ jobs:
 
       - name: Dependency check (resolution + dynamic versions)
         run: |
-          set -o pipefail
+          set +o pipefail
           ./gradlew app:dependencies --write-locks --console=plain 2>&1 | tee /tmp/gradle-deps.log
+          GRADLE_RC=${PIPESTATUS[0]}
+          if [ "$GRADLE_RC" -ne 0 ]; then
+            echo "::error title=dependency-check::gradle app:dependencies --write-locks failed (rc=$GRADLE_RC)"
+            grep -E "^e: |FAILURE|What went wrong|^> |Could not|error" /tmp/gradle-deps.log | head -20 | while read -r line; do echo "::error title=dependency-check::$line"; done
+            exit 1
+          fi
           python3 .github/check_deps.py /tmp/gradle-deps.log
 
       - name: Dependency vulnerability scan (Trivy, HIGH/CRITICAL)
