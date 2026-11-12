@@ -2,7 +2,10 @@ name: Attach APKs to release
 
 # Fast workflow (no build): the APKs are committed under dist/ on the branch,
 # so this job just attaches them to a GitHub Release for public download links.
+# Trigger: push a commit whose message contains [attach-apk] (works on any
+# branch), or run manually via workflow_dispatch when available.
 on:
+  push:
   workflow_dispatch:
     inputs:
       tag:
@@ -16,6 +19,7 @@ permissions:
 jobs:
   attach:
     name: Attach dist/*.apk to release
+    if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[attach-apk]')
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -24,7 +28,8 @@ jobs:
       - name: Upload APKs to the release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ inputs.tag || 'v1.0.0' }}
         run: |
           ls -la dist/
-          gh release upload "${{ inputs.tag }}" dist/*.apk --clobber
-          gh release view "${{ inputs.tag }}" --json assets -q '.assets[] | .name + " -> " + .url'
+          gh release upload "$TAG" dist/*.apk --clobber
+          gh release view "$TAG" --json assets -q '.assets[] | .name'
