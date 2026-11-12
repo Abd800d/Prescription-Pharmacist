@@ -27,7 +27,9 @@ object AuthErrorMapper {
     /** Maps a Firebase `FirebaseAuthException.errorCode` (or a heuristic message) to [AuthErrorType]. */
     fun map(codeOrMessage: String?): AuthErrorType {
         val raw = codeOrMessage.orEmpty()
-        val code = raw.uppercase()
+        // accept both Android ("ERROR_WRONG_PASSWORD") and web
+        // ("wrong-password") Firebase code styles
+        val code = raw.uppercase().replace('-', '_')
         return when {
             "ALREADY_IN_USE" in code || "EMAIL_EXISTS" in code -> AuthErrorType.EMAIL_EXISTS
             "INVALID_EMAIL" in code -> AuthErrorType.INVALID_EMAIL
