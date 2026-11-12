@@ -1,5 +1,6 @@
 package com.maakthi.prescriptionpharmacist.core.security
 
+import com.maakthi.prescriptionpharmacist.core.privacy.DataDeletionPolicy
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
